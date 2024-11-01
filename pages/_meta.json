@@ -1,0 +1,33 @@
+{
+  "index": {
+    "title": "🏠"
+  },
+  "---": {
+    "type": "separator"
+  },
+  "lab1": {
+    "title": "lab 1 podstawy",
+    "type": "page",
+    "display": "hidden"
+  },
+  "lab2": {
+    "title": "lab 2 podstawy",
+    "type": "page",
+    "display": "hidden"
+  },
+
+  "menu": {
+    "title": "Rozdziały",
+    "type": "menu",
+    "items": {
+      "01-lab": {
+        "title": "lab 1",
+        "href": "/lab1"
+      },
+      "02-lab": {
+        "title": "lab 2",
+        "href": "/lab2"
+      }
+    }
+  }
+}

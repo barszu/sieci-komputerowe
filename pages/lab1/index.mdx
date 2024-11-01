@@ -1,0 +1,235 @@
+# Podstawowe pojęcia:
+
+## HOST
+
+urządzenie z przypisanym IP, jego zadaniem jest odbieranie i wysylanie danych od/do innych urządzeń
+
+## SERWER
+
+'komputer' oferujący usługi jak strony www, poczta, wymiana plików z innym 'komputerem'
+
+## PROTOKÓŁ KOMUNIKACYJNY
+
+sposob komunikacji i wymiany danych okreslajacy reguly i zasady tej komunikacji
+
+(debil: jak interpretowac binarke)
+
+## Medium Transmisyjne
+
+po czym przesylane jest fizycznie (np. swiatlowod)
+
+## INTERNET
+
+zbiór sieci rozległych stanowiących globalna sieć
+
+**Intranet** - prywatna sieć
+
+**Extranet** - intranet ++
+
+## DNS - Domain Name System
+
+zamienia domeny (nazwy mnemoniczne) na adresy IP
+
+## DHCP - Dynamic Host Configuration Protocol
+
+protokół automatycznej konfiguracji ustawień sieci przydzielający hostom adresy IP, maski podsieci i adresy bram (gateway)
+
+## adres MAC - Media Access Control address - adres fizyczny
+
+<img src="img/img35.png"/>
+
+- nadawany na etapie produkcji karty sieciowej zapisany w pamieci ROM (mozna z niej tylko czytac)
+- odnajdywanie hostow w sieciach LAN
+- komputer musi być w tej samej sieci co serwer aby znać adres MAC
+- służa do komunikacji w obrębie jednej sieci, nie wychodzą za nią
+- _Media Access Control to protokół!_
+- switche wykorzystują do komunikacji, mają MAC tablice: port_urzadzenia:MAC
+
+# Jednostki
+
+**masa, objętość danych** - 1bit `[b]` , 1bajt `[B]`
+
+**przesył** - `[bps]` bit per second
+
+**Bandwidth** -> szerokość pasma, maksymalna teoretyczną przepustowość `[bps]`
+
+**Throughput** -> przepustowość / przeplynnosc, aktualne możliwości sieci w zakresie przesyłu `[bps]` , zależy od wydajności sprzętu, obciążenia sieci i typu danych.
+
+# Media transmisyjne przewodowe
+
+<img src="img/img13.png"/>
+<img src="img/img28.png"/>
+<img src="img/img29.png"/>
+
+## kable koncentryczne
+
+<img src="img/img15.png"/>
+<img src="img/img14.png"/>
+
+_prędkości wynikają ze starego standardu nie z winy medium_
+
+## skrętki
+
+8P8C - prawdzina nazwa końcówki nie RJ45 (RJ-45 ma “klucz” z boku)
+
+<img src="img/img16.png"/>
+<img src="img/img17.png"/>
+<img src="img/img18.png"/>
+<img src="img/img19.png"/>
+<img src="img/img20.png"/>
+<img src="img/img21.png"/>
+<img src="img/img22.png"/>
+
+### CAT-X kategorie skretek (debil:technologia)
+
+<img src="img/img23.png"/>
+
+### ułożenie przewodów t568a vs b
+
+<img src="img/img36.png"/>
+
+<img src="img/anime_t568A.png"/>
+
+grupa urządzeń końcowych
+
+- router
+- pc
+
+grupa urządzeń NIE końcowych
+
+- switch, mostek
+- hub
+
+urządzenia tego samego typu (bez switcha) muszą mieć 2 różne CROSS
+urządzenia różnego typu A lub B (w polsce jest B)
+
+`Auto MDI-X` - funkcja, dzięki której wszystko jedno, jaki kabel podłączymy, urządzenia
+ogarną (wymagane dla Gigabit Ethernetu)
+
+## światłowód
+
+<img src="img/img24.png"/>
+<img src="img/img25.png"/>
+<img src="img/img26.png"/>
+
+- rdzeń : 8-10 [mikro m]
+- predkosci kosmiczne
+- bardzo duze odleglosci
+
+<img src="img/img27.png"/>
+
+- rdzeń : 50-62.5 [mikro m]
+- wolniejszy
+- krotsze odleglosci
+
+# Parametry techniczne kabli
+
+**tłumienie sygnału** `[dB]` - U_exit / U_inputted (debil: U = napięcie)
+**propagacja sygnału** `[%]` - v_sygnalu / c (debil: c= predkosc swiatla)
+**rezystancja** `[Ω]` - opor kabla na prad (debil:im wiekszy tym wieksze straty)
+**promień zgięcia kabla** defaultowo `R = 4*srednica_zewnetrzna`
+
+# Media transmisyjne bezprzewodowe
+
+f = 3Hx - 3THz
+
+<img src="img/img30.png"/>
+
+# Rodzaje sieci (obszar)
+
+**LAN** - Local Area Network
+
+Sieć lokalna, obejmująca niewielki obszar, np. jedno biuro lub budynek.
+
+**MAN** - Metropolitan Area Network
+
+Sieć metropolitalna, obejmująca większy obszar, np. miasto lub aglomerację.
+
+**WAN** - Wide Area Network
+
+Sieć rozległa, obejmująca bardzo duży obszar, np. kraj lub kontynent.
+
+**PAN** - Personal Area Network
+
+Sieć osobista, obejmująca niewielki zasięg, np. kilka metrów wokół osoby. (Bluetooth)
+
+**WLAN** - Wireless Local Area Network
+
+Bezprzewodowa sieć lokalna, działająca na zasadzie komunikacji radiowej.
+
+**VPN** - Virtual Private Network
+
+Wirtualna sieć prywatna, umożliwiająca bezpieczne połączenia przez publiczne sieci.
+
+# Rodzaje sieci
+
+<img src="img/img31.png"/>
+<img src="img/img32.png"/>
+
+- równorzedna
+- nie kompa co udostepnia usługi
+- wiele kompow na tych samych prawach
+- każdy może jednocześnie korzystac z zasobow i je udostepniać (bit torrent)
+
+---
+
+# Po co modele sieci OSI/ISO , TCP/IP, ogolne INFO
+
+- określają reguły i zasady w komunikacji
+- różne sprzety i opgramowania bedą działać (cisko i hp)
+- latwiej pojąc dla czlowieka jak dziala proces komunikacji
+
+`Enkapsulacja` pakowanie danych po warstwach **w dół** i doczepianie dodatkowych informacji
+`Dekapsulacja` odpakowywanie danych po warstwach **w góre** i odczepianie dodatkowych informacji
+
+`jednostki PDU` - Protocol Data Unit - dane przesyłane przez sieć, kiedy przechodzą przez wartwy to ich dane/ nazwy sie zmieniaja
+
+<img src="img/img33.png"/>
+
+# TCP/IP - model protokołów
+
+- każda z warstw wykonuje zadania gdzie wykorzystywane są konkretne protokoły
+- zestaw / stos protokołów jeden ułożony pod drugim
+- dodawane są informacje sterujące, aby trafialy do odpowiednegie hosta i aplikacji w nienaruszonym stanie
+
+1. `aplikacji` - usługi sieciowe (www, poczta)
+
+   - **HTTP**
+   - PDU **dane**
+
+2. `transportu` - sprawna obsluga komunikacji miedzy urządzeniami
+
+   - **TCP , UDP**
+   - **numer portu aplikacji** - inf sterująca
+   - PDU **segment / datagram** - zalezy od protokołu użytego
+   - dane są dzielone na mniejsze części
+   - wrapowane dodatkowymi informacjami
+     - aby można było je przydzielić do właściwej aplikacji na urządzeniu docelowym
+     - aby mozna bylo te chunki zlozyc w odpowiedniej kolejnosci na urządzeniu docelowym
+
+3. `internetowa` - znajdowanie trasy przesyłu danych
+
+   - **IP** - protokół / inf sterująca, adres logiczny, przesyłanie danych pomiedzy hostami znajdującymi sie w innych sieciach
+   - PDU **pakiet**
+
+4. `dostępu do sieci` - koduje dane i przekazuje do medium transmisyjnego
+   - standard **Ethernet**
+   - adres **MAC** - inf sterujaca
+   - PDU **ramka**
+
+<img src="img/img34.png"/>
+
+# OSI/ISO - model odniesienia
+
+- stosowany do analizy, aby lepiej zrozumiec co sie dzieje
+
+1. `aplikacji` - pozwala korzystać z sieci
+2. `prezentacji` - informuje o formacie danych i je koduje
+   - jakie typy plików będą przesyłane
+   - odpowiednie zakodowanie danych na urządzeniu źródłowym i ich dekodowanie na docelowym
+3. `sesji` - zarządza sesjami użytkowników
+4. `transportu` - sprawna obsluga komunikacji miedzy urządzeniami (to samo co TCP/IP)
+5. `sieci` - określa trasę przesyłu danych
+6. `łącza danych` - kontroluej dostęp do medium transmisyjnego
+   - adresowanie danych w celu przesłania ich pomiedzy hostami w sieciach lokalnych
+7. `fizyczna` - koduje dane i przesyła przez medium transmisyjne
