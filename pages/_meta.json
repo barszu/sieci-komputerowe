@@ -20,6 +20,11 @@
     "type": "page",
     "display": "hidden"
   },
+  "lab4": {
+    "title": "lab 4 podstawy",
+    "type": "page",
+    "display": "hidden"
+  },
 
   "menu": {
     "title": "Rozdziały",
@@ -36,6 +41,10 @@
       "03-lab": {
         "title": "lab 3",
         "href": "/lab3"
+      },
+      "04-lab": {
+        "title": "lab 4",
+        "href": "/lab4"
       }
     }
   }
