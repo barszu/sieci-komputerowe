@@ -1,0 +1,62 @@
+# Topologie sieci
+
+## Fizyczna
+
+opisuje **połączenia** pomiedzy urządzeniami w sieci
+
+![img33](/lab2/img/img33.webp)
+![img34](/lab2/img/img34.webp)
+
+można dodac podwojny pierscien wtedy jak sie przerwie dziala dalej
+
+![img35](/lab2/img/img35.webp)
+
+## logiczna
+
+opisuje **sposoby komunikacji** pomiedzy urzadzeniami w sieci
+
+### **punkt-punkt**
+
+![img36](/lab2/img/img36.webp)
+
+- dane przesyłane sa tylko z A do B urządzenia
+- mogą być połaczone bezpośrednio i pośrednio
+
+### **pierścienia**
+
+![img37](/lab2/img/img37.webp)
+
+- dane są przekazywane kolejno do urządzeń połączonych w sieci
+- każde urzadzenie widzi dane i stwierdza czy sa one do niego czy nie
+  - jak tak to zabiera
+  - jak nei to przekazuje dalej
+
+### **wielodostępowa**
+
+![img33](/lab2/img/img33.webp)
+
+- inaczej rozgłaszania
+- jedno fizyczne medium transisyjne (żyła)
+- kazde urządzenie widzi dane przesyłane
+
+# Metody dostępu do łącza
+
+## CSMA/CD
+
+- metoda z `wykrywaniem kolizji`
+- nasluchuje stan łącza, jeśli urządzenie co chce rozpoczać nadawanie wykryje że łącze:
+  - wolne - rozpoczyna transmisje,
+  - jezli wykryje ze inne urzadzenie tez wysyla to `przerywa`, po pewnym czasie prubuje znowu
+- stary ethernet
+
+## CSMA/CA
+
+- metoda z `unikaniem kolizji`
+- nasluchuje stan łącza
+- jesli wolne to wysyla informacje `'chce nadawac'` do wszytskich innych
+- sieci bezprzewodowe
+
+## Token passing
+
+- przesyłąnie od urządzenia do urządzenia tokenu ktorego posiadane pozwala na transmisje
+- nie przyjely sie bo byly skomplikowane
