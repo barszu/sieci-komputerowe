@@ -15,6 +15,11 @@
     "type": "page",
     "display": "hidden"
   },
+  "lab3": {
+    "title": "lab 3 podstawy",
+    "type": "page",
+    "display": "hidden"
+  },
 
   "menu": {
     "title": "Rozdziały",
@@ -27,6 +32,10 @@
       "02-lab": {
         "title": "lab 2",
         "href": "/lab2"
+      },
+      "03-lab": {
+        "title": "lab 3",
+        "href": "/lab3"
       }
     }
   }

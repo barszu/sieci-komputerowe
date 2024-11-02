@@ -1,0 +1,147 @@
+# VLAN - Virtual Local Area Network - Wirtualna sieć lokalna
+
+> `logiczne` grupowanie urządzen w warstwie 2 (na poziomie switchy) - nie zmieniamy fizycznie sieci
+
+Zalety:
+
+- szybsze i łatwiejsze i lepsze, niż wykorzystywanie routerów (urządzeń warstwy 3)
+- zmniejszenie domeny rozgłoszeniowej (broadcast w obrebie VLANu tylko)
+- większe bezpieczeństwo (można odseparować od siebie sieci) aby sie widziały jak kolwiek (wymaga routera lub switcha warstwy 3)
+- lepsza skalowalność - programowa (re)konfiguracja (nie trzeba fizycznie ruszać kabli)
+
+Wady:
+
+- trudniejsze w konfiguracji (od wsadzania kabli do gniazdek), ale dalej łatwiej niż router konfigurować
+- mało zaawansowana standaryzacja
+
+# VLANy a domena kolizyjna i rozgłoszeniowa
+
+> kolizyjna : nie ma żadnego wpływu kolizje w obrebie tej sieci (no bo medium to samo)
+
+> rozgłoszeniowa - każdy VLAN to osobna domena rozgłoszeniowa
+
+# Sposoby definiowania przynależności do sieci wirtualnych:
+
+## `statyczne`
+
+> ustawienie na stałe, że **port X należy do VLAN Y** - `port-based, port-centric`
+
+- konfigurowane przez administartora
+- pełna kontrola największe bezpieczeństwo o ile w kablach sie nie zmieni
+
+## `dynamiczne`
+
+> VLAN związany z danym portem określa się automatycznie przy podłączaniu urządzenia
+
+- musi być włączony przez admina
+- urządzenia identyfikuje MAC (z czym użytkownik może majstrować) lub protokół warstwy 3 (czyli zwykle IP)
+- dla sprawdzenia docelowego VLANu używa się serwera VMPS (VLAN Membership
+  Policy Server, mapa MAC-VLAN)
+- **nie DHCP**
+
+## Trunk - rzeka VLAN'ów
+
+- Pojedyncze łącze, którego jednocześnie używa wiele VLANów (**multipleksuje łącze**).
+- Zwykle łącza punkt-punkt o dużej przepustowości (bo muszą obsłużyć wiele VLANów naraz) i dostępności (np. zwielokrotnienie, żeby zagwarantować brak awarii).
+- Z takich łączy buduje się okablowanie szkieletowe (**backbone**), czyli kable z serwerowni do punktów dystrybucyjnych (IDF), gdzie są switche obsługujące podłączone do nich VLANy.
+- Trunkowanie - przesyłanie danych VLANu przez trunk.
+
+# VLAN a wiele switchy:
+
+## Problem:
+
+Możemy chcieć, żeby porty w wielu switchach były w tym samym VLANie (bo np. nie możemy fizycznie ruszyć sieci i tych switchy, a logiczny podział tego wymaga).
+
+Nie da się tego rozwiązać kablami, bo to eliminuje zalety VLANów, oraz do każdej sieci trzeba osobnego kabla i portu.
+
+## Rozwiązanie:
+
+Skoro nie da się zrobić `"1 kabel - 1 VLAN"`, to można zrobić `"1 kabel - wiele VLANów" + mechanizm współdzielenia łącza` (trunkować), czyli:
+
+- `TDM` - **Time-Division Multiplexing**
+- `Filtrowanie`
+- `Tagowanie`
+
+# Techniki trunkowania VLANów: TDM, filtrowanie, tagowanie
+
+## TDM - Time-Division Multiplexing:
+
+> Czas dzieli się na tyle VLANów, ile trzeba trunkować.
+>
+> Dla n VLANów każdy dostaje 1/n czasu transmisji w jakiejś jednostce czasu.
+
+- Problem: Rzadko VLANy potrzebują tak samo dużej transmisji, więc dużo czasu się marnuje.
+- Przez niewydajność rzadko używane.
+
+## Filtrowanie:
+
+> Każdy switch posiada zestaw zasad filtracji ramek i dalszego postępowania z nimi.
+
+- informacja o przynależności do VLAN jest przechowywana na każdym switch, posiada on tablicę MAC-VLAN, którą ma statycznie narzuconą, lub też switche z trunka wysyłają sobie wzajemnie aktualizacje tablic.
+- Problem: Słabo skalowalne, bo trzeba aktualizować instrukcje filtrowania wielu switchom.
+- Rzadko używane.
+
+## Tagowanie:
+
+> Na czas transportu przez trunk **ramki dostają ID VLANu (tag)**, do którego należą, na koniec trunka switch odczytuje ID, usuwa je i przesyła już normalną ramkę Ethernet do komputera z właściwego VLANu. - Nowoczesna technika: **802.1Q, standard IEEE.**
+
+- Stara technika: Inter-Switch Link (external tagging, tagowanie dwupoziomowe), rozwiązanie Cisco, opakowanie ramki Ethernet w dodatkową ramkę ISL: ISL header (26 B) + ramka Ethernet + CRC ramki ISL (4 B).
+
+# Technika 802.1Q tagowania ramek: - internal tagging
+
+![img1](/lab3/img/img1.webp)
+
+- modyfikuje oryginalną ramkę Ethernet, wstawiając dodatkowe 4 B pole, nagłówek 802.1Q, pomiędzy adres nadawcy a pole typ/długość
+- wymaga przeliczenia oryginalnej sumy kontrolnej
+- dodatek składa się z dwóch części: TPID i TCI
+
+![img2](/lab3/img/img2.webp)
+
+## `TPID` - Tag Protocol Identifier -> 2 B:
+
+- **stała wartość 0x8100**, pozwala zidentyfikować ramkę jako 802.1Q
+- jako, że te 2 B w normalnej ramce opisują typ, to urządzenie "nieznające" VLANów mogą
+  teoretycznie dalej odbierać i przekazywać takie ramki (reszta nagłówka będzie traktowana jako
+  część pola danych)
+
+## `TCI` (Tag Control Information) -> 2 B
+
+1. **`PCP` (Priority Code Point) -> 3 bit**
+
+   zarezerwowane i niezdefiniowane, może to być np. priorytet ramki według protokołu 802.1P (0 - najniższy, 7 - najwyższy)
+
+2. **`DEI` (Drop Eligible Identifier) -> 1bit**
+
+   czy ramka może **zostać porzucona**, gdy sieć jest zapchana ?
+
+3. **`VID` (VLAN Identifier) -> 12 bit**
+
+   numer VLANu danej ramki, wartości:
+
+   - 0 - brak tagowania, nagłówek 802.1Q ma, żeby używać priorytetu (pole PCP w TCI)
+   - 1 - brak oficjalnego znaczenia, ale często jest to numer VLANu do zarządzania urządzeniami sieciowymi (albo natywny VLAN, patrz niżej)
+   - 2 : 4094 - swobodne wykorzystanie
+   - 4095 - zarezerwowane
+
+   ```
+   Natywny VLAN:
+   ● native VLAN, VLAN pierwotny
+   ● sieć wirtualna obsługująca przesyłanie ramek bez identyfikatora VLAN
+   ● “domyślny” VLAN istniejący np. dla kompatybilności nowych switchy ze starymi,
+   nieobsługującymi VLANów
+   ● często (np. w urządzeniach Cisco) jest to VLAN o ID 1
+   ```
+
+# ISL - Inter-Switch Link
+
+> protokół Cisco, służy do przesyłania ramek Ethernetowych między switchami.
+
+- dwu-poziomowe tagowanie
+- oryginalna ramka jest enkapsułolwana w nagłowek ISL i FCS
+  - ISL zawiera informacje takie jak identyfikator VLAN
+  - FCS zapewnia integralność danych, sprawdzając, czy ramka nie została uszkodzona podczas transmisji.
+- implementacja ASICs (Application-Specific Integrated Circuit) - _układy scalone, które są zaprojektowane do wykonywania określonych zadań bardzo szybko_
+
+  - zapewnia szybkość liniową - brak/min narzut na przepustowość
+
+- ma wsparcie do 1024 VLANs (ilości ich)
