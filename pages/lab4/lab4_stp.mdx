@@ -1,0 +1,31 @@
+# Wybór root'a, Inicjalizacja MST
+
+![img4](/lab4/img/img4.webp)
+
+każdy na początku twierdzi, że jest rootem i wysyła ramki BPDU do sąsiada twierdząc że jest rootem
+
+> BID - Bridge Root ID - most do roota
+
+![img5](/lab4/img/img5.webp)
+
+switch B, C stwierdzaja ze switch A ma lepszy BID, i zmieniają `root BID` na switcha A, i switch A staje się **root bridge**
+
+![img6](/lab4/img/img6.webp)
+
+kazdy z portów **root bridge** staje sie FWD (Forwarding State - normalna praca portu), ROOT PORT
+
+> Designated Port - Port, który odbiera i przekazuje ramki, część drzewa rozpinającego; typowy port dla korzenia drzewa.
+
+kazdy nie **root bridge** ma znalezc najlepsza droge do root bridge -> wpisać sobie route port
+
+- opiera sie to na koszcie dla portu (szybkosc kabla itd) wdl sciezki
+
+od roota było 0, każdy kabel ma tutaj koszt 4
+
+![img7](/lab4/img/img7.webp)
+
+root port wybrany z wartoscia 4 i tak oznaczamy jako `Route Porty`
+
+Szukamy dalej Designated Port... analogicznie
+
+![img8](/lab4/img/img8.webp)
