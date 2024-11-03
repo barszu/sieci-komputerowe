@@ -16,6 +16,10 @@ const config: DocsThemeConfig = {
   footer: {
     text: "Notatki z sieci, autor Bartłomiej Szubiak",
   },
+  toc: {
+    float: true, // Ustawienie, czy spis treści ma być pływający
+    title: "On This Page", // Tytuł sekcji spisu treści
+  },
 };
 
 export default config;

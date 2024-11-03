@@ -1,0 +1,90 @@
+# Budowa
+
+- 32 bity = `4 oktety` = 4\*8
+- mniej adresów niż MAC, więc stosuje się hierarchiczne rozwiązania
+- dzieli się na **dwie części**, które mają po ileś oktetów (zależy od klasy):
+  - **adres `sieci`** (prefix)
+  - **adres `hosta`** (suffix)
+
+![img1](/lab5/img/img1.webp)
+
+# Adresowanie
+
+`Klasowe` - **predefiniowane klasy A B C D E**
+
+> określają na sztywno podział na adres sieci i hosta (po oktetach) => liczbe możliwych sieci i hostów
+
+`Bezklasowe` - **maski**, które dzielą adresy na podsieci
+
+## Klasy
+
+- wyznacza, ile oktetów dostaje adres sieci, a ile adres hosta;
+- rozróżnia się ją po pierwszych bitach **pierwszego oktetu**
+
+| Klasa | Pierwszy oktet (binarnie) | Zakres adresów IP           | sieć - host oktety           |
+| ----- | ------------------------- | --------------------------- | ---------------------------- |
+| A     | `0`xxxxxxx                | 0.0.0.0 - 127.255.255.255   | **S**.H.H.H                  |
+| B     | `10`xxxxxx                | 128.0.0.0 - 191.255.255.255 | **S.S**.H.H                  |
+| C     | `110`xxxxx                | 192.0.0.0 - 223.255.255.255 | **S.S.S**.H                  |
+| D     | `1110`xxxx                | 224.0.0.0 - 239.255.255.255 | Multicast (grupowe)          |
+| E     | `1111`xxxx                | 240.0.0.0 - 255.255.255.255 | Experimental / zarezerwowane |
+
+> `Liczba adresów sieci` = **2^(liczba bitów adresu sieci)**
+
+> `Liczba adresów hosta` = **2^(liczba bitów adresu hosta) - 2** (bo 0 i 1 są zarezerwowane dla sieci i broadcast)
+
+## Sieci i hosty
+
+Uzyskiwanie adresu:
+
+- numer sieci - od odpowiedniej organizacji lub `ISP` - Internet Service Provider (adres publiczny)
+- numer hosta - nadawane przez lokalnego administratora
+- dla każdej karty sieciowej trzeba pozyskać osobny adres
+- **hosty z tej samej sieci mają ten sam adres sieci i unikatowe numery hostów**
+
+Adres IP to **adres interfejsu sieciowego**, nie urządzenia (hosta)
+
+> host może mieć wiele interfejsów sieciowych, więc może być w wielu sieciach, ale wtedy ma wiele adresów IP
+
+# Prywatne adresy IP
+
+**nie są routowane w internecie** - mogą być przydzielone tylko komputerom niewidocznym poza siecią lokalną
+
+| Klasa | Zakres adresów IP                 |
+| ----- | --------------------------------- |
+| A     | **10.0.0.0** - 10.255.255.255     |
+| B     | **172.16.0.0** - 172.31.255.255   |
+| C     | **192.168.0.0** - 192.168.255.255 |
+
+# Adresy specjalne
+
+| Adres                                         | Znaczenie                                                                                                                                                   |
+| --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 0.0.0.0/8 <br/>_(1 oktet sieciowy)_           | ● `nieznany adres/ wszystko`<br/>● “ten komputer w tej sieci”<br/>● adres źródłowy podczas uruchamiania komputera, kiedy jeszcze nie zna swojej sieci       |
+| 0.x.y.z                                       | ● komputer x.y.z w tej samej sieci<br/>● adres źródłowy podczas uruchamiania komputera, kiedy zna tylko część informacji                                    |
+| 127.x.y.z/8 <br/>_(1 oktet sieciowy)_         | ● loopback<br/>● pakiet może tylko wrócić do tego samego komputera<br/>● używany przy komunikacji między programami na tym samym komputerze używając TCP/IP |
+| 127.0.0.1/8 <br/>_(1 oktet sieciowy)_         | ● `localhost`                                                                                                                                               |
+| 255.255.255.255/32 <br/>_(wszytsko sieciowy)_ | ● `lokalny broadcast` (LAN)<br/>● routery nie przekazują go dalej                                                                                           |
+| x.y.z.255<br/>x.y.255.255<br/>x.255.255.255   | ● `broadcast skierowany` do określonej sieci o adresie x.y.z<br/>● adres sieci - sieć w której broadcastujemy, adres hosta - same jedynki                   |
+
+_W powyższej tabeli broadcast skierowany może być skierowany także do konkretnej
+podsieci, wtedy na koniec dodaje się oznaczenie podsieci /q (q - maska podsieci)._
+
+_/8, /32 - długość maski_
+
+# Adresy publiczne i prywatne
+
+**publiczne**
+
+- routowane w internecie, stosowane w sieciach WAN (rozległych), unikatowe na świat
+- otrzymujemy od `ISP` (Internet Service Provider)
+
+**prywatne**
+
+- nie routowane w internecie, sieci LAN (lokalne)
+
+Komputery z sieci lokalnej mogą korzystać z internetu dzięki `NAT` (Network Address Translation) - przekładaniu adresów
+
+![img9](/lab5/img/img9.webp)
+
+_(debil: każdy komputer z sieci LAN ma adres publiczny taki sam i z routera )_

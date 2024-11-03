@@ -1,0 +1,89 @@
+# Cele tworzenia podsieci:
+
+- podział dużych sieci klasy A i B na mniejsze
+- podział domen rozgłoszeniowych na mniejsze (**każda podsieć to osobna domena rozgłoszeniowa**)
+- ukrycie szczegółów budowy sieci przed routerami zewnętrznymi
+- możliwość połączenia różnych rodzajów sieci lokalnych
+- lepsze od wielu sieci klasy wyższej, bo **zmniejsza to rozmiar tablic routowania**
+
+![img2](/lab5/img/img2.webp)
+
+# Tworzenie podsieci:
+
+- tylko **logiczny**
+- **rozróżnia się je dzięki masce podsieci**
+- budowa adresu dla podsieci:
+  **adres sieci + adres podsieci + adres hosta**
+- adres podsieci “zużywa” bity na adres hosta, więc **więcej podsieci = mniej hostów w każdej podsieci**
+
+# Maska sieci (podsieci):
+
+- **długość adresów sieci i hosta wyznacza klasa**, a **maska granicę między adresem podsieci i adresem hosta**
+- **4 bajty** (32 bity) np. 255.255.255.0
+- dzieli adres IP na dwie części: sieć i hosta (po bitach)
+  - `1` - bit jest częścią **adresu sieci** (spójny ciag '1' jest na początku) (nie musza to być oktety!)
+  - `0` - bit jest częścią **adresu hosta** (spójny ciag '0' jest na końcu)
+  - występuje zapis skrócony np. **/24** (24 bity na adres sieci, 8 na adres hosta)
+
+Przykładowe maski:
+
+![img4](/lab5/img/img4.webp)
+
+> Przykład analizy adresu IP:
+>
+> Obliczenie adresu sieci:
+>
+> ![img5](/lab5/img/img5.webp)
+>
+> adres sieci zaczyna się od 192 więc jest to klasa C, gdyby było klasowe
+>
+> Obliczanie adresu broadcast (ostatni adres w podsieci):
+>
+> ![img6](/lab5/img/img6.webp)
+>
+> Obliczamy liczbę hostów:
+>
+> ![img7](/lab5/img/img7.webp)
+> ![img8](/lab5/img/img8.webp)
+>
+> hosty mają adresy 192.168.1.129 - 192.168.1.254 (.128 ma sieć, .255 ma
+> broadcast){" "}
+
+_liczba bitów adresu IP - skrocony zapis maski = ilość 0 w masce_
+
+![img10](/lab5/img/img10.webp)
+![img11](/lab5/img/img11.webp)
+
+`Adres następnej podsieci = adres broadcast poprzedniej + 1`
+
+![img12](/lab5/img/img12.webp)
+![img13](/lab5/img/img13.webp)
+
+## Podsieci niezalecane:
+
+ze względu na poniższe problemy używanie tych podsieci jest niezalecane (kiedyś te adresy były nawet domyślnie wyłączone)
+
+Załóżmy, że mamy adres sieci 192.168.1.0/24 i chcemy podzielić go na 8 podsieci. Potrzebujemy 3 bitów na adres podsieci (2^3 = 8).
+
+Adres sieci: 192.168.1.0/24
+Maska podsieci: 255.255.255.224 (/27)
+
+### Podsieć zero:
+
+- same zera na bitach adresu podsieci
+- **ma taki sam adres sieci i podsieci**, co jest mylące
+
+Adres sieci: 192.168.1.0
+Adres podsieci: 192.168.1.0
+Zakres adresów hostów: 192.168.1.1 - 192.168.1.30
+Adres broadcast: 192.168.1.31
+
+### Podsieć samych jedynek:
+
+- same jedynki na bitach adresu podsieci
+- **adres broadcast sieci i podsieci są takie same**, co może w skrajnych przypadkach powodować cykle routowania
+
+Adres sieci: 192.168.1.224
+Adres podsieci: 192.168.1.224
+Zakres adresów hostów: 192.168.1.225 - 192.168.1.254
+Adres broadcast: 192.168.1.255

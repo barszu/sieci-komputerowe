@@ -1,0 +1,137 @@
+# ICMP - Internet Control Message Protocol - ping
+
+- protokół warstwy 3 (sieciowej)
+- wspomaga protokoły IP, UDP i TCP
+- przesyła komunikaty ICMP, enkapsulowane w pakietach IP (są w warstwie 4!) (transportowej)
+
+### przesyła informacje:
+
+- o błędach transmisji, np. host nieosiągalny
+- sterujące ruchem, np. przekierowania
+- pomocnicze, np. rozgłaszanie routera
+
+## Zastosowania
+
+import { Details } from "../../components/details";
+
+<Details summary="ping - sprawdzanie dostępności hosta" ml="">
+  **Jak działa**: 
+  
+  Wysyła żądanie ICMP Echo Request do docelowego hosta i
+  oczekuje na odpowiedź ICMP Echo Reply. Mierzy czas, jaki upłynął między
+  wysłaniem żądania a otrzymaniem odpowiedzi.
+  
+  **Zastosowanie:**
+
+- Sprawdzanie, czy host jest osiągalny
+- mierzenie opóźnienia (latency) w sieci.
+
+</Details>
+
+<Details summary="traceroute - śledzenie trasy pakietu" ml="">
+  **Jak działa**: 
+  
+  Wysyła serię pakietów ICMP Echo Request z rosnącymi wartościami TTL (Time To Live). Każdy router na trasie zmniejsza wartość TTL o 1 i odrzuca pakiet, gdy TTL osiągnie 0, wysyłając komunikat ICMP Time Exceeded.
+  
+  **Zastosowanie:**
+
+- Identyfikacja trasy pakietu przez sieć
+- diagnozowanie problemów z routingiem.
+
+</Details>
+
+<Details summary="sterowanie routingiem IP" ml="">
+  **Jak działa**: 
+  
+  Routery mogą wysyłać komunikaty ICMP Redirect, aby poinformować hosty o lepszej trasie do docelowego hosta.
+
+Host odbiera komunikat ICMP Redirect i może (zalezy od konfiguracji) zaktualizowac swoją tablicę routingu na podstawie otrzymanych informacji.
+
+**Zastosowanie:**
+
+Optymalizacja tras routingu i poprawa efektywności sieci.
+
+</Details>
+
+<Details summary="wykrywanie `MTU` (Maximum Transmission Unit) ścieżki" ml="">
+  **Jak działa**: 
+  
+Wysyła pakiety ICMP Echo Request z ustawioną flagą DF (Don't Fragment) i różnymi rozmiarami. Jeśli pakiet jest zbyt duży, router odrzuca go i wysyła komunikat ICMP Fragmentation Needed.
+
+**Zastosowanie:**
+
+Optymalizacja wielkości pakietów w celu uniknięcia fragmentacji i poprawy wydajności sieci.
+
+</Details>
+
+<Details summary="proste sterowanie przepływem" ml="">
+  **Jak działa**: 
+  
+Wysyła komunikaty ICMP Source Quench, aby poinformować nadawcę o konieczności zmniejszenia szybkości przesyłania danych
+
+**Zastosowanie:**
+
+Zapobieganie przeciążeniu sieci i poprawa stabilności komunikacji.
+
+</Details>
+
+## Budowa
+
+- **Typ** [1B], **Kod** [1B] - określają rodzaj komunikatu ICMP
+   ![img20](/lab5/img/img20.webp)
+- **Suma kontrolna** [2B] - sprawdza poprawność nagłówka ICMP
+- **Dane** - inne dane potrzebne danemu typowi - zmienna długość
+
+## Program PING (Packet InterNet Groper)
+
+Korzysta z komunikatów ICMP typów 0 i 8 (`echo reply`, `echo request`), sprawdza:
+
+- czy host jest osiągalny
+- czas podróży pakietu
+- liczba zgubionych i zdublowanych pakietów
+
+Działanie:
+
+1. Komputer A tworzy ramke ECHO REPLY ICMP i wysyła do B:
+
+| type | code | data                                   |
+| ---- | ---- | -------------------------------------- |
+| 8    | 0    | process ID (proces PING z komputera A) |
+
+2. Komputer B odbiera i odpowiada ramką ECHO REPLY ICMP:
+
+| type | code | data                                   |
+| ---- | ---- | -------------------------------------- |
+| 0    | 0    | process ID (proces PING z komputera A) |
+
+![img21](/lab5/img/img21.webp)
+
+## Program TRACEROUTE
+
+- Pozwala na śledzenie trasy datagramów IP między dwoma hostami.
+- Wykorzystuje pole TTL protokołu IP oraz komunikaty ICMP (czas przekroczony, port nieosiągalny).
+- Wysyła dane na port > 30000, aby uniknąć konfliktów z innymi aplikacjami.
+- umożliwia śledzenie z wykorzystaniem loose lub strict source routing
+
+Przykład działania:
+
+![img22](/lab5/img/img22.webp)
+![img23](/lab5/img/img23.webp)
+
+## ICMP router discovery (IRDP)
+
+### Router Solicitation
+
+komunikat używany przez hosty (komputery lub inne urządzenia) do odkrywania routerów w sieci lokalnej.
+Host wysyła żądanie (solicitation) do wszystkich routerów w sieci, prosząc o przesłanie informacji o sobie.
+Routery odpowiadają na to żądanie poprzez `Router Advertisement`, dostarczając hostowi niezbędne informacje, takie jak adresy IP routerów i inne parametry konfiguracyjne.
+
+> **host przy podłączeniu** się wysyła na adres multicastowy 224.0.0.2 komunikat ICMP “Router Solicitation”
+
+### Router Advertisement
+
+Każdy router wspierający protokół IRDP wysyła w regularnych odstępach czasu
+komunikaty Router Advertisement w celu poinformowania o swojej obecności w podsieci.
+
+Dodatkowo komunikat Router Advertisement jest wysyłany jako odpowiedź na zapytanie
+komunikatem Router Solicitation

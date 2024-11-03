@@ -1,0 +1,190 @@
+import { Callout } from "nextra/components";
+
+# ARP Protocol
+
+<Callout>
+  Wysyłanie pakietu odbywa się po warstwie 2, np. adresem MAC w Ethernecie,
+  <br />a pakiet IP wysyłamy na adres IP, nie znając docelowego adresu MAC.
+</Callout>
+
+<Callout type="info">
+  Dynamiczne mapowanie adresów IP (warstwy 3) na adresy MAC (warstwy 2) => ARP
+  (Address Resolution Protocol).
+</Callout>
+
+<Callout type="success">
+  ARP działa poprzez wysyłanie zapytania ARP (ARP Request) do wszystkich
+  urządzeń w sieci lokalnej. <br />
+  Urządzenie, które posiada dany adres IP, odpowiada zapytaniem ARP (ARP Reply),
+  podając swój adres MAC. <br /> Informacja o adresie MAC jest zapisywana w tablicy
+  ARP.
+</Callout>
+
+jeżeli hosty są w tej samej sieci, to nie ma problemu, jak nie to trzeba dodatkowych mechanizmów, np. Proxy ARP
+
+## Tablica ARP, IP : MAC
+
+- działa jak tablica forwardingu w switchach
+- znajduje się bezpośrednio u hostów
+- adresy są odczytywane z zapytań oraz z odpowiedzi ARP
+- wpisy mają **czas życia**, są dynamicznie tworzone i kasowane
+- można stworzyć **wpisy statyczne**, np. dla większego bezpieczeństwa
+
+![img17](/lab5/img/img17.webp)
+
+**typ** (w ramce Ethernet) = 0x0806 (ARP)
+
+**rodzaj protokołu warstwy** x2 - Ethernet = 0x001, IP = 0x0800, ...
+
+**rozmiar adresu protokołu** x2 - w bajtach
+
+**typ operacji** - 1 - zapytanie, 2 - odpowiedź
+
+**adres odbiorcy, nadawcy** x2 - adresy MAC dla Ethernet
+
+## Działanie w jednej sieci
+
+1. Komputer A szukający komputera B zna jego adres IP. Tworzy ramkę Ethernet z zapytaniem ARP (o MAC):
+
+![img18](/lab5/img/img18.webp)
+
+2. Ramka ARP jest `broadcastowana` do wszystkich hostów w sieci lokalnej:
+
+3. Komputer B odbiera ramkę i tworzy ramkę Ethernet z odpowiedzią ARP: (podaje swój MAC)
+
+![img19](/lab5/img/img19.webp)
+
+Różnice względem poprzedniej ramki:
+
+- adresy MAC źródłowy i docelowy są już znane (oba to unicasty)
+- dane - ramka ARP:
+  - 2 - oznaczenie odpowiedzi ARP
+  - są znane pełne dane warstw 2 i 3 nadawcy i odbiorcy
+
+4. Komputer A odbiera ramkę ARP i zapisuje adres MAC komputera B w swojej tablicy ARP
+
+## Działanie w różnych sieciach
+
+**Brama domyślna** (sieciowa, `default gateway`) - adres **IP routera**, do którego komputery wysyłają pakiety, jeżeli ich odbiorca jest poza siecią lokalną. Jest częścią podstawowej konfiguracji hosta (więc zna ją np. od serwera DHCP, dostaje ją razem ze swoim IP)
+
+1. Komputer A porównuje sieci swoją i docelową.
+
+- Są różne - tworzy więc zapytanie ARP do bramą domyślnej A. - jeśli nie zna jej MAC
+
+2. Wysyła ramkę do routera A
+3. Router A tworzy odpowiedź ARP ze swoim MAC i odsyła do A.
+4. Komputer A wysyła ramkę z pakietem IP do routera A.
+5. Router dekapsuluje ramkę, sprawdza adres IP komputera B. - i Nie zna MAC_B
+
+- Gdyby było więcej routerów po drodze, to punkt 5 składałby się z ciągu zapytań i odpowiedzi między routerami po drodze.
+
+6. Router tworzy zapytanie ARP do B (trzymając oryginalny pakiet od A w sobie).
+7. Komputer B dostaje zapytanie od routera B (od swojej strony) i odsyła mu odpowiedź ze swoim adresem MAC
+8. Router A dostaje MAC_B. Tworzy ramkę Ethernet z tym adresem oraz oryginalnym pakietem IP od A i wysyła go do komputera B.
+
+[wiecej o tym z rysunkiem... (jak działa przesyłanie ramek?)](../lab2/lab2_koncentrat2.md)
+
+## Proxy ARP
+
+- wybór proxy device jako pośrednika w przekazywaniu informacji do innej sieci
+- proxy “podstawia” **swój MAC za MAC celu** (tzn. tego IP, do którego chce się wysłać pakiet), a potem sam przesyła pakiety dalej
+
+### Działanie
+
+1. Komputer A wysyła zapytanie ARP przez bramę domyślną do komputera B (wierzy błędnie, że są w tej samej sieci)
+2. Router znajduje u siebie w tablicy ARP adres docelowy (zaużmy) i zwraca swój MAC jako odpowiedź (że niby komp B ma ten MAC)
+3. A teraz myśli że komunikuje się bezpośrednio z B ale tak na prawdę rozmawia z routerem
+
+### zalety
+
+- ukrywa istnienie wielu sieci (oba hosty mogą korzystać z tego samego adresu sieci)
+
+import { Details } from "../../components/details";
+
+<Details summary="debil:">
+  pozwala hostom w różnych sieciach komunikować się tak, jakby były w tej samej
+  sieci. Router odpowiada na zapytania ARP, udając, że jest docelowym hostem, co
+  ukrywa złożoność sieci przed hostami.
+</Details>
+
+- umożliwia komunikację źle skonfigurowanym hostom
+- umożliwia komunikację hostom nieobsługującym podsieci
+- można włączyć bez naruszania tablic routingu
+
+### wady
+
+- skalowalność (wymaga **ustawienia proxy'ego dla każdego urządzenia**)
+- nie działa dla niektórych topologii (np. 2 routery łączące 2 fizyczne sieci)
+- brak mechanizmów niezawodności (brak planu B, jeżeli proxy padnie)
+- zwiększenie stopnia skomplikowania sieci
+- źle skonfigurowany router-proxy może zablokować ruch (bo gromadzi pakiety jako proxy, ale nie umie ich z jakiegoś powodu wysłać)
+- ukrywanie złej konfiguracji hostów
+- zwiększa ruch ARP
+- hosty muszą posiadać większe tablice ARP
+- bezpieczeństwo (np. można podszyć się pod cudzy adres)
+- nie działa w sieciach nieużywających ARP
+
+## GRRP - Gratuitoous ARP - ARP bez pytania
+
+Każdy ją otrzymuje, nikt nie odpowiada
+
+> IP źródłowe = IP hosta <br/>
+> IP docelowe = IP hosta
+
+> MAC źródłowy = MAC hosta <br/>
+> MAC docelowy = broadcastowy
+
+### Zastosowania
+
+- **aktualizacja tablic ARP** u innych hostów
+
+<Details>
+  przydatne np. przy backupowych serwerach, bo gdy główny padnie, to zapasowy
+  (ten sam adres IP, co główny) wyśle wszystkim ramkę GARP ze swoim MACiem, żeby
+  wszyscy dowiedzieli się o zmianie
+</Details>
+
+- **powiadomienie** innych hostów o **pojawieniu się nowego**
+
+<Details>
+  zawczasu wypełnia tablice ARP innych hostów IP i MACiem nowego hosta, co
+  potencjalnie zmniejsza późniejszą liczbę wysyłanych pakietów ARP
+</Details>
+
+- **powiadomienie wcześniej switcha** o porcie danego hosta lub o zmianie jego adresu MAC
+
+- wykrywanie błędów w konfiguracji - bardzo częste ramki GARP od danego hosta
+
+<Details>
+  np. jeżeli host ma problem z kablem i co chwilę odłącza się i podłącza z
+  powrotem
+</Details>
+
+### Wady
+
+dodatkowe pakiety wysyłane przy podłączeniu urządzenia powodują dużo ruchu w sieci, a mogą być niepotrzebne (np. nowy host komunikuje się tylko z 1 innym hostem),
+
+## ARP Cache Poisoning | ARP Spoofing
+
+- atak polegający na podmianie adresów MAC w tablicy ARP
+- atakujący wysyła fałszywe odpowiedzi ARP, aby zmusić hosty do przekierowania ruchu do niego
+- atakujący może podszyć się pod inny host, podsłuchiwać ruch, modyfikować go, a nawet przekierowywać go dalej
+
+## ARP problem
+
+<Callout type="info">
+  Służy do sprawdzenia czy ma się unikatowy adres IP. (np. sprzawdzenie czy DHCP
+  nie przydzieliło tego samego adresu 2 hostom)
+</Callout>
+
+Działa jak GARP, ale:
+
+- MAC odbiorcy ustawiamy na 00:00:00:00:00:00
+- IP nadawcy na 0.0.0.0
+
+powyższe gwarantuje, że nic nie wykorzysta tego pakietu do update'owania tablic ARP
+(bo jeżeli jest konflikt adresów, to zdecydowanie nie chcemy, żeby odbiorcy się
+“uczyli” na tych danych), w przeciwieństwie do GARP, gdzie tego właśnie chcemy
+
+- jak nikt nie odpowie, to jest ok
+- jeżeli ktoś odpowie, to jest konflikt adresów IP i nie można z niego korzystać
