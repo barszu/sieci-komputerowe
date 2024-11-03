@@ -1,0 +1,25 @@
+# Warstwa III OSI/ISO - Warstwa sieciowa
+
+## Zadania warstwy
+
+- dostarczanie **adresacji logicznej**
+- znalezienie **najlepszej drogi** łączącej dwa hosty (mogą być w różnych sieciach z perspektywy warstwy łącza danych) (debil: pomiedzy roznymi routerami)
+- enkasulacja i dekapsulacja **pakietów** (dodanie i usunięcie nagłówków)
+
+## Po co adresacja logiczna?
+
+mamy adresy Ethernet (**MAC**):
+
+- _'unikalne'_
+- ograniczona liczba mozliwych adresow -> przestrzeń adresowa
+- płaska przestrzeń adresowa (**bez hierarchii**) -> słaabe skalowanie
+- **brak powiązania z geograficznym rozmieszczeniem** (debil: nie można stwierdzić, gdzie się znajduje host)
+
+Ethernet to nie jedyny standard, a powinna być **możliwość obsłużenia wielu naraz standardów** => adresy IP które naprawiają te problemy
+
+## Inne protokoły warstwy III sieciowej
+
+- `IP` (Internet Protocol): Protokół odpowiedzialny za adresowanie i routowanie pakietów danych w sieci.
+- `ARP` (Address Resolution Protocol): Protokół używany do mapowania adresów IP na fizyczne adresy MAC w sieci lokalnej.
+- **ICMP** (Internet Control Message Protocol): Protokół używany do przesyłania komunikatów kontrolnych i diagnostycznych, np. w narzędziu ping.
+- **IGMP** (Internet Group Management Protocol): Protokół używany do zarządzania członkostwem w grupach multicastowych w sieciach IP.
