@@ -20,11 +20,20 @@ import { Callout } from "nextra/components";
   ARP.
 </Callout>
 
-jeżeli hosty są w tej samej sieci, to nie ma problemu, jak nie to trzeba dodatkowych mechanizmów, np. Proxy ARP
+jeżeli hosty są w tej samej sieci, to nie ma problemu, jak nie to możliwe, że trzeba dodatkowych mechanizmów, np. Proxy ARP
+
+Adres IP służy do odnalezienia (przynależność) hosta w sieci, MAC indentyfikuje samo urządzenie
+
+## Działanie ogólnie
+
+![img24](/lab5/img/img24.webp)
+
+_wydaje mi się że jeśli są w różnych sieciach to jest potrzebny proxy ARP ? => TODO sprawdz_
+_bo wtedy router klamie z MAC_
 
 ## Tablica ARP, IP : MAC
 
-- działa jak tablica forwardingu w switchach
+- działa jak tablica forwardingu w switchach, czyli m.in dane są chwilowe (dynamiczne)
 - znajduje się bezpośrednio u hostów
 - adresy są odczytywane z zapytań oraz z odpowiedzi ARP
 - wpisy mają **czas życia**, są dynamicznie tworzone i kasowane
@@ -44,7 +53,7 @@ jeżeli hosty są w tej samej sieci, to nie ma problemu, jak nie to trzeba dodat
 
 ## Działanie w jednej sieci
 
-1. Komputer A szukający komputera B zna jego adres IP. Tworzy ramkę Ethernet z zapytaniem ARP (o MAC):
+1. Komputer A szukający komputera B zna jego adres IP. Tworzy ramkę Ethernet z zapytaniem ARP (o MAC) (o ile nie ma go w tablicy ARP):
 
 ![img18](/lab5/img/img18.webp)
 
@@ -88,6 +97,13 @@ Różnice względem poprzedniej ramki:
 
 - wybór proxy device jako pośrednika w przekazywaniu informacji do innej sieci
 - proxy “podstawia” **swój MAC za MAC celu** (tzn. tego IP, do którego chce się wysłać pakiet), a potem sam przesyła pakiety dalej
+- przydatne jeżeli chcemy np. tunelować się do naszej sieci i stwierdzać że w niej jesteśmy
+- proxy arp może być ustawione na routerze
+
+### Różnica z normalnym ARP
+
+- w normalnym ARP, hosty wiedzą, że są w innej sieci i wysyłają zapytanie ARP do bramy domyślnej (debil: routera)
+- tutaj zapytanie nie jest kierowane do bramy tylko do proxy, które udaje, że jest celem w tej samej sieci
 
 ### Działanie
 

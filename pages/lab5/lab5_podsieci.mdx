@@ -25,6 +25,12 @@
   - `0` - bit jest częścią **adresu hosta** (spójny ciag '0' jest na końcu)
   - występuje zapis skrócony np. **/24** (24 bity na adres sieci, 8 na adres hosta)
 
+### Maski w klasach
+
+- **klasa A** (ip od 0.0.0.0) - **255**.XXX.XXX.XXX
+- **klasa B** (ip od 128.0.0.0)- **255.255**.XXX.XXX
+- **klasa C** (ip od 192.0.0.0)- **255.255.255**.XXX
+
 Przykładowe maski:
 
 ![img4](/lab5/img/img4.webp)
@@ -35,7 +41,7 @@ Przykładowe maski:
 >
 > ![img5](/lab5/img/img5.webp)
 >
-> adres sieci zaczyna się od 192 więc jest to klasa C, gdyby było klasowe
+> adres sieci zaczyna się od 192 więc jest to klasa C, defaultowa maska to 255.255.255.0
 >
 > Obliczanie adresu broadcast (ostatni adres w podsieci):
 >
@@ -43,8 +49,7 @@ Przykładowe maski:
 >
 > Obliczamy liczbę hostów:
 >
-> ![img7](/lab5/img/img7.webp)
-> ![img8](/lab5/img/img8.webp)
+> ![img7](/lab5/img/img7.webp) > ![img8](/lab5/img/img8.webp)
 >
 > hosty mają adresy 192.168.1.129 - 192.168.1.254 (.128 ma sieć, .255 ma
 > broadcast){" "}
