@@ -455,97 +455,14 @@ Przykłady kodowania fizycznego to modulacja amplitudy (AM), modulacja częstotl
 przypisaniu wartości logicznych (0 i 1) do określonych stanów sygnału. W tej metodzie ważne jest, aby sygnały były jednoznacznie interpretowane przez odbiornik. Różne techniki kodowania logicznego mogą wpływać na efektywność transmisji i odporność na zakłócenia
 Kody: NRZ, Manchester, Manchester różnicowy, MLT-3, 4B/5B.
 
-## Metody kodowania (logiczne)
-
-### NRZ - Non Return To Zero
-
-- 0 to brak napięcia lub napięcie ujemne, 1 to napięcie dodatnie
-- brak synchronizacji
-- problem: rozróżnienie ciągu 0 i 1, wymaga dodatkowej synchronizacji
-- szybkość sygnalizacji = szybkość transmisji
-- 2 bity informacji na sygnał
-- używane w światłowodach
-- ważny jest poziom sygnału
-
-### RZ - Return To Zero
-
-- 0 to brak napięcia lub napięcie ujemne przez cały cykl
-- 1 to napięcie dodatnie przez pół cyklu i brak napięcia przez kolejne pół cyklu
-- rozwiązuje problem rozróżniania ciągów 1 (problem z 0 nadal jest)
-- mniejsza wydajność niż NRZ bo jest tylko 1 bit informacji na sygnał
-
-### NRZ-I - Non Return To Zero Inverted
-
-- 0 to napięcie, które było wcześniej (brak zmiany napięcia)
-- 1 to odwrócenie wcześniejszego napięcia
-- kod różnicowy - informację niesie zmiana poziomu sygnału
-- kod samo-synchronizujący
-- zapewnia DC balance
-- średnie napięcie równe 0
-- dobre dla światłowodów
-
-### AMI - Alternate Mark Inversion:
-
-- kod trójwartościowy
-- 0 to brak napięcia
-- 1 to na przemian napięcie dodatnie i ujemne, zmienia się w zależności od wartości poprzedniej
-
-### HDB-3 - High Density Bipolar of order 3
-
-- 1 koduje się tak, jak w AMI, na przemian napięciem dodatnim i ujemnym
-- jeżeli są po kolei jedno, dwa lub trzy 0, to koduje się je brakiem napięcia
-- przy 4 kolejnych zerach zastępuje się je 000V lub B00V; wybiera się to tak, żeby kolejne złamania kodowe (violation, wielokrotne występowanie 0) miały różną polaryzację (oddzielone nieparzystą liczbą + i -)
-- impuls poprzedzający - znak stojący przed kodem dla 4 zer, tzn. +000V ma impuls poprzedzający +, a -B00V impuls poprzedzający
-
-### Manchester:
-
-- ma synchronizacje
-- 0 jest kodowane przez zbocze malejące, czyli 1->0 (połowa sygnału - napięcie dodatnie, druga połowa - napięcie ujemne)
-- 1 jest kodowane przez zbocze rosnące, czyli 0->1
-- jeżeli są dwie 1 lub dwa 0, to nastąpi przeskok wartości między bitami (patrz wykres poniżej i 11)
-- ważny poziom sygnału (0 lub 1)
-- zmiana w połowie bitu pozwala synchronizować komunikację, szczególnie dzięki nagłemu spadkowi między tymi samymi wartościami, co rozwiązuje problem ciągu 0 lub 1
-- zapewnia częstą zmianę napięcia, proporcjonalną do częstotliwości zegara, co uodparnia na błędy
-- wykorzystuje je Ethernet w modelu 10BASE-T (czyli 10 Mb/s)
-
-        10BASE-T
-        - szybkosc: do 10 Mbps
-        - typ medium: skretka twisted-pair CAT3/4/5 o dlugosci 100m
-        - kodowanie Manchester co pozwala na synchronizację sygnału
-        - Złącza: Używa wtyczek RJ-45, a do połączenia więcej niż dwóch komputerów wymagany jest koncentrator (hub)
-        - Struktura sieci: Typowa topologia to gwiazda, gdzie wszystkie urządzenia są podłączone do centralnego koncentratora
-
-        Nazwa "10BASE-T" oznacza:
-        - 10 - maksymalna prędkość transmisji (10 Mbps),
-        - BASE - przesyłanie sygnału w paśmie podstawowym (baseband),
-        - T - odniesienie do skrętki (twisted pair)
-
-### Manchester różnicowy:
-
-- 0 powtarza ostatni sygnał (01 lub 10)
-- 1 zmienia sygnał (01 na 10, 10 na 01)
-- zachowuje zalety Manchestera
-- kod różnicowy - informację niesie zmiana poziomu sygnału
-- jest bardzo odporny na błędy, bo gwarantuje zmianę napięcia w środku bitu, a wykrywanie
-  samego faktu takiej zmiany napięcia jest mniej podatne na błędy niż porównywanie sygnału z
-  jakąś wartością
-- odporny np. na zmianę polaryzacji przez zamianę przewodów (dzięki używaniu tylko faktu
-  zmiany napięcia)
-- wada: double bandwidth, są 2 ticki zegara na bit ○ w porównaniu do Manchestera eliminuje
-  konieczność dodawania preambuły do synchronizacji zegarów, więc np. Token Ring w
-  przeciwieństwie do Ethernetu jej nie ma (bo korzysta z DME)
-- używają go np. Token Ring, modemy telefoniczne
-
-### Kodowanie blokowe np. 4B/5B
-
-![img12](/lab1/img/img12.webp)
-
-- dzieli bity na 4-bitowe bloki i zamienia je na 5-bitowe pakiety, dodając piąty bit
-- każdy 5-bitowy pakiet może mieć dwie 1, co wymusza częste zmiany wartości bitów
-- ułatwia synchronizację zegarów dzięki wymuszeniu częstej zmiany wartości bitów
-- stosowany w 100Base-TX (Fast Ethernet)
-- wada: wymaga zegara 125 MHz dla uzyskania 100 Mb/s
-- dobór wartości pakietów: empiryczny, sprawdzono, że te kody dobrze działają
+- `NRZ` - Non Return To Zero
+- `RZ` - Return To Zero
+- `NRZ-I` - Non Return To Zero Inverted
+- `AMI` - Alternate Mark Inversion:
+- `HDB-3` - High Density Bipolar of order 3
+- `Manchester`
+- `Manchester różnicowy`
+- `Kodowanie blokowe` np. 4B/5B
 
 # Wykorzystanie poszczególnych kodów w różnych standardach sieciowych, w szczególności w różnych odmianach sieci Ethernet.
 

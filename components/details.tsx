@@ -10,6 +10,7 @@ export function Details({
         borderRadius: "4px",
         padding: "0.5em",
         margin: `0.1em {ml}`,
+        cursor: "pointer",
       }}
     >
       <summary>
