@@ -1,3 +1,5 @@
 {
-  "index": "Koncentrat"
+  "index": "VLAN",
+  "lab3_trunk": "Trunk",
+  "lab3_tagowanie": "Tagowanie Trunków"
 }

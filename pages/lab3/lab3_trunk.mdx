@@ -1,0 +1,47 @@
+# Trunk - rzeka VLAN'ów
+
+- Pojedyncze łącze, którego jednocześnie używa wiele VLANów (**multipleksuje łącze**).
+- Zwykle łącza `punkt-punkt` o dużej przepustowości (bo muszą obsłużyć wiele VLANów naraz) i dostępności (np. zwielokrotnienie, żeby zagwarantować brak awarii).
+- Z takich łączy buduje się okablowanie szkieletowe (**backbone**), czyli kable z serwerowni do punktów dystrybucyjnych (IDF), gdzie są switche obsługujące podłączone do nich VLANy.
+- Trunkowanie - przesyłanie danych VLANu przez trunk.
+
+## VLAN a wiele switchy:
+
+### Problem:
+
+Możemy chcieć, żeby porty w wielu switchach były w tym samym VLANie (bo np. nie możemy fizycznie ruszyć sieci i tych switchy, a logiczny podział tego wymaga).
+
+Nie da się tego rozwiązać kablami, bo to eliminuje zalety VLANów, oraz do każdej sieci trzeba osobnego kabla i portu.
+
+### Rozwiązanie:
+
+Skoro nie da się zrobić `"1 kabel - 1 VLAN"`, to można zrobić `"1 kabel - wiele VLANów" + mechanizm współdzielenia łącza` (trunkować), czyli:
+
+- `TDM` - **Time-Division Multiplexing**
+- `Filtrowanie`
+- `Tagowanie`
+
+## Techniki trunkowania VLANów: TDM, filtrowanie, tagowanie
+
+### TDM - Time-Division Multiplexing:
+
+> Czas dzieli się na tyle VLANów, ile trzeba trunkować.
+>
+> Dla n VLANów każdy dostaje 1/n czasu transmisji w jakiejś jednostce czasu.
+
+- Problem: Rzadko VLANy potrzebują tak samo dużej transmisji, więc dużo czasu się marnuje.
+- Przez niewydajność rzadko używane.
+
+### Filtrowanie:
+
+> Każdy switch posiada zestaw zasad filtracji ramek i dalszego postępowania z nimi.
+
+- informacja o przynależności do VLAN jest przechowywana na każdym switch, posiada on tablicę MAC-VLAN, którą ma statycznie narzuconą, lub też switche z trunka wysyłają sobie wzajemnie aktualizacje tablic.
+- Problem: Słabo skalowalne, bo trzeba aktualizować instrukcje filtrowania wielu switchom.
+- Rzadko używane.
+
+### Tagowanie:
+
+> Na czas transportu przez trunk **ramki dostają ID VLANu (tag)**, do którego należą, na koniec trunka switch odczytuje ID, usuwa je i przesyła już normalną ramkę Ethernet do komputera z właściwego VLANu. - Nowoczesna technika: **802.1Q, standard IEEE.**
+
+- Stara technika: Inter-Switch Link (external tagging, tagowanie dwupoziomowe), rozwiązanie Cisco, opakowanie ramki Ethernet w dodatkową ramkę ISL: ISL header (26 B) + ramka Ethernet + CRC ramki ISL (4 B).
