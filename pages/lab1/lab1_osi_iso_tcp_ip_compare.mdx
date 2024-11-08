@@ -1,0 +1,75 @@
+import { Details } from '../../components/Details'
+
+# Po co modele sieci OSI/ISO , TCP/IP, ogolne INFO
+
+- `określają reguły i zasady w komunikacji`
+- Umożliwia **niezależny rozwój warstw**
+- **Zmniejsza złożoność** systemów
+- **Standaryzuje** interfejsy
+- Zapewnia współpracę między urządzeniami różnych producentów - różne sprzety i opgramowania bedą działać (cisko i hp)
+- Przyśpiesza rozwój
+- Ułatwia uczenie się - latwiej pojąc dla czlowieka jak dziala proces komunikacji
+
+### TCP/IP - model protokołów
+
+### OSI/ISO - model odniesienia
+
+![img33](/lab1/img/img33.webp)
+
+![img34](/lab1/img/img34.webp)
+
+<Details summary='więcej o ... Komunikacja w modelu warstwowym'>
+
+każda z implementacji warstw modelu OSI / ISO komunikuje się z tą samą warstwą w
+drugim systemie, ale implementacja może być zupełnie inna pod warunkiem zachowania
+protokołu -> peer-to-peer
+
+      Zasada komunikacji peer-to-peer
+
+      ..Równorzędne warstwy..: Każda warstwa modelu OSI, np. warstwa transportowa, komunikując się z drugą warstwą transportową w innym systemie, używa tego samego protokołu. Oznacza to, że niezależnie od implementacji (np. różne systemy operacyjne czy urządzenia), obie warstwy muszą przestrzegać tych samych reguł i standardów protokołów.
+
+      ..Wymiana jednostek danych protokołu (PDU)..: W trakcie tej komunikacji, każda warstwa wymienia informacje w postaci PDU (Protocol Data Unit). Na przykład, warstwa transportowa może przesyłać segmenty danych do warstwy sieciowej, która następnie enkapsuluje je w pakiety.
+
+      ..Niezależność implementacji..: Kluczowym aspektem jest to, że implementacje różnych warstw mogą być zupełnie różne, pod warunkiem że zachowują zgodność z ustalonymi protokołami. To pozwala na dużą elastyczność i interoperacyjność między różnymi systemami.
+
+Porcja danych na poziome N warstwy to N-PDU (protocol data unit), i składa się z:
+
+- nagłowka
+- pola danych
+- zakończenia ramki
+
+PDU z warstwy N+1 jest enkapsulowane w PDU warstwy N, czyli ramka N+1 jest zawarta w ramce N.
+
+      ..N-PDU..: Jest to jednostka danych, która zawiera zarówno dane użytkownika, jak i kontrolne informacje specyficzne dla protokołu. Każda warstwa modelu OSI ma swoją własną nazwę dla PDU.
+
+</Details>
+
+## Enkapsulacja / Dekapsulacja
+
+`Enkapsulacja` - **pakowanie danych** po warstwach **w dół** i doczepianie dodatkowych informacji
+
+`Dekapsulacja` - **odpakowywanie danych** po warstwach **w góre** i odczepianie dodatkowych informacji
+
+![img4](/lab1/img/img4.webp)
+
+<Details >
+- Strona nadawcza "pakuje" dane
+- Strona odbiorcza musi wiedzieć jak interpretować pole danych poszczególnych warstw.
+
+      ..Enkapsulacja..: Gdy N-PDU jest przesyłana z wyższej warstwy do niższej, dodawane są nagłówki (i ewentualnie stopki), co tworzy nową PDU dla niższej warstwy. Na przykład, segment TCP staje się częścią pakietu IP.
+
+      ..Dekapsulacja..: Na stronie odbiorczej proces ten działa odwrotnie; nagłówki i stopki są usuwane, aby uzyskać oryginalne dane na poziomie wyższej warstwy.
+
+</Details>
+
+## PDU
+
+`jednostki PDU` - Protocol Data Unit - dane przesyłane przez sieć, kiedy przechodzą przez wartwy to ich dane/ nazwy sie zmieniaja
+
+ściśle związane z warstwami modelu TCP/IP (model protokołów)
+
+- `bit` - warstwa 1 - fizyczna
+- `ramka` - warstwa 2 - łącza danych
+- `pakiet`- warstwa 3 - sieciowa
+- `segment` (dla TCP) lub `datagram` (dla UDP) - warstwa 4 - transportowa
+- `dane` - warstwa aplikacji

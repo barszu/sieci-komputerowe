@@ -1,0 +1,114 @@
+import {Details} from '../../../../components/details'
+
+# skrętki - `T` - twisted pair
+
+> (debil: rjota)
+
+- 4 pary => 8 przewodów
+- pary są skręcone wokół siebie - samoredukcja zakłóceń
+
+8P8C - prawdzina nazwa końcówki nie RJ45 (RJ-45 ma “klucz” z boku)
+
+![img16](/lab1/img/img16.webp)
+
+## UTP, FTP, STP
+
+![img17](/lab1/img/img17.webp)
+
+`UTP` - Unshielded Twisted Pair
+
+<Details>
+
+- najczęściej stosowany typ kabla skręcanego w sieciach.
+- polegają na skręcaniu przewodów, aby zminimalizować EMI (zakłócenia elektromagnetyczne) i crosstalk.
+- Składają się z par skręconych przewodów miedzianych bez dodatkowego ekranowania.
+- Chociaż są tańsze i łatwiejsze w instalacji niż kable STP, są bardziej podatne na zakłócenia i szumy, co czyni je odpowiednimi do mniej wymagających środowisk.
+- jest szeroko stosowany w aplikacjach takich jak linie telefoniczne i sieci lokalne (LAN) ze względu na swoją opłacalność.
+
+</Details>
+
+`FTP` - Foiled Twisted Pair
+
+<Details>
+
+mają ekran foliowy pokrywający wszystkie pary wewnątrz kabla, co zapewnia pewien poziom ochrony przed EMI, zachowując jednocześnie prostszą strukturę niż STP.
+
+Każda skręcona para nie jest indywidualnie ekranowana; zamiast tego cały pakiet jest owinięty warstwą folii.
+
+Taki projekt pomaga zredukować zakłócenia i crosstalk, a jednocześnie jest tańszy niż STP. Kable FTP stanowią kompromis między UTP a STP, oferując lepszą wydajność niż UTP bez złożoności i kosztów związanych z STP.
+
+</Details>
+
+`STP` - Shielded Twisted Pair
+
+<Details>
+
+składające się z par skręconych przewodów, które są otoczone materiałem ekranowym, takim jak folia lub plecionka miedziana.
+
+Ekranowanie zapewnia lepszą ochronę przed zakłóceniami elektromagnetycznymi (EMI) oraz redukuje crosstalk (przesłuch) między parami.
+
+Kable STP są zazwyczaj używane w środowiskach o dużym poziomie zakłóceń, ponieważ potrafią utrzymać integralność sygnału na dłuższych odległościach i przy wyższych prędkościach w porównaniu do kabli nieekranowanych.
+
+Są jednak droższe i bardziej skomplikowane w instalacji z powodu dodatkowych wymagań dotyczących ekranowania, które również wymagają odpowiedniego uziemienia dla optymalnej wydajności.
+
+</Details>
+
+![img8](/lab1/img/img8.webp)
+
+## podział lepszy
+
+![img18](/lab1/img/img18.webp)
+
+![img19](/lab1/img/img19.webp)
+
+![img20](/lab1/img/img20.webp)
+
+![img21](/lab1/img/img21.webp)
+
+![img22](/lab1/img/img22.webp)
+
+## CAT-X kategorie skretek (debil:technologia)
+
+![img23](/lab1/img/img23.webp)
+
+`1`. **skrętka telefoniczna** - nie przystosowana do transmisji danych
+
+`2`. **2 pary skręconych przewodów - do 4 MHz** Używane w starszych systemach, takich jak terminale IBM 3270.
+
+`3`. **4 pary - do 16 MHz** , (Ethernet, Token Ring), o tłumienności 9,8 dB/km
+
+`4`. **4 pary - do 20 MHz** (Token Ring 16 Mb/s)
+
+`5`. **4 pary - do 100 MHz** do 100m
+
+- o tłumienności 6,6 dB/km dla 10 MHz
+- o tłumienności 22 dB/km dla 100 MHz
+
+- 5e - najbardziej popularny
+
+`6`. **do 250 MHz** do 10 Gb/s, nowoczesnych sieciach Ethernet, w tym Gigabit Ethernet.
+
+`7`. **do 600 MHz** do 10 Gb/s podwójnym ekranowaniem centra danych, przemyslowa
+
+## ułożenie przewodów t568a vs b
+
+![img36](/lab1/img/img36.webp)
+
+![anime_t568A](/lab1/img/anime_t568A.webp)
+
+grupa urządzeń końcowych
+
+- router
+- pc
+
+grupa urządzeń NIE końcowych (pośredniczących)
+
+- switch, mostek
+- hub
+
+urządzenia **tego samego typu** (bedących w tej samej grupie) muszą mieć 2 różne => kabel `CROSS`
+
+urządzenia **różnego typu** A lub B (w polsce jest B) muszą mieć ten sam => kabel `STRAIGHT` (prosty)
+
+`Auto MDI-X` - funkcja, dzięki której wszystko jedno, jaki kabel podłączymy, urządzenia
+ogarną (wymagane dla Gigabit Ethernetu)

@@ -1,3 +1,5 @@
+import { Details } from '../../components/details'
+
 # Podstawowe pojęcia:
 
 ## HOST
@@ -14,9 +16,28 @@ sposob komunikacji i wymiany danych okreslajacy reguly i zasady tej komunikacji
 
 (debil: jak interpretowac binarke)
 
+<Details>
+
+Zestaw reguł wymiany informacji zarówno danych użytkownika jak i
+informacji kontrolnej z odpowiadającą warstwą w innym systemie.
+
+różne urządzenia, takie jak komputery, telewizory czy telefony, mogą ze sobą współpracować i przesyłać dane w sposób uporządkowany i zrozumiały dla odbiorcy
+
+**Zasady przesyłu informacji**: Protokół określa, jak dane są formatowane, przesyłane i interpretowane przez odbiorcę. Obejmuje to zarówno aspekty techniczne (np. kodowanie sygnałów), jak i proceduralne (np. synchronizacja)
+
+**Model warstwowy**: Wiele protokołów jest zorganizowanych w modelu warstwowym, co pozwala na oddzielenie różnych funkcji komunikacyjnych w różnych warstwach. Na przykład model OSI składa się z siedmiu warstw, z których każda odpowiada za inny aspekt komunikacji
+
+Przykłady protokołów:
+
+- HTTP (Hypertext Transfer Protocol) do przesyłania stron internetowych.
+- SMTP (Simple Mail Transfer Protocol) do wysyłania e-maili.
+- TCP (Transmission Control Protocol) zapewniający niezawodny transfer danych
+
+</Details>
+
 ## Medium Transmisyjne
 
-po czym przesylane jest fizycznie (np. swiatlowod)
+po czym przesylane jest fizycznie (np. swiatlowod, fale radiowe)
 
 ## INTERNET
 
@@ -39,197 +60,48 @@ protokół automatycznej konfiguracji ustawień sieci przydzielający hostom adr
 ![img35](/lab1/img/img35.webp)
 
 - nadawany na etapie produkcji karty sieciowej zapisany w pamieci ROM (mozna z niej tylko czytac)
-- odnajdywanie hostow w sieciach LAN
-- komputer musi być w tej samej sieci co serwer aby znać adres MAC
-- służa do komunikacji w obrębie jednej sieci, nie wychodzą za nią
+- odnajdywanie hostow w sieciach LAN - komputer musi być w tej samej sieci co serwer aby znać adres MAC
 - _Media Access Control to protokół!_
 - switche wykorzystują do komunikacji, mają MAC tablice: port_urzadzenia:MAC
 
-# Jednostki
+Wykorzystywany w :
 
-**masa, objętość danych** - 1bit `[b]` , 1bajt `[B]`
+- **Ethernet**, ...
+- Protokół **ARP** - Address Resolution Protocol - przypisanie adresu IP do adresu MAC
 
-**przesył** - `[bps]` bit per second
+## DTE - Data Terminal Equipment
 
-**Bandwidth** -> szerokość pasma, maksymalna teoretyczną przepustowość `[bps]`
+> urządzenie końcowe
 
-**Throughput** -> przepustowość / przeplynnosc, aktualne możliwości sieci w zakresie przesyłu `[bps]` , zależy od wydajności sprzętu, obciążenia sieci i typu danych.
+- generują lub konsumują dane
+- Funkcje: DTE odpowiada za kodowanie i dekodowanie danych do przesyłania oraz za interakcję z użytkownikami lub aplikacjami.
 
-# Media transmisyjne przewodowe
+Przykłady:
 
-![img13](/lab1/img/img13.webp)
-![img28](/lab1/img/img28.webp)
-![img29](/lab1/img/img29.webp)
+- `komputer`
+- `router`
+- drukarka
+- telefon
+- serwer
 
-## kable koncentryczne
+## DCE - Data Communication Equipment
 
-![img15](/lab1/img/img15.webp)
-![img14](/lab1/img/img14.webp)
+> urządzenie pośredniczące (nie końcowe)
 
-_prędkości wynikają ze starego standardu nie z winy medium_
+- ułatwiają transmisję danych między DTE
+- Funkcje: DCE konwertuje sygnały, synchronizuje transmisję i zapewnia odpowiednie połączenie między różnymi urządzeniami.
 
-## skrętki
+Przykłady:
 
-8P8C - prawdzina nazwa końcówki nie RJ45 (RJ-45 ma “klucz” z boku)
+- `modem`
+- `switch` / `mostek`
+- `hub`
 
-![img16](/lab1/img/img16.webp)
-![img17](/lab1/img/img17.webp)
-![img18](/lab1/img/img18.webp)
-![img19](/lab1/img/img19.webp)
-![img20](/lab1/img/img20.webp)
-![img21](/lab1/img/img21.webp)
-![img22](/lab1/img/img22.webp)
+## Okablowanie strukturalne
 
-### CAT-X kategorie skretek (debil:technologia)
+Służy do budowy samej architektury sieci (jej struktury).
 
-![img23](/lab1/img/img23.webp)
+Konstruowane jest zgodnie z normami 568-C.0 i TIA 568-C.1 w oparciu o topologie gwiazdy.
 
-### ułożenie przewodów t568a vs b
-
-![img36](/lab1/img/img36.webp)
-
-![anime_t568A](/lab1/img/anime_t568A.webp)
-
-grupa urządzeń końcowych
-
-- router
-- pc
-
-grupa urządzeń NIE końcowych
-
-- switch, mostek
-- hub
-
-urządzenia tego samego typu (bez switcha) muszą mieć 2 różne CROSS
-urządzenia różnego typu A lub B (w polsce jest B)
-
-`Auto MDI-X` - funkcja, dzięki której wszystko jedno, jaki kabel podłączymy, urządzenia
-ogarną (wymagane dla Gigabit Ethernetu)
-
-## światłowód
-
-![img24](/lab1/img/img24.webp)
-![img25](/lab1/img/img25.webp)
-![img26](/lab1/img/img26.webp)
-
-- rdzeń : 8-10 [mikro m]
-- predkosci kosmiczne
-- bardzo duze odleglosci
-
-![img27](/lab1/img/img27.webp)
-
-- rdzeń : 50-62.5 [mikro m]
-- wolniejszy
-- krotsze odleglosci
-
-# Parametry techniczne kabli
-
-**tłumienie sygnału** `[dB]` - U_exit / U_inputted (debil: U = napięcie)
-**propagacja sygnału** `[%]` - v_sygnalu / c (debil: c= predkosc swiatla)
-**rezystancja** `[Ω]` - opor kabla na prad (debil:im wiekszy tym wieksze straty)
-**promień zgięcia kabla** defaultowo `R = 4*srednica_zewnetrzna`
-
-# Media transmisyjne bezprzewodowe
-
-f = 3Hx - 3THz
-
-![img30](/lab1/img/img30.webp)
-
-# Rodzaje sieci (obszar)
-
-**LAN** - Local Area Network
-
-Sieć lokalna, obejmująca niewielki obszar, np. jedno biuro lub budynek.
-
-**MAN** - Metropolitan Area Network
-
-Sieć metropolitalna, obejmująca większy obszar, np. miasto lub aglomerację.
-
-**WAN** - Wide Area Network
-
-Sieć rozległa, obejmująca bardzo duży obszar, np. kraj lub kontynent.
-
-**PAN** - Personal Area Network
-
-Sieć osobista, obejmująca niewielki zasięg, np. kilka metrów wokół osoby. (Bluetooth)
-
-**WLAN** - Wireless Local Area Network
-
-Bezprzewodowa sieć lokalna, działająca na zasadzie komunikacji radiowej.
-
-**VPN** - Virtual Private Network
-
-Wirtualna sieć prywatna, umożliwiająca bezpieczne połączenia przez publiczne sieci.
-
-# Rodzaje sieci
-
-![img31](/lab1/img/img31.webp)
-![img32](/lab1/img/img32.webp)
-
-- równorzedna
-- nie kompa co udostepnia usługi
-- wiele kompow na tych samych prawach
-- każdy może jednocześnie korzystac z zasobow i je udostepniać (bit torrent)
-
----
-
-# Po co modele sieci OSI/ISO , TCP/IP, ogolne INFO
-
-- określają reguły i zasady w komunikacji
-- różne sprzety i opgramowania bedą działać (cisko i hp)
-- latwiej pojąc dla czlowieka jak dziala proces komunikacji
-
-`Enkapsulacja` pakowanie danych po warstwach **w dół** i doczepianie dodatkowych informacji
-`Dekapsulacja` odpakowywanie danych po warstwach **w góre** i odczepianie dodatkowych informacji
-
-`jednostki PDU` - Protocol Data Unit - dane przesyłane przez sieć, kiedy przechodzą przez wartwy to ich dane/ nazwy sie zmieniaja
-
-![img33](/lab1/img/img33.webp)
-
-# TCP/IP - model protokołów
-
-- każda z warstw wykonuje zadania gdzie wykorzystywane są konkretne protokoły
-- zestaw / stos protokołów jeden ułożony pod drugim
-- dodawane są informacje sterujące, aby trafialy do odpowiednegie hosta i aplikacji w nienaruszonym stanie
-
-1. `aplikacji` - usługi sieciowe (www, poczta)
-
-   - **HTTP**
-   - PDU **dane**
-
-2. `transportu` - sprawna obsluga komunikacji miedzy urządzeniami
-
-   - **TCP , UDP**
-   - **numer portu aplikacji** - inf sterująca
-   - PDU **segment / datagram** - zalezy od protokołu użytego
-   - dane są dzielone na mniejsze części
-   - wrapowane dodatkowymi informacjami
-     - aby można było je przydzielić do właściwej aplikacji na urządzeniu docelowym
-     - aby mozna bylo te chunki zlozyc w odpowiedniej kolejnosci na urządzeniu docelowym
-
-3. `internetowa` - znajdowanie trasy przesyłu danych
-
-   - **IP** - protokół / inf sterująca, adres logiczny, przesyłanie danych pomiedzy hostami znajdującymi sie w innych sieciach
-   - PDU **pakiet**
-
-4. `dostępu do sieci` - koduje dane i przekazuje do medium transmisyjnego
-   - standard **Ethernet**
-   - adres **MAC** - inf sterujaca
-   - PDU **ramka**
-
-![img34](/lab1/img/img34.webp)
-
-# OSI/ISO - model odniesienia
-
-- stosowany do analizy, aby lepiej zrozumiec co sie dzieje
-
-1. `aplikacji` - pozwala korzystać z sieci
-2. `prezentacji` - informuje o formacie danych i je koduje
-   - jakie typy plików będą przesyłane
-   - odpowiednie zakodowanie danych na urządzeniu źródłowym i ich dekodowanie na docelowym
-3. `sesji` - zarządza sesjami użytkowników
-4. `transportu` - sprawna obsluga komunikacji miedzy urządzeniami (to samo co TCP/IP)
-5. `sieci` - określa trasę przesyłu danych
-6. `łącza danych` - kontroluej dostęp do medium transmisyjnego
-   - adresowanie danych w celu przesłania ich pomiedzy hostami w sieciach lokalnych
-7. `fizyczna` - koduje dane i przesyła przez medium transmisyjne
+topologia gwiazdy: układ sieci, gdzie mamy centralne urządzenie (punkt dystrybucyjny, np. switch lub
+hub) z którego wyprowadza się połączenia do innych urządzeń np. komputerów.

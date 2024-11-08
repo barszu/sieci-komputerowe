@@ -1,0 +1,52 @@
+# TCP/IP - model protokołów
+
+> transimision control protocol / internet protocol
+
+- każda z warstw wykonuje zadania gdzie wykorzystywane są konkretne protokoły
+- zestaw / stos protokołów jeden ułożony pod drugim
+- dodawane są informacje sterujące, aby trafialy do odpowiednegie hosta i aplikacji w nienaruszonym stanie
+
+![img33](/lab1/img/img33.webp)
+
+## 1. `dostępu do sieci`
+
+> koduje dane (do postaci czystych bitów) i przekazuje do medium transmisyjnego
+
+- adresuje dane - `MAC` - inf sterujaca - standard **Ethernet**
+- PDU `ramka`
+
+## 2. `internetowa`
+
+> znajdowanie trasy przesyłu danych
+
+- Jej zadaniem jest odnalezienie jak najszybszej drogi do urządzenia docelowego przez sieć rozległą,
+- adresowanie danych z wykorzystaniem adresów logicznych (IP)
+
+---
+
+- `IP` - protokół / inf sterująca, adres logiczny, przesyłanie danych pomiedzy hostami znajdującymi sie w innych sieciach
+- PDU `pakiet`
+
+## 3. `transportu`
+
+> sprawna obsluga komunikacji miedzy urządzeniami
+
+- Odpowiada za transport danych end-to-end,
+- tworzy połączenia pomiędzy hostami, przesyła segmenty lub datagramy.
+
+---
+
+- protokoły: `TCP` , `UDP`
+- **numer portu aplikacji** - inf sterująca
+- PDU `segment / datagram` - zalezy od protokołu użytego
+- dane są dzielone na mniejsze części
+- wrapowane dodatkowymi informacjami
+  - aby można było je przydzielić do właściwej aplikacji na urządzeniu docelowym
+  - aby mozna bylo te chunki zlozyc w odpowiedniej kolejnosci na urządzeniu docelowym
+
+## 4. `aplikacji` - usługi sieciowe (www, poczta)
+
+Udostępnia użytkownikowi możliwość korzystania z usług sieciowych, takich jak WWW, poczta, komunikatory itp.
+
+- protokoły: **Telnet**, `HTTP`, **SMTP**, **FTP**
+- PDU `dane`
