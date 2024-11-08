@@ -1,0 +1,40 @@
+## Domena kolizyjna
+
+> część sieci, gdzie transmitować może tylko jedno urządzenie naraz.
+
+> Granicę wyznaczają mostki, switche i routery
+
+## Domena rozgłoszeniowa
+
+> część sieci, gdzie docierają broadcasty
+
+> Granicę wyznaczają routery i sieci wirtualne VLAN.
+
+## Podział domen z użyciem wartswy I (fizycznej) [`hub`]
+
+- **bez sensu** bo nic nie daje
+- rośnie domena kolizyjna, bo **hub przekazuje dalej sygnal elektryczny i to na wszytskie swoje porty**
+- `domena kolizyjna == domena rozgłoszeniowa`
+
+![img14](/lab2/img/img14.webp)
+
+> zastosowanie wartswy: pozwalają **zwiększyć rozległość sieci**
+
+## Podział domen z użyciem wartswy II (łącza danych) [`switch / bridge`]
+
+- rozszerza domene rozgloszeniowa, (domyślnie, można zrobić VLANy )
+- można poodzielać domeny kolizyjne od siebie
+
+![img15](/lab2/img/img15.webp)
+
+> zastosowanie wartswy:
+>
+> - mają zalety repeaterów
+> - zmniejszają ruch w sieci poprzez **filtrację ramek**
+> - separują tylko domeny kolizyjne
+
+## Podział domen z użyciem wartswy III (sieciowa) [`router`]
+
+- oddziela domeny rozgloszeniowe i kolizyjne od siebie - zastosowanie warstwy
+
+![img16](/lab2/img/img16.webp)

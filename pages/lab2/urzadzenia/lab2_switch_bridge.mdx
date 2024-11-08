@@ -1,0 +1,59 @@
+# switch - przełącznik
+
+teraz są przełaczniki (zamiast hubów) i on wysyla dane do odpowiedniego urządzenia (jest inteligentny)
+
+- **oszczędniejsze wysyłanie**: Wysyłanie unicastów i multicastów tylko tam, gdzie trzeba, a **nie wszędzie**.
+- **Nauka budowy sieci**: Uczą się, gdzie są nadawcy wiadomości (adresów MAC) dla zwiększania wydajności:
+- **`Zmniejszanie domeny kolizyjnej`**: dzieląc sieć na fragmenty, jednocześnie nie naruszając domeny rozgłoszeniowej (broadcasty mają lecieć wszędzie).
+- **`Tryb promiscuous`**: - nasluchu i analizy całego ruchu , (bo musi interpretować ramki)
+- **`Tablica forwardingu` (FDB)**: `SWITCH_PORT : MAC` (sprzętowo realizowany hash table -> pamięć CAM)
+  > z ramki odczytują MAC nadawcy i zapisują w tablicy forwardingu
+  - **Czas ważności wpisów**: przy braku ruchu i upływie czasu usuwa się stare wpisy.
+
+---
+
+- miedzy kompem a switchem jest **peer-peer** (debil:punkt-punkt)
+- praktycznie brak kolizji, na domene kolizujna sklada sie port przelacznika i komputer
+- zaczął być możliwy full duplex (w 2 strony ciagle)
+- korzysta do komunikacji z adresów MAC
+- jeśli jeszcze nie zna adresu MAC urządzenia docelowego to robi `zalewanie` i wysyła te dane do wszystkich oprócz nadawcy
+  - ![img10](/lab2/img/img10.webp)
+  - adresat odczyta i wysyła wiadomość do switcha a ten zabiera z niej MAC
+- interpretuje ramki, więc dekapsuluje, czyta (cześć albo wszytsko), tworzy nową i wysyła
+
+## switch vs bridge
+
+- bridge to nie musi być switch z 2 portami !!!
+- **switch ma częściej więcej portów**
+- bridge jest prostrzy, mniej wydajny i działa wolniej,
+- **switch ma układ ASIC** (Application-Specific Integrated Circuit) - specjalizowany układ scalony
+- switch często potrafi wiele ramek naraz przesyłać, interpretować
+
+## Działąnie
+
+- **Broadcast**: Wysyła ramkę na wszystkie porty. `oprócz tego, z którego przyszła`.
+- **Multicast**:
+  - Przy prostych switchach jak broadcast.
+  - Przy lepszych: Podłączone hosty wysyłają najpierw komunikat protokołu IGMP o chęci dołączenia do transmisji, zapisują kto i na którym porcie jest zainteresowany grupą i przekazują multicasty tylko do odpowiednich hostów.
+
+### **Adresu `nie znaleziono` w tablicy forwardingu**:
+
+- Ramka **zostaje wysłana na wszystkie porty**
+- **dodajemy wpis do tablicy z adresem MAC i portem nadawcy**.
+- _(odbiorca może (nie musi) się wtedy odezwać i można uzupełnić tabelę)_,
+
+### **Adres znaleziono i `port odbiorcy = port nadawcy`**:
+
+- Nie przekazuj dalej, bo **ramka ma zostać w tym samym segmencie sieci**
+- _(switch prawdopodobnie dostał ramkę przez bezmyślnie przekazujący ją hub)_.
+
+### **Adres `znaleziono i ma inny port`**:
+
+- **Przekaż dalej na ten port**,
+- **aktualizacja tablicy forwardingu** czasu życia wpisu dla danego adresu MAC.
+
+## MAC flooding - atak na tablicę forwardingu - zapelnienie jej
+
+- atakujący komputer generuje dużo ramek z losowymi adresami źródłowymi -> zapełnia tablicę forwardingu, pamięc CAM.
+- => buffer overflow exploit w switchu może być
+- wymusza na switchu wysyłanie wszystkich wiadomości jak broadcastowych

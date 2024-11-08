@@ -1,5 +1,13 @@
 {
-  "index": "Koncentrat 1",
-  "lab2_opracowanie": "Opracowanie",
-  "lab2_koncentrat2": "Koncentrat 2"
+  "index": "Warstwa II - łącza danych",
+  "topologie": "topologie",
+  "urzadzenia": "urzadzenia",
+  "lab2_domeny": "domeny kolizyjne, rozgłoszeniowe",
+  "lab2_ethernet": "Ethernet",
+  "lab2_ramka": "ramka Ethernet",
+  "lab2_odbieranie_ramek": "odbieranie ramek",
+  "lab2_sposoby_przekazywania_ramek": "sposoby przekazywania ramek",
+  "lab2_standardy_ethernet": "standardy Ethernet",
+  "lab2_promiscuous": "tryb promiscuous",
+  "lab2_przesylanie_ramek": "jak działa internet - przesył ramek"
 }

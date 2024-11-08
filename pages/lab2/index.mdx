@@ -1,62 +1,23 @@
-# Topologie sieci
+# Warstwa II - łącza danych OSI/ISO
 
-## Fizyczna
+> w jaki sposob dane z wyzszych warstw sa przekazywane do medium transmisyjnego
 
-opisuje **połączenia** pomiedzy urządzeniami w sieci
+- zapewnienie wartwom wyzszym dostepu do medium transimisyjnego
+- wrapuje (pakiet warstwy III) dodatkowo w adres `MAC` wysyłającego i odbiorcy => `ramka`
+- łączy media transmisyjne z oprogramowaniem sieciowym
+- implementowana w sprzecie i oprogramowaniu - **karta sieciowa**
+- **wykrywa błędy** i koryguje na przesyle (warstwa fizyczna) , w Ethernet naprawia nie koryguje
 
-![img33](/lab2/img/img33.webp)
-![img34](/lab2/img/img34.webp)
+Urządzenia:
 
-można dodac podwojny pierscien wtedy jak sie przerwie dziala dalej
+- karta sieciowa => komputer
+- router
+- **switch**
 
-![img35](/lab2/img/img35.webp)
+## Przeźroczyste urządzenia warstwy II
 
-## logiczna
+> "przeźroczyste" - ich **obecność jest niewidoczna dla urządzeń końcowych** w sieci (nie sa ich swiadome).
 
-opisuje **sposoby komunikacji** pomiedzy urzadzeniami w sieci
+**Widoczność fizyczna, nie logiczna**: Urządzenia te są widoczne w fizycznej topologii sieci, ale nie są widoczne w jej logicznej strukturze.
 
-### **punkt-punkt**
-
-![img36](/lab2/img/img36.webp)
-
-- dane przesyłane sa tylko z A do B urządzenia
-- mogą być połaczone bezpośrednio i pośrednio
-
-### **pierścienia**
-
-![img37](/lab2/img/img37.webp)
-
-- dane są przekazywane kolejno do urządzeń połączonych w sieci
-- każde urzadzenie widzi dane i stwierdza czy sa one do niego czy nie
-  - jak tak to zabiera
-  - jak nei to przekazuje dalej
-
-### **wielodostępowa**
-
-![img33](/lab2/img/img33.webp)
-
-- inaczej rozgłaszania
-- jedno fizyczne medium transisyjne (żyła)
-- kazde urządzenie widzi dane przesyłane
-
-# Metody dostępu do łącza
-
-## CSMA/CD
-
-- metoda z `wykrywaniem kolizji`
-- nasluchuje stan łącza, jeśli urządzenie co chce rozpoczać nadawanie wykryje że łącze:
-  - wolne - rozpoczyna transmisje,
-  - jezli wykryje ze inne urzadzenie tez wysyla to `przerywa`, po pewnym czasie prubuje znowu
-- stary ethernet
-
-## CSMA/CA
-
-- metoda z `unikaniem kolizji`
-- nasluchuje stan łącza
-- jesli wolne to wysyla informacje `'chce nadawac'` do wszytskich innych
-- sieci bezprzewodowe
-
-## Token passing
-
-- przesyłąnie od urządzenia do urządzenia tokenu ktorego posiadane pozwala na transmisje
-- nie przyjely sie bo byly skomplikowane
+`switch`, **bridge** - Łączą dwa lub więcej segmentów sieci, filtrując ruch i zmniejszając kolizje. Przekazują ramki tylko wtedy, gdy jest to konieczne.

@@ -1,0 +1,22 @@
+# Standard Ethernet
+
+- spotykamy w sieciach LAN, MAN, a nawet WAN
+- łatwy i tani w implementacji
+- **prosty** , niezawodny
+- rozwojowy (łatwa zdolność do przyjmowania nowych technologi)
+- `niedeterministyczny` - nie ma wybitnego algorytmu który by określał kiedy i jakie urządzenie ma dostęp do medium, używa protokołu `CSMA/CD` (Carrier Sense Multiple Access with Collision Detection)
+- cały zbiór rozwiązań sieciowych implementowanych w **warstwie łącza danych i fizycznej**
+- IEEE - Institute of Electrical and Electronic Engineers sprawuje piecze nad tym, (standaryzuje)
+- opisali standardy`802.2` (LLC) `802.3` (w. fizyczna, MAC), podzielili tym warstwe łącza danych na 2 podwarstwy
+
+![img8](/lab2/img/img8.webp)
+
+## **LLC** - logical link control
+
+- informuje o protokole warstwy sieci (np. IPv4)
+- realizuje sterownik karty sieciowej
+
+## **MAC** - media access control
+
+- okresla zasady dostepu do medium
+- wykonuje funkcje adresowania (MAC)
