@@ -1,0 +1,154 @@
+import { Details } from "../../components/details";
+
+# OSI/ISO - model odniesienia
+
+<details>
+  <summary>Opis skrótu (click)</summary>
+
+Open Systems Interconnection, co oznacza "Otwarte Łączenie Systemów". Model ten został opracowany przez Międzynarodową Organizację Normalizacyjną (ISO), a jego pełna nazwa to ISO OSI RM (ISO Open Systems Interconnection Reference Model)
+
+</details>
+
+- stosowany do analizy, aby lepiej zrozumiec co sie dzieje
+
+![img1](/lab1/img/img1.webp)
+
+6. `prezentacji`
+7. `aplikacji` - pozwala korzystać z sieci
+
+## 1. Warstwa fizyczna
+
+> **koduje dane i przesyła przez medium transmisyjne**
+
+- przesyłanie (elektryczne / optyczne) surowych nieuporządkowanych danych (bity)
+- zapewnienie dostępu do mediów
+- określenie mechanicznej i elektrycznej specyfikacji urządzenia
+- kodowanie strumienia danych
+- korygowanie zepsutych danych
+
+### fizyczne zasoby (urządzenia)
+
+- kable, wtyczki, gniazda
+
+- krosownice (panel krosujący)- zbiór gniazdek 'RJ45'
+
+  - zbiór gniazdek o standardzie RJ45, z drugiej strony jest kabel który idzie do innych gniazdek, np w sali
+  - stanowi on zakończenie okablowania strukturalnego (panel)
+
+- `Adapter` sieciowy - **przejściówka**
+
+- `Modem` - **zmienia sygnał** analogowy (ciągły typu fale radiowe) na cyfrowy (zero jedynkowy) i na opak.
+
+  > Pełni rolę "middleware'a" między komputerem, a siecią (nieważne przez co się z nią komunikuje, fale czy np. światłowód)
+
+- `Repeater` - **wzmacniacz** sygnału (niezależnie czy fal czy po kablu)
+
+  <Details summary="Regeneracja sygnału ...">
+
+  > pozwala na zwiększenie zasięgu i jakości przesyłanych danych
+
+  **Zasada działania regeneratora sygnału**
+
+  Regenerator sygnału to urządzenie, które działa na poziomie fizycznym (pierwsza warstwa modelu OSI) i ma na celu poprawę jakości przesyłanych sygnałów. Jego podstawowe funkcje obejmują:
+
+  - **Wzmacnianie sygnału**: Regenerator zwiększa amplitudę sygnału, co pozwala na pokonanie strat związanych z zniekształceniami i zakłóceniami w mediach transmisyjnych.
+  - **Korekcja kształtu sygnału**: W przypadku sygnałów cyfrowych, regenerator nie tylko wzmacnia, ale także poprawia kształt sygnału oraz parametry czasowe, co jest istotne dla zachowania integralności danych.
+  - **Brak interpretacji danych**: Regenerator nie analizuje ani nie interpretuje przesyłanych danych; jego rola ogranicza się do ich wzmocnienia i poprawy.
+
+  Regeneratory mogą być stosowane w różnych technologiach, takich jak Ethernet czy światłowody, a ich funkcje często są integrowane w bardziej zaawansowanych urządzeniach, takich jak przełączniki czy routery.
+
+  **Ograniczenia w stosowaniu regeneratorów sygnału**
+
+  Jednym z kluczowych ograniczeń w stosowaniu regeneratorów sygnału jest tzw. zasada czterech regeneratorów. Zasada ta odnosi się do maksymalnej liczby regeneratorów, które można zastosować w danym torze transmisyjnym bez znacznej degradacji jakości sygnału. Oto jej główne punkty:
+
+  - **Maksymalna liczba**: W praktyce zaleca się, aby w jednym torze transmisyjnym nie stosować więcej niż czterech regeneratorów. Przekroczenie tej liczby może prowadzić do znacznych zniekształceń sygnału oraz problemów z synchronizacją[1].
+  - **Zniekształcenia**: Każdy regenerator może wprowadzać własne zniekształcenia i szumy, co kumuluje się przy kolejnych regeneracjach. W efekcie jakość sygnału może ulegać pogorszeniu.
+  - **Ograniczenia technologiczne**: Różne technologie przesyłania danych mają różne wymagania dotyczące jakości sygnału, co wpływa na decyzję o liczbie używanych regeneratorów.
+
+  </Details>
+
+- `hub` - **rozdzielarka** - łączy urządzenia w sieci (duże pudlo z wieloma wejsciami rj45)
+
+  > Inne nazwy:
+  >
+  > - wieloportowy regenerator sygnału
+  > - koncentrator sieciowy
+
+  - używany w topologii gwiaździstej
+  - regeneruje sygnał i przesyła na wszystkie pozostałe porty
+
+- `transceiver` - **Układ nadawczo-odbiorczy**
+
+  - zewnętrzny
+  - zintegrowany z interfejsem sieciowym-> Regenerator sygnału (repeater)
+  - pozwala zwiększyć rozmiar segmentu sieci
+  - zapewnia odtworzenie charakterystyki sygnału
+  - reguła 5-4-3-2-1 -> można połączyć do 5 segmentów sieci, do tego używa się czterech reapeterów, tylko do trzech można podłączyć komputery, dwa służą jako linijki, jedna domena kolizyjna
+
+## 2. Wartstwa łącza danych
+
+> **kontroluje dostęp do medium transmisyjnego**
+
+- adresowanie danych w celu przesłania ich pomiedzy hostami w sieciach lokalnych
+- Tu bezpośrednio połączone węzły są wykorzystywane do **wykonywania transferu danych** pomiędzy nimi, gdzie dane są pakowane w `ramki`.
+- **koryguje błędy** wysyłane przez warstwe fizyczną.
+- Tej warstwy dotyczy **Topologia sieci**
+
+- Używane protokoły: **Ethernet**, **Token Ring**, **MAC**
+- Urządzenia: `Switch`, `Bridge`
+
+## 3. Sieciowa
+
+> **określa trasę przesyłu danych**
+
+- odpowiedzialna za odbieranie ramek z warstwy łącza danych
+- dostarczanie do miejsc docelowych, za pomocą adresów logicznych, (np. IP)
+- tworzy `pakiety`
+
+### Urządzenia
+
+- `Router` - **przekierowuje pakiety** danych między różnymi sieciami
+
+  > kierują informacje tam, gdzie muszą one trafić pomiędzy sieciami.
+
+- **Switch warstwy 3** - zaawansowane switch'e, działające na poziomie sieciowym (debil: IP), a nie tylko na poziomie łącza danych. (debil: MAC)
+
+## 4. Transportowa
+
+> **sprawna obsluga komunikacji miedzy urządzeniami (to samo co TCP/IP)**
+
+- Zarządza dostarczaniem i sprawdzaniem błędów pakietów danych.
+- Reguluje rozmiar, kolejność i ostatecznie transfer danych pomiędzy systemami lub hostami.
+
+### Protokoły
+
+- **TCP** (Transmission Control Protocol) - zapewnia niezawodność, kontrolę przepływu i odzyskiwanie danych
+- **UDP** (User Datagram Protocol) - zapewnia szybkość i niezawodność, bez tego ^
+
+## 5. Sesji
+
+> **zarządza sesjami użytkowników**
+
+- kontroluje rozmowy pomiędzy komputerami.
+- Sesja lub połączenie pomiędzy komputerami jest tworzone, zarządzane i kończone w tej warstwie.
+- wierzytelnia i ponawia połączenie.
+
+## 6. Prezentacji
+
+> **informuje o formacie danych i je koduje**
+>
+> - jakie typy plików będą przesyłane
+> - odpowiednie zakodowanie danych na urządzeniu źródłowym i ich dekodowanie na docelowym
+
+- formatuje lub tłumaczy dane dla warstwy aplikacji w oparciu o składnie lub semantykę, którą akceptuje aplikacja.
+- Może także obsługiwać szyfrowanie i deszyfrowanie wymagane przez warstwę aplikacji.
+
+## 7. Aplikacji
+
+> **pozwala korzystać z sieci**
+
+- W tej warstwie zawierają się usługi sieciowe dostarczane do aplikacji użytkownika końcowego, np przeglądarka internetowa lub aplikacja internetowa.
+
+- Ta warstwa identyfikuje partnerów komunikacyjnych, dostępność zasobów i synchronizuje komunikację.
+
+[video o modelu OSI/ISO](https://www.youtube.com/watch?v=Rx2R-8rjpNE)

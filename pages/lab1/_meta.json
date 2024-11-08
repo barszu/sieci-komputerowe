@@ -1,5 +1,11 @@
 {
-  "index": "Koncentrat",
-  "lab1_opracowanie": "Opracowanie",
-  "lab1_opis_laba": "Opis laba"
+  "index": "Podstawowe pojęcia",
+  "lab1_rodzaje_sieci": "Rodzaje sieci",
+  "lab1_jednostki": "Jednostki",
+  "lab1_osi_iso_tcp_ip_compare": "OSI/ISO vs TCP/IP",
+  "lab1_tcp_ip": "Model TCP/IP",
+  "lab1_osi_iso": "Model OSI/ISO",
+  "lab1_tryby_transmisji": "Tryby transmisji (duplex)",
+  "lab1_kodowania": "Kodowania",
+  "media_transmisyjne": "Rodzaje mediów"
 }

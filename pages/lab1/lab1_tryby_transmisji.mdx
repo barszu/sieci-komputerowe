@@ -1,0 +1,37 @@
+# Tryby transmisji sieci:
+
+## Simplex
+
+```
+-------------------------->
+```
+
+- dane są przesyłane w jedną stronę.
+- jedno urzadzenie nadajnik drugie odbiornik
+- **klawiaturą** do komputera (przyklad nie z sieci)
+- Prosta implementacja.
+- Efektywne wykorzystanie pasma, ponieważ cała przepustowość kanału jest używana w jednym kierunku.
+- Wady: Brak możliwości zwrotu informacji; nie można potwierdzić odbioru danych.
+
+## Half-Duplex
+
+```
+!!<------------------------>!!
+```
+
+- dane mogą być przesyłane w obie strony, ale nie jednocześnie. (drugie musi czekać na zakończenie transmisji przed odpowiedzią)
+- **Walkie-talkie/ mijajka drogowa** (przyklad nie z sieci)
+- Zalety: komunikację w obie strony przy mniejszym zużyciu zasobów niż pełny duplex.
+- Wady: Wydajność jest niższa niż w duplex, urządzenia muszą czekać na swoją kolej.
+
+## Full-Duplex
+
+```
+------------------------>
+<------------------------
+```
+
+- równoczesną transmisję danych w obu kierunkach
+- **rozmowa telefoniczna**
+- zalety: nie ma opóźnień związanych z czekaniem na wolny kanał.
+- wady: bardziej zaawansowanej infrastruktury

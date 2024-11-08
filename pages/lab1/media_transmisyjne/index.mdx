@@ -1,0 +1,59 @@
+# Podział mediów transmisyjnych.
+
+- przewodowe (kable, światłowody)
+- bezprzewodowe (radiowe, podczerwień)
+
+## BER - Stopa błędu:
+
+> Bit Error Rate (BER) -> współczynnik ilości bitów błędnie otrzymanych do ogólnej liczby otrzymanych bitów.
+
+Jest to wskaźnik prawdopodobieństwa wystąpienia przekłamania bitu informacji
+
+- przewodowo -> tylko 10^-10
+- bezprzewodowo -> aż 10^-3
+
+## Problemy w transmisji danych
+
+`Prędkość propagacji` - v_sygnalu / c
+
+- jest wielkością skończoną, ok. **2/3 c** (200 tys. m/s)
+
+`Round Trip Time` - **Czas propagacji** -> tam i z powrotem, im większa odległość tym większy
+
+`Tłumienność` - [dB/km]
+
+- Wynika z osłabienia amplitudy sygnału w czasie transmisji, narzuca ograniczenia przez długość medium.
+- Zależy od rodzaju przewodnika, częstotliwości, temperatury
+- Wyrażana jest w decybelach / km, 10 \* log (P1/P2) [dB], np. "dwukrotny spadek mocy to spadek o 3 dB", "dziesięciokrotny spadek mocy to spadek o 10 dB".
+
+## Zniekształcenia sygnału
+
+- Zewnętrzne (EMI (Electro-Magnetic Interference) oraz RFI (Radio-Frequency Interference)
+- Wewnętrzne (np. od innych kabli w skrętce (crosstalk)):
+  - NEXT: Near End Crosstalk -> zakłocenie na innych parach mierzone po stronie nadajnika
+  - FEXT: Far End Crosstalk -> zakłócenie na innych parach mierzone po drugiej stronie kabla
+
+### Jak przeciwdziałać zniekształceniu sygnału?
+
+> ekranowanie medium, wzajemne znoszenie zakłóceń, właściwy sposób prowadzenia okablowania
+
+## Sposoby modulacji fali nośnej (AM, PM, FM).
+
+Modulacja fali nośnej to technika, która umożliwia przesyłanie sygnałów audio na dużą odległość, wykorzystując różne metody.
+
+Główne rodzaje modulacji to:
+
+- `AM` - amplitudy - Radio AM, kod Morse'a radiowej transmisji na falach długich i średnich
+- `FM` - częstotliwości - Radio FM radiu na falach ultrakrótkich (UKF), analogowa telewizja satelitarna lepszą filtrację zakłóceń w porównaniu do AM
+- `PM` - fazy - systemach Phase Shift Keying w telefonii komórkowej i Wi-Fi
+
+## Ceny mediów
+
+| Typ medium               | Prędkość      | Dystans            | Cena za metr (zł) |
+| ------------------------ | ------------- | ------------------ | ----------------- |
+| Kable miedziane (Cat 5e) | do 1 Gbps     | do 100 m           | 0,20 - 0,50       |
+| Kable miedziane (Cat 6)  | do 10 Gbps    | do 100 m           | 0,50 - 1,00       |
+| Kable koncentryczne      | do 10 Mbps    | do 100 m           | 1,00 - 2,00       |
+| Światłowody jednomodowe  | bardzo wysoka | do kilku km        | 2,00 - 5,00       |
+| Światłowody wielomodowe  | wysoka        | do kilkuset m      | 1,50 - 3,00       |
+| Wi-Fi                    | do kilku Gbps | ograniczony zasięg | od 200            |
