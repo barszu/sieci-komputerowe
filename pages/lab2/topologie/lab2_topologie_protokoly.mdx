@@ -1,0 +1,28 @@
+# Metody dostępu do łącza
+
+## CSMA/CD
+
+> Carier Sence Multiple Access with Colision Detection
+
+- `wykrywanie kolizji`
+- `nie deterministyczny`
+- tylko dla `half duplex` - tam gdzie kolizje
+- nasluchuje stan łącza, jeśli urządzenie co chce rozpoczać nadawanie wykryje że łącze:
+  - wolne - rozpoczyna transmisje,
+  - jezli wykryje ze inne urzadzenie tez wysyla to `przerywa`, po pewnym czasie prubuje znowu
+- stary ethernet
+
+![img12](/lab2/img/img12.webp)
+
+## CSMA/CA
+
+- metoda z `unikaniem kolizji`
+- nasluchuje stan łącza
+- jesli wolne to wysyla informacje `'chce nadawac'` do wszytskich innych
+- sieci bezprzewodowe
+
+## Token passing
+
+- przesyłąnie od urządzenia do urządzenia tokenu ktorego posiadane pozwala na transmisje
+- nie przyjely sie bo byly skomplikowane
+- token ring

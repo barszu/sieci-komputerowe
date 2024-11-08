@@ -1,0 +1,33 @@
+## Rodzaje portów
+
+![img2](/lab4/img/img2.webp)
+
+> `RP` - **Root Port**: Prowadzi do korzenia; ramki BPDU nie są na niego wysyłane.
+
+> `DP` - **Designated Port**: Port, który odbiera i przekazuje ramki, część drzewa rozpinającego; typowy port dla korzenia drzewa.
+
+> `BP` - **Blocked Port**: Port, który odbiera tylko ramki BPDU i służy tylko do STP. Jest granicą drzewa rozpinającego.
+
+## Stany portów
+
+> _`Disabled`_: Port wyłączony z użycia, => awarii || wyłączenie
+
+> `Blocking`:
+>
+> - Domyślny stan nowych urządzeń w sieci.
+> - Tu odbywa się wybór roota.
+> - **Przetwarza tylko otrzymane BPDU, ignoruje resztę ruchu.**
+> - Po 20 sekundach nieotrzymania wiadomości przechodzi w Listening.
+
+> `Listening` - default 15s
+>
+> - Jest kandydatem na Root Port lub Designated Port
+> - Nasłuchuje tylko BPDU, które mogą go zmienić w Blocking.
+> - Po 15 sekundach nieotrzymania wiadomości zamienia się w Learning.
+
+> `Learning` - default 15s
+>
+> - Przygotowuje się do przekazywania ruchu (uczy się tablicy MAC).
+> - Ignoruje ruch.
+
+> `Forwarding`: Normalna praca portu

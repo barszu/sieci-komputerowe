@@ -1,0 +1,35 @@
+# Sposoby przekazywania ramek
+
+tylko w switchach ! (potrzeba zdekapsulować ramke i zinterpretowac)
+
+## `Store-and-Forward` - asymetryczna
+
+- Może obsługiwać różne prędkości bitowe, tzn. odebrać całą ramkę z jedną prędkością, sprawdzić i nadać z inną (np. Ethernet -> Gigabit Ethernet)
+- Wymaga **buforowania pamięci**
+- Odbieramy ramkę, sprawdzamy sumę kontrolną, jeśli ok to zapamiętujemy adres nadawcy i decydujemy o jej losie
+- **Zaleta:** wykrywa wszystkie błędne ramki
+- **Wada:** wprowadza **największe opóźnienie**
+
+## `Cut-Through` - symetryczne
+
+- Port wyjściowy musi pracować z co najmniej taką samą prędkością, co wejściowy
+- Decyzja o ramce jest podejmowana jeszcze przed otrzymaniem całej (zanim można w ogóle policzyć sumę kontrolną)
+
+  **2 rozwiązania:**
+
+  ### `Fast-Forward` - odrazu
+
+  - decydujemy, jak dostaniemy ostatni bit adresu nadawcy (12 B);
+  - szybkie,
+  - może powodować problemy z kolizjami,
+  - tylko przy full duplexie mamy gwarancję braku kolizji, więc można bezpiecznie wykorzystywać szybsze fast-forward
+
+  ### `Fragment-Free` - po 64 B
+
+  - decydujemy, jak odczytamy 64 B ramki (minimalny rozmiar), bo zgodnie z CSMA/CD wtedy na 100% już nie ma kolizji;
+  - wolniejsze
+  - brak kolizji, Przy half duplexie fragment-free jest bezpieczniejsze,
+
+> **Alignment error** - błąd wyrównania, rozmiar ramki nie jest wielokrotnością 8 (**ramka nie składa się tylko z pełnych bajtów**).
+
+> **`Mikrosegmentacja`** - technika w switchach, **1 port => 1 host**

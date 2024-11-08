@@ -1,0 +1,47 @@
+import {Details} from "../../components/details";
+
+# standard Ethernet
+
+![img9](/lab2/img/img9.webp)
+![img13](/lab2/img/img13.webp)
+
+Problemy zwiekszania szybkości -> przesył jest za szybki i `IFG` jest za krótki, solution:
+
+- masywniejsza ramka (wypełnianie śmieciami / klejenie ich ze soba)
+- krótsza siec poprostu
+
+<Details summary="co to jest `IFG`">
+
+IFG (Inter-Frame Gap) to przerwa między ramkami w sieciach Ethernet.
+
+Jest to minimalny czas, jaki musi upłynąć między zakończeniem jednej ramki a rozpoczęciem następnej.
+
+IFG jest kluczowy dla zapewnienia prawidłowego działania sieci Ethernet, ponieważ pozwala urządzeniom na przetwarzanie odebranych ramek i przygotowanie się do wysłania kolejnych.
+
+</Details>
+
+## fast ethernet (100 Mb/s)
+
+- 10x większa prędkość przesyłania danych -> 10x krótszy czas wysyłania ramki -> rozległość ramki podczas transmisji jest 10x mniejsza
+- max rozległość sieci = **200m**
+- szczelina czasowa = **64 B**
+
+- **tylko poprzez 2 pary żył miedzianych a nie 4 dostępne**
+- dla sieci małych, mało aplikacji
+
+## gigabit ethernet (1Gb/s)
+
+- **używane 4 żyły (wszystkie)**
+- w ramce znajduje się wypełniacz wydłuża czas zajmowany przez ramke do **512 B** (ramka ma dalej minimalnie 64 bajty)
+- **frame bursting** - gdy ma do wysłania wiele ramek klei je ze sobą i wysyla , mniej jest wypelniacza, max 8 kB
+- tylko `full duplex` wtedy **CSMA/CD nie używa** się
+
+  - CS (Carrier Sense) - stacje nie muszą badać, czy medium jest wolne, bo zawsze jest
+  - MA (Multiple Access) - każda stacja ma swoje medium
+  - CD (Collision Detection) - nie ma kolizji do wykrywania
+
+  > fullduplex jest tylko peer-peer (debil:punkt-punkt) na kiekolidujacym kablu
+
+- albo światłowody albo skrętki **(kat. >= 5)**
+- potrzeba przepustowości
+- nie wszystkie switche oferują możliwość pracy i są drozsze

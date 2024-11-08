@@ -1,4 +1,8 @@
 {
   "index": "Koncentrat",
-  "lab4_stp": "Spanning Tree Protocol"
+  "lab4_bpdu": "Ramka BPDU",
+  "lab4_porty": "Porty",
+  "lab4_dzialanie_stp": "Działanie STP",
+  "lab4_modyfikacje_stp": "Modyfikacje STP",
+  "lab4_stp": "Wizualizacja STP"
 }

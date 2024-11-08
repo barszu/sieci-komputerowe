@@ -1,0 +1,54 @@
+# NIC - Network Interface Card - karta sieciowa
+
+> urządzenie pracujące w I,II warstwie modelu OSI / ISO
+
+- zapewnia dostęp do medium w określonym standardzie
+- formatuje ramki, obsługuje określony protokół warstwy łącza danych
+- ma adres MAC (najczęściej niezmienny), ale można zmienić na systemie operacyjnym
+
+## Jak NIC odbiera ramkę?
+
+Adres docelowy mówi tylko o tym, czy urządzenie powinno się zainteresować informacją, czy ją olać. (nie wziąć)
+
+Odbiera gdy: adres przeznaczenia
+
+- == własnemu adresowi MAC (unicast)
+- == adresem rozgłoszeniowym (broadcast)
+- == adresem grupowym (multicast), którymi stacja jest zainteresowana
+
+Decyzja jest podejmowana po:
+
+- po przeczytaniu całej ramki i jej sprawdzeniu (sumy kontrolnej)
+- tylko po przeczytaniu adresu docelowego
+
+---
+
+- w żadnym przypadku **nie ma gwarancji, że informacja trafi tylko do zaadresowanego urządzenia**! (tyczy to się unicastu, multicastu, broadcastu)
+
+- na współczesnym sprzęcie switche interpretują ramki, żeby powyższe nie zachodziło, ale sam Ethernet niczego nie gwarantuje
+
+## Transmisja broadcast - do wszystkich
+
+> FF-FF-FF-FF-FF-FF
+
+- wszyscy otrzymują (odbierają)
+- granica router (dalej nie pojdzie), router router moze miec broadcast!
+- **domena rozgłoszeniowa** - wszedzie tam gdzie broadcast dojdzie
+
+uzywane np. do szukania kto czai sie pod IP (jego MAC'a) (ARP protocol)
+
+## Transmicja multicast - do grupy
+
+> (nieparzysty bajt)-xx-xx-xx-xx-xx
+
+> (prawy bit z bajtu najbardziej na lewo) to 1 | **najstarszy bajt jest nieparzysty**
+
+- tutaj **grupa == jeden special receiver**
+- odbiorcy wyznaczani przez specjalny komunikat dołączenia do danej grupy multicastowej
+
+## Transmisja unicast - do konkretnego
+
+> (parzysty bajt)-xx-xx-xx-xx-xx
+
+- tylko wszystkie adresy -- specjalne
+- **nie ma gwarancji** ze dotrze do niego

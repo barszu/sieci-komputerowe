@@ -1,12 +1,13 @@
 # STP - Spanning Tree Protocol
 
-- protokołem **warstwy drugiej** (łącza danych) modelu OSI, który zapewnia, że **nie ma pętli** (cyklu) w sieci
+- protokoł **warstwy drugiej** (łącza danych) modelu OSI/ISO, który zapewnia, że **nie ma pętli** (cyklu) w sieci
   - brak burzy broadcastowej
   - **sieć nie umiera od krążacych w nieskonczonosc ramek**
   - zapobiega powstawaniu pętli routingu
-- dziala na poziomie logicznym wlaczajac/wylaczajac porty (kierujac ruchem)
+- **dziala na poziomie logicznym** wlaczajac/wylaczajac porty (kierujac ruchem)
 - można mieć dodatkowe 'zapasowe' połączenia
-- przeźroczyste dla innych urządzeń, (nie widzą)
+- **przeźroczyste** dla innych urządzeń, (nie widzą)
+- każdy VLAN ma osobne drzewo (PVST+) - ulepszenie STP
 
 ## Wady
 
@@ -25,116 +26,9 @@
 - na szczycie grafu jest główny switch (`root`) zarządzający siecia
 - zostaje nim na podstawie indetyfikatora (z mniejsza wartościa wygrywa)
 
-## Pseudokod (uproszczenie)
+## Czynniki wpływające na kształt MST
 
-### 1. Inicjalizacja (każdy switch):
-
-- ustawia indentyfikator root na siebie z kosztem 0
-
-### 2. Serce algorytmu - pętla (każdy switch)
-
-- wysyła ramki `BPDU` z indentyfikatorem roota do sąsiadów. (swoim tylko przy inicjalizacji)
-- wysyła je co `Hello Time`
-- _pozniej tylko root je wysyła ?_
-
-### 2. Odebranie BPDU (u każdego switcha):
-
-ramka lepsza niż przechowywana:
-
-> znajdz port o najnizszym koszcie:
->
-> **łączny koszt** > **Bridge ID** > **Sender Port ID** > **Receiver Port ID**
->
-> Ten port to Root Port (port w kierunku roota), ten na przeciwko niego do Designated Port (od roota)
-
-- aktualizuje identyfikator root
-- Dodaje do otrzymanego `Root Path Cost` koszt połączenia do nadawcy (ostatniego kabla)
-
-- wyślij od siebie BPDU do sąsiadów
-
-- Te, na których wysłano "lepszą" ramkę oznaczamy jako Designated Port, a te na przeciwko jako Blocked Port.
-
-#### Przesyłanie BPDU i aktualizacje:
-
-- Ramki `BPDU` są regularnie wysyłane co `Hello Time`, aby aktualizować informacje o topologii.
-- **Czas trwania BPDU:** Jeżeli w ciągu `Max Age` (domyślnie 20 sekund = 10 \* hello time) switch nie otrzyma BPDU, zakłada, że topologia się zmieniła i może stać się nowym rootem.
-
-#### Wykrywanie zmian:
-
-- Jeżeli w okresie `Hello Time` nie nadejdzie BPDU, switch rozpoczyna przebudowę drzewa.
-
-#### Dodatkowe ustawienia (opcjonalne):
-
-- `Forward Delay` - Czas przejścia portów przez stany `Listening` i `Learning` (domyślnie 15 sekund), co umożliwia stabilizację sieci. i temu 7 switchy moze byc 2\* ilosc_switchy < forward delay
-
-## Detekcja Awari
-
-1. Switche w sieci **przestają otrzymywać ramki BPDU od padłego switcha**.
-   - Domyślnie, brak ramek BPDU przez **20 sekund (czas Max Age)** jest interpretowany jako awaria.
-   - wysyłane jest BPDU typu TCN (Topology Change Notification) do roota
-   - jak on otrzyma wysyła do wszytskich TCA (Topology Change Acknowledgement) ze topologia sieci (spanning tree) sie zmienila, aby inne switche mogly zaaktualizwac swoje tablice forwardingu
-2. stan `Listening`: Przez 15 sekund switchy nasłuchują ramek BPDU, aby upewnić się, że nowa topologia jest stabilna.
-3. stan `Learning`: Przez kolejne 15 sekund switchy uczą się nowych adresów MAC, aby zaktualizować swoje tablice przełączania.
-4. stan `Forwarding`, co pozwala na przywrócenie normalnego ruchu sieciowego.
-
-> W sumie, standardowy czas detekcji i naprawy wynosi około 50 sekund
-> (20 sekund Max Age + 15 sekund Listening + 15 sekund Learning).
-
-# Budowa ramki BPDU
-
-![img1](/lab4/img/img1.webp)
-
-# Porównywanie ramek (jednostek) BPDU -> która gorsza / lepsza
-
-klasyfikowane na podstawie informacji, jakie przenoszą, oraz porównując je z informacjami przechowywanymi na switchu odbiorczym.
-
-kiedy switch otrzyma gorsze to ignoruje i korzysta z wcześniej zapisanych.
-
-## Lepsza BPDU ?
-
-- Przenosi **lepsze informacje o ścieżce do roota** niż te aktualnie przechowuje switch.
-- Ma **niższy identyfikator roota** (root bridge) . wpp...
-  - Jeśli identyfikatory root są równe, ma niższy koszt ścieżki do mostu głównego.
-  - Jeśli zarówno identyfikator root, jak i koszt ścieżki są równe, ma niższy identyfikator switcha.
-- Kiedy switch otrzymuje takie BPDU, aktualizuje swoje własne informacje.
-
-# Rodzaje portów
-
-![img2](/lab4/img/img2.webp)
-
-> `RP` - **Root Port**: Prowadzi do korzenia; ramki BPDU nie są na niego wysyłane.
-
-> `DP` - **Designated Port**: Port, który odbiera i przekazuje ramki, część drzewa rozpinającego; typowy port dla korzenia drzewa.
-
-> `BP` - **Blocked Port**: Port, który odbiera tylko ramki BPDU i służy tylko do STP. Jest granicą drzewa rozpinającego.
-
-# Stany portów
-
-## Stany portów
-
-> _`Disabled`_: Port wyłączony z użycia, => awarii || wyłączenie
-
-> `Blocking`:
->
-> - Domyślny stan nowych urządzeń w sieci.
-> - Tu odbywa się wybór roota.
-> - **Przetwarza tylko otrzymane BPDU, ignoruje resztę ruchu.**
-> - Po 20 sekundach nieotrzymania wiadomości przechodzi w Listening.
-
-> `Listening` - default 15s
->
-> - Jest kandydatem na Root Port lub Designated Port
-> - Nasłuchuje tylko BPDU, które mogą go zmienić w Blocking.
-> - Po 15 sekundach nieotrzymania wiadomości zamienia się w Learning.
-
-> `Learning` - default 15s
->
-> - Przygotowuje się do przekazywania ruchu (uczy się tablicy MAC).
-> - Ignoruje ruch.
-
-> `Forwarding`: Normalna praca portu
-
-# Czynniki wpływające na kształt MST (hierarchia porównywania od najważniejszego)
+> (hierarchia porównywania od najważniejszego)
 
 1. **`Połączenia w sieci i ich przepustowości:`** Drzewo tworzy się na podstawie już istniejących połączeń. STP nie tworzy nowych połączeń, a przepustowość determinuje koszt ścieżki.
 2. **`ID urządzeń:`** Priorytety urządzeń są domyślnie ustawione, cisko na **32768 + numer VLAN'u**, ale można je modyfikować.
@@ -143,7 +37,7 @@ kiedy switch otrzyma gorsze to ignoruje i korzysta z wcześniej zapisanych.
 
 ![img9](/lab4/img/img9.webp)
 
-# Zasady konfiguracji STP:
+## Zasady konfiguracji STP:
 
 1. prawidłowe **ustawienie priorytetów**:
    - korzeniem powinno być urządzenie z największą ilością ruchu (czyli “na środku” grafu), z podłączonymi kablami o wysokiej przepustowości
@@ -155,46 +49,3 @@ kiedy switch otrzyma gorsze to ignoruje i korzysta z wcześniej zapisanych.
    - zmniejsza wydajność sieci, wymaga wysyłania dużej ilości ramek BPDU
    - bez sensu jeżeli mamy sieć bez redundantnych połączeń (= drzewo rozpinające już dzięki kablom)
    - wymaga upewnienia się, że porty końcowe (tam, gdzie podłączamy komputery) są zabezpieczone przed utworzeniem cykli
-
-# Pochodne po STP 802.1D (modyfikacje)
-
-## **PVST/PVST+** - Per VLAN Spanning Tree +
-
-- dla każdego VLANu robi się osobne drzewo rozpinające, może być redundantne (identyczne drzewa dla wielu VLANów)
-- rozwiązauje problem tego że jest dużo nieużywanych połączeń
-- Cisco
-
-## **MSTP** - Multiple Spanning Tree Protocol
-
-- jest ulepszeniem PVST+
-- robi wiele drzew, ale nie 1 per VLAN
-- dla drzewa wybieramy VLANy, które z niego korzystają, mapujemy vlany na instancje BPDU dla wszytskich drzew z MSTP pakowane są w jedną ramkę, więc trzeba przesyłać mniej ramek, niż jest drzew
-
-## **RSTP** - Rapid Spanning Tree Protocol
-
-1. Nowe rodzaje portów:
-
-- **Alternate Port**: Nie został Designated Port, ponieważ w segmencie sieci znaleziono lepsze połączenie na innym switchu.
-- **Backup Port**: Nie został Designated Port, ponieważ na tym samym switchu znaleziono lepszy port.
-
-2. Połączenie stanu portów -> `Blocking + Listening => Discarding`:
-
-3. **Wszystkie** switche wysyłają BPDU co `Hello Time`, nie tylko korzeń, co zwiększa niezawodność.
-
-4. Informacja uznawana jest za przestarzałą po braku 3 kolejnych BPDU od poprzedniego switcha w ścieżce do korzenia.
-
-5. Dwukierunkowa informacja między switchami:
-
-   - W STP - tylko przetwarzanie informacji od sąsiadów
-   - W RSTP switche komunikują się między sobą, aby szybciej reagować na zdarzenia.
-
-6. Nowe koszta dla połączeń:
-
-![img3](/lab4/img/img3.webp)
-
-7. **Edge Ports** - (wyjścia dla komputerów) mają stan `forwarding`
-
-- komputer nie zrobi pętli
-- jesli pojawi sie ramka BPDU to zmieniją sie w zwykły port i realizują STP
-
-8. jeśli Root Port zostanie stracony (np. odłączony kabel), to włącza się natychmiast Alternate Port (jeżeli można) mechanizmem UplinkFast, wysyła też do sąsiadów Topology Change Notification (TCN)

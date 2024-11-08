@@ -1,0 +1,19 @@
+# Tryb promiscuous
+
+- urządzenie przechwytuje i analizuje wszystkie pakiety danych przechodzące przez sieć, niezależnie od tego, do kogo są one adresowane
+- tryb interfejsu sieciowego (wykorzystywany przez mostki i sniffery) , w którym urządzenie **przekazuje dalej** wszystkie ramki do przetwarzania.
+- przetwarza on tylko ramki unicast do siebie, multicast do własnych grup i broadcast
+- `nie routerr!!!`
+
+## Urządzenie Sniffer
+
+> urządzenie/oprogramowanie (np. whireshark) któro przechwytuje i analizuje ruch sieciowy
+
+Zastosowanie -> narzędzia diagnostyczne, monitorujące lub do naruszania prywatności
+
+## zabezpieczanie się
+
+- Wyeliminowanie z sieci hubów i repeaterów.
+- Podział sieci na małe sieci wirtualne (VLAN), bo chociaż fizycznie są połączone, to na poziomie warstwy drugiej (logicznie) są wtedy odseparowane.
+- Użycie szyfrowania na wyższych warstwach sieci.
+- Użycie “inteligentnego” sprzętu (np. zarządzalne switche), które wykrywają i reagują na próby podsłuchiwania lub blokują je (np. blokują komunikację dowolnych dwóch urządzeń niebędących częścią infrastruktury sieci).

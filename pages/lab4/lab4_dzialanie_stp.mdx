@@ -1,0 +1,58 @@
+# Pseudokod (uproszczenie)
+
+## Inicjalizacja - wybór root bridge
+
+1. każdy switch ustawia BID na siebie z kosztem 0
+
+> BID - Bridge Root ID - most do roota = Bridge ID + Root_MAC, BridgeID = priority + VLAN
+
+2. Wysyła ramki `BPDU` z indentyfikatorem roota (siebie) do sąsiadów.
+
+3. Sąsiedzi porównują swoje BID z otrzymanym i wybierają lepsze.
+
+4. Root bridge został wybrany
+
+> Root Bridge => switch z najniższym BID
+
+## Układanie spanning tree
+
+1. Każdy z portów **root bridge** staje się FWD (Forwarding State - normalna praca portu), ROOT PORT
+   _(no chyba, że sam switch ze sobą jest spięty to nie dla któregoś z tych portów)_
+
+2. Root bridge wysyła BPDU do sąsiadów, a oni do swoich, itd., szukają najlepszej drogi do root bridge.
+
+3. Ustawianie portów
+
+- Root Port - Designated Port - port w kierunku roota
+- Blocked Port - port na przeciwko Root Port (ten co blokujemy)
+  _(nie blokujemy kabla tylko jeden z portów na switchu i zlewa on wszystko co tam trafia)_
+
+> znajdz port o najnizszym koszcie:
+>
+> **`łączny koszt`** > **`BID`** > **`Sender Port ID`** > **`Receiver Port ID`**
+
+_łączny koszt - łączny koszt (suma) wag krawędzi na trasie_
+
+## Utrzymywanie topologii
+
+- root bridge wysyła BPDU co `Hello Time` (2s)
+- **Czas trwania BPDU:** Jeżeli w ciągu `Max Age` (domyślnie 20 sekund = 10 \* hello time) switch nie otrzyma BPDU, zakłada, że topologia się zmieniła i może stać się nowym rootem.
+
+## Detekcja awarii
+
+- Jeżeli w okresie `Hello Time` nie nadejdzie BPDU, cały proces od nowa.
+
+1. Switche w sieci **przestają otrzymywać ramki BPDU od padłego switcha**.
+   - Domyślnie, brak ramek BPDU przez **20 sekund (czas Max Age)** jest interpretowany jako awaria.
+   - wysyłane jest BPDU typu TCN (Topology Change Notification) do roota
+   - jak on otrzyma wysyła do wszytskich TCA (Topology Change Acknowledgement) ze topologia sieci (spanning tree) sie zmienila, aby inne switche mogly zaaktualizwac swoje tablice forwardingu
+2. stan `Listening`: Przez 15 sekund switchy nasłuchują ramek BPDU, aby upewnić się, że nowa topologia jest stabilna.
+3. stan `Learning`: Przez kolejne 15 sekund switchy uczą się nowych adresów MAC, aby zaktualizować swoje tablice przełączania.
+4. stan `Forwarding`, co pozwala na przywrócenie normalnego ruchu sieciowego.
+
+> W sumie, standardowy czas detekcji i naprawy wynosi około 50 sekund
+> (20 sekund Max Age + 15 sekund Listening + 15 sekund Learning).
+
+#### Dodatkowe ustawienia (opcjonalne):
+
+- `Forward Delay` - Czas przejścia portów przez stany `Listening` i `Learning` (domyślnie 15 sekund), co umożliwia stabilizację sieci. i temu 7 switchy moze byc 2\* ilosc_switchy < forward delay
