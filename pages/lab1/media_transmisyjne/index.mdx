@@ -30,7 +30,7 @@ Jest to wskaźnik prawdopodobieństwa wystąpienia przekłamania bitu informacji
 
 - Zewnętrzne (EMI (Electro-Magnetic Interference) oraz RFI (Radio-Frequency Interference)
 - Wewnętrzne (np. od innych kabli w skrętce (crosstalk)):
-  - NEXT: Near End Crosstalk -> zakłocenie na innych parach mierzone po stronie nadajnika
+  - **NEXT**: Near End Crosstalk -> zakłocenie na innych parach mierzone po stronie nadajnika
   - FEXT: Far End Crosstalk -> zakłócenie na innych parach mierzone po drugiej stronie kabla
 
 ### Jak przeciwdziałać zniekształceniu sygnału?
@@ -57,3 +57,16 @@ Główne rodzaje modulacji to:
 | Światłowody jednomodowe  | bardzo wysoka | do kilku km        | 2,00 - 5,00       |
 | Światłowody wielomodowe  | wysoka        | do kilkuset m      | 1,50 - 3,00       |
 | Wi-Fi                    | do kilku Gbps | ograniczony zasięg | od 200            |
+
+## Komutacja (switching)
+
+> dynamiczne zestawianie połączeń, tworzenie połączenia między nadawcą a odbiorcą do przesłania informacji.
+
+import {Details} from '../../../components/details'
+
+<Details>
+
+- **Komutacja pakietów** - przesyłanie danych w postaci pakietów, każdy pakiet jest przesyłany niezależnie od innych, nie ma gwarancji kolejności, ale jest szybka i efektywna
+- **Komutacja łączy** (obwodów) - przesyłanie danych w postaci ciągłego strumienia, gwarantuje kolejność, ale jest wolniejsza i mniej efektywna
+
+</Details>
