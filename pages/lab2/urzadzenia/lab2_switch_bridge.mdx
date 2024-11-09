@@ -23,18 +23,28 @@ teraz są przełaczniki (zamiast hubów) i on wysyla dane do odpowiedniego urzą
 
 ## switch vs bridge
 
-- bridge to nie musi być switch z 2 portami !!!
+> bridge to nie musi być switch z 2 portami !!!, ani mieć tylko halfduplex!!!
+
 - **switch ma częściej więcej portów**
 - bridge jest prostrzy, mniej wydajny i działa wolniej,
 - **switch ma układ ASIC** (Application-Specific Integrated Circuit) - specjalizowany układ scalony
-- switch często potrafi wiele ramek naraz przesyłać, interpretować
+- **bridge przesyła programowo, switch sprzętowo**
+- switch często potrafi wiele ramek naraz przesyłać, interpretować, równolegle robić spaning tree
 
 ## Działąnie
 
+import { Details } from '../../../components/details'
+
 - **Broadcast**: Wysyła ramkę na wszystkie porty. `oprócz tego, z którego przyszła`.
-- **Multicast**:
-  - Przy prostych switchach jak broadcast.
-  - Przy lepszych: Podłączone hosty wysyłają najpierw komunikat protokołu IGMP o chęci dołączenia do transmisji, zapisują kto i na którym porcie jest zainteresowany grupą i przekazują multicasty tylko do odpowiednich hostów.
+- **Multicast**: jak broadcast
+
+  <Details summary='zaawansowane switche'>
+
+  Podłączone hosty wysyłają najpierw komunikat protokołu IGMP o chęci dołączenia do transmisji, zapisują kto i na którym porcie jest zainteresowany grupą i przekazują multicasty tylko do odpowiednich hostów.
+
+  </Details>
+
+- **Unicast**:
 
 ### **Adresu `nie znaleziono` w tablicy forwardingu**:
 
