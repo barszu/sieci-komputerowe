@@ -28,14 +28,39 @@
 
 ## Czynniki wpływające na kształt MST
 
+import { Details } from '../../components/details'
+
 > (hierarchia porównywania od najważniejszego)
 
 1. **`Połączenia w sieci i ich przepustowości:`** Drzewo tworzy się na podstawie już istniejących połączeń. STP nie tworzy nowych połączeń, a przepustowość determinuje koszt ścieżki.
-2. **`ID urządzeń:`** Priorytety urządzeń są domyślnie ustawione, cisko na **32768 + numer VLAN'u**, ale można je modyfikować.
-3. **`ID portów nadawcy:`** Używane, gdy ID urządzeń są identyczne. **Priorytety portów są domyślnie takie same**, ale można je modyfikować. Numer portu - niższy wygrywa. (skrot myslowy => adres MAC)
-4. **`ID portów odbiorców:`** -- || --
+
+- `koszt portu` - wartość zależna od przepustowości połączenia, _mozna zmienić ręcznie?_
+
+<Details>
+
+switch(config)# interface gigabitethernet 0/1 ----> np. port 1 z interfejsu 0 typu gigabit
+switch(config-if)# spanning-tree cost 2
+
+</Details>
+
+- w zwykłym STP : **(10Mps (Eth) = `100`, 100Mps (FEth) = `19`, 1Gps (GEth) = `4`, 10Gps = `2`)**
+- koszt krawędzi = max(koszt portu nadawcy, koszt portu odbiorcy) - najgorsze
+- **koszt ścieżki** - suma kosztów portów na ścieżce - im mniejsza wartość, tym lepsze połączenie
+
+2. **`BID`** - **priorytet urządzenia + adres MAC urządzenia**
+
+- Priorytety urządzeń są domyślnie ustawione, cisko na **32768 + numer VLAN'u**, można je modyfikować w obrębie VLANU, albo globalnie.
+- jeśli są takie same, to wygrywa urządzenie z mniejszym MAC
 
 ![img9](/lab4/img/img9.webp)
+
+3. **`PID nadawcy:`** - **priorytet portu + numer portu**
+
+- Używane, gdy ID urządzeń są identyczne.
+- Priorytety portów są domyślnie takie same, ale można je modyfikować. _domyślny 128?_
+- kiedy takie same są priorytety, **niższy numer portu** wygrywa.
+
+4. **`PID odbiorcy:`** -- || --
 
 ## Zasady konfiguracji STP:
 
