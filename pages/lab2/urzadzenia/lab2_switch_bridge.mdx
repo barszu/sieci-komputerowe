@@ -6,9 +6,10 @@ teraz są przełaczniki (zamiast hubów) i on wysyla dane do odpowiedniego urzą
 - **Nauka budowy sieci**: Uczą się, gdzie są nadawcy wiadomości (adresów MAC) dla zwiększania wydajności:
 - **`Zmniejszanie domeny kolizyjnej`**: dzieląc sieć na fragmenty, jednocześnie nie naruszając domeny rozgłoszeniowej (broadcasty mają lecieć wszędzie).
 - **`Tryb promiscuous`**: - nasluchu i analizy całego ruchu , (bo musi interpretować ramki)
-- **`Tablica forwardingu` (FDB)**: `SWITCH_PORT : MAC` (sprzętowo realizowany hash table -> pamięć CAM)
+- **`Tablica forwardingu` (FDB)**: `MAC : SWITCH_PORT ` (sprzętowo realizowany hash table -> pamięć CAM)
   > z ramki odczytują MAC nadawcy i zapisują w tablicy forwardingu
   - **Czas ważności wpisów**: przy braku ruchu i upływie czasu usuwa się stare wpisy.
+  - na jednym porcie może być wiele adresów MAC (urządzenia z tej samej sieci, niepodłączone bezpośrednio)
 
 ---
 
