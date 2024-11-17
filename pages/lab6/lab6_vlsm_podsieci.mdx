@@ -1,0 +1,45 @@
+# VLSM - Variable Length Subnet Masking
+
+- podział sieci na podsieci nie równych wielkością
+- zmieniamy długość maski tak aby uwzglednic zapotrzebowanie na liczbe hostow w danej podsieci
+- **klejenie ze soba mniejszych grupek sieci** używając mniejszej maski
+
+![img14](/lab5/img/img14.webp)
+
+## CIDR - Class`less` Inter-Domain Routing
+
+- klasy (A,B,C,D,E) nie są już używane - **sieć == podsieć**
+- adres dzieli się teraz na adres sieci (= zarazem podsieci) oraz adres hosta
+- **adres IP idzie zawsze z maską sieci**
+- pozwala na używanie masek sieciowych różnej długości dla adresów z dowolnej podsieci, np może być maska /21, /23 itp
+- wydajniejszy przydział przestrzeni adresowej IPv4 przez eliminację tradycyjnej koncepcji klas adresów IP.
+
+## Algorytm tworzenia podsieci
+
+Wykorzystamy tutaj VLSM oraz metodę drzewka. Wykorzystuje ona fakt, iż każdy kolejny bit dodany do maski dzieli podsieć na dwie, więc mamy w ten sposób drzewo binarne.
+
+import { Details } from "../../components/details"
+import { Callout } from "nextra/components"
+
+<Callout type="warning">
+
+każda sieć potrzebuje 2 adresów więcej niż hostów, bo jeszcze adres sieci i broadcast w tej sieci
+
+</Callout>
+
+1. pełny adres sieci + dana maska (minimalna)
+2. dzielimy na połowy, tworząc węzły-dzieci (każdy węzeł reprezentuje podsieć):
+   - lewe dziecko ma dany bit podmaski ustawiony na 0,
+   - prawe na 1.
+3. Kiedy dziecko ma już odpowiednią ilość hostów dla naszej sieci (tzn. nie da się jej bardziej zmniejszyć - zwykle zależy nam na minimalnych podsieciach), to nie dzielimy dalej, tylko przydzielamy dany adres danej podsieci.
+
+## Przykład
+
+Mamy sieć 192.68.10.0/24 i chcemy podzielić ją na 4 nierówne podsieci:
+
+- A) 60 hostów
+- B) 28 hostów
+- C) 12 hostów
+- D) 12 hosty
+
+![przyklad](/lab6/img/img6.webp)

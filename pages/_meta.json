@@ -30,6 +30,11 @@
     "type": "page",
     "display": "hidden"
   },
+  "lab6": {
+    "title": "lab 5 ip",
+    "type": "page",
+    "display": "hidden"
+  },
 
   "menu": {
     "title": "Rozdziały",
@@ -54,6 +59,10 @@
       "05-lab": {
         "title": "lab 5",
         "href": "/lab5"
+      },
+      "06-lab": {
+        "title": "lab 6",
+        "href": "/lab6"
       }
     }
   }

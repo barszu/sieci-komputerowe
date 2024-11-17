@@ -1,0 +1,113 @@
+import { Callout } from 'nextra/components'
+
+# DHCP - Dynamic Host Configuration Protocol
+
+<Callout>
+
+IDEA: serwer DHCP dostaje pulę adresów do przydzielania, nowy host bierze dane od serwera na określony czas (czas dzierżawy) i kiedy przestaje być aktywny, to adres wraca do puli
+
+</Callout>
+
+- protokół służący do automatycznego przydzielania adresów IP urządzeniom w sieci
+- pozwala automatycznie skonfigurować adres IP, maskę podsieci, adres bramy sieciowej i inne
+- wykorzystuje protokół UDP
+  - port 67 (serwer) i 68 (klient) (IPv4)
+  - port 546 (serwer) i 547 (klient) (IPv6)
+- komunikacja odbywa się na poziomie warstwy 7 (apliacji) modelu OSI/ISO
+
+## Działanie
+
+![dhcp](/lab6/img/img3.webp)
+
+![dhcp](/lab6/img/img4.webp)
+
+1. klient chce odnaleźć serwer DHCP
+
+   - wysyła **broadcastowo** zapytanie dhcp\_`DISCOVER`
+   - w zapytaniu będzie jego adres MAC (no bo to ramka)
+   - normalne hosty to ignorują
+
+2. serwery DHCP odpowiada dhcp\_`OFFER`
+
+   - zawiera adres IP, maskę podsieci, adres bramy, adres serwera DHCP, adres serwera DNS
+   - serwer odpowiada z ofertą o ile ma wolne adresy w puli oraz o ile klieny spełnia warunki (nie ma BANA)
+   - serwer zaznacza adres jako zajęty
+
+3. klient akceptuję oferte i wysyla **broadcastem** do tego serwera dhcp\_`REQUEST`
+
+   - klient wybiera jedną z ofert (najczęściej pierwszą)
+   - broadcast po to aby inne serwery o tym wiedziały - wracają dane IP do puli
+
+4. serwer potwierdza dhcp\_`ACK`
+
+   - klient dostaje potwierdzenie dzierzawy z czasem dzierżawy
+   - klient dostaje już adres IP, maskę podsieci, adres bramy, adres serwera DNS,
+   - klient zaczyna używać adresu IP
+
+5. klient sprawdza otrzymany adres IP - wysyła pakiet DHCP_PROBE
+
+   - jeżeli ktoś się odezwie, to adres nie jest unikalny,
+     - wysyła do serwera dhcp\_`DECLINE`, a serwer wyłącza dany adres
+     - trzeba zacząć wszystko od nowa
+   - jak jest ok to uruchamia zegar czasu dzierżawy
+
+6. po minieciu 0.5 czasu dzierżawy (T1 Renewal Time) klient wysyła **unicastowo** zapytanie dhcp\_`REQUEST` do serwera, aby przedłużyć czas dzierżawy
+
+   - jeśli serwer odpowie dhcp\_`ACK` z nowym czasem dzierżawy, to zegar jest ustawiany na nowo - klient zaczyna używać nowego czasu dzierżawy
+
+   - jeśli serwer odpowie dhcp\_`NAK` to klient musi zacząć wszystko od nowa
+
+   - jeśli serwer nie odpowie, to czas dzierżawy leci dalej
+
+7. po minieciu 7/8 czasu dzierżawy (T2 Rebinding Time) klient wysyła **broadcastowo** zapytanie dhcp\_`REQUEST` do `wszystkich` serwerów DHCP w sieci, chcąc przedłużenia dzierżawy
+
+   - _odpowiedzi i efekty takie same jak w pkt 6_
+   - do wszystkich serwerów, bo może serwer z którego dostał mógł paść
+   - do czasu T2 uruchomi się serwer zapasowy (no i on ma inny adres)
+
+8. po minieciu całego czasu dzierżawy zaczyna się proces od nowa
+
+9. klient wyśle dhcp\_`RELEASE` do serwera DHCP, aby zwolnić adres IP, serwer zaznacza adres jako wolny
+
+## DHCP a sieci
+
+Rozwiązanie to zadziała poprawnie, jeśli serwer DHCP i host są w jednej sieci, więc nie zadziała np. dla jednej firmowej sieci i kilku podsieci w niej, bo routery zatrzymają bradcast 255.255.255.255.
+
+Rozwiązanie problemu:
+
+- osobny serwer DHCP dla każdej podsieci (meh, bo koszty i trudność utrzymania)
+- jedna maszyna obslugująca wszytskie sieci (meh, bo bezpieczeństwo oraz dużo kabli)
+- relay agent
+
+## Relay agent
+
+W każdym końcowym segmencie sieci jest router relay agent, który **nie blokuje komunikatów broadcastu ograniczonego DHCP**, tylko przekazuje komunikaty dalej, **modyfikując niektóre pola**
+
+### Działanie:
+
+1. klient wysyła **broadcastem** dhcp\_`DISCOVER` z użyciem UDP, na port 67 (serwer)
+2. router relay agent odbiera komunikat i **broadcastuje** go dalej
+   - sprawdza adres bramy domyślnej w nagłówku DHCP.
+   - Jeżeli == 0.0.0.0, to zamienia
+     - adres źródłowy na własny adres (tak, że bramą jest dla serwera ten router)
+     - adres odbiorcy na adres serwera
+   - przesyła dalej.
+3. komunikat idzie **unicastem** do serwera DHCP
+   - Serwer sprawdza IP bramy, znajdując pulę adresów dla danej bramy.
+   - Jeżeli tylko ma pulę dla danej bramy i wolne adresy, to tworzy komunikat dhcp\_`OFFER` i wysyła unicastem do relay agenta
+
+<Callout type="warning">
+
+wiadomości między relay agentem a serwerem idą unicastem, <br/>
+natomiast w sieci z hostem i relay agentem unicastem za wyjątkiem pierwszego połączenia
+
+</Callout>
+
+<Callout type="info">
+
+**Specjalne IP i ich zastosowanie:**
+
+- **0.0.0.0/0** - trasa domyślna w routerach, adres komputera wysyłającego zapytanie DHCP
+- **255.255.255.255** - broadcast ograniczony, używany np. w zapytaniach DHCP
+
+</Callout>
