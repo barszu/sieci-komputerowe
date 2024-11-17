@@ -1,0 +1,304 @@
+import { Callout } from 'nextra/components'
+import { Details } from '../../components/details'
+
+# Tablica routingu
+
+<Callout>
+
+- `IP sieci docelowej` -> `IP następnego skoku` lub “`sieć bezpośrednia`”
+- adresy IP = IP + maska
+- IP następnego skoku = brama (next hop IP)
+
+</Callout>
+
+![Tablica routingu](/lab6/img/img1.webp)
+![Tablica routingu](/lab6/img/img2.webp)
+
+- sieci bezposrednie - podlaczone do interfejsu routera
+- sieci odległe - niepodlaczone bezposrednio, ale znane routerowi
+  - otrzymał informacje o tych sieciach od innych routerów z wykorzystaniem RIP - Routing Information Protocol
+
+## Działanie
+
+1. router otrzymuje pakiet od hosta z sieci A (bezpośredniej)
+2. router odczytuje adres IP sieci docelowej i sprawdza czy w tablicy routingu jest wpis dla tej sieci (ma trase):
+
+- jeśli tak, to przekierowuje pakiet do następnego skoku (interfejsu innego routera)
+- jeśli nie, to używa trasy domyślnej (0.0.0.0) , jak jej nie ma to odrzuca pakiet
+
+3. router sieci docelowej widzi ze ma swoj interfejs w tej sieci wiec wysyła pakiet przez ten interfejs do hosta
+
+Trasa domyślna musi być ręcznie dodana (przypisana) do tablicy routingu.
+
+## O tablicy routingu
+
+- tablica, dzięki której router wie, gdzie kierować pakiety zaadresowane do danej sieci
+- pamięta tylko informację o następnym routerze na trasie do sieci (next hop IP) lub informację o tym, że sieć jest już przyległa do danego routera (nie zna całej ścieżki)
+- jeżeli wpis nie zostanie znaleziony w tablicy, to realizuje się najdłuższe dopasowanie, czyli “wygrywa” ten adres docelowy w tablicy, który ma najdłuższą zgodną maskę podsieci
+
+  - maska 255.255.255.255 to “najlepsza” maska
+  - maska 0.0.0.0 (brama domyślna) to “najgorsza” maska - zostanie użyta, jeżeli nie znajdzie się żadne lepsze dopasowanie i jest w tablicy
+
+- wpisy można agregować, łącząc wiele podobnych w jeden (np. jeśli wiele wpisów ma ten sam adres następnego skoku) i zaoszczędzić miejsce w tablicy routingu
+
+- wpisy w tablicy są tam:
+  routing statyczny - ustawiane ręcznie przez administratora
+  routing dynamiczny -tworzone i zarządzane automatycznie przez protokół -
+
+## Routing statyczny
+
+> trasy statyczne dla routera przypisuje ręcznie administrator sieci
+
+- tarsy statyczne są mniej zawodne niż dynamiczne
+- lżejsze obliczeniowo dla routera
+- zmiana tras wymaga atencji administratora
+- jest łatwy do skonfigurowania w małych sieciach
+
+## Routing dynamiczny
+
+> protokoły routingu zbierają informacje o trasach od innych routerów i tworzą tablice routingu
+
+- zmiana topologi sieci powoduje automatyczna aktualizacje tras
+- protokoły mielą router :( - ALU lepsze nawet niż standardowego PC
+- wymiana informacji o trasach generuje dodatkowy ruch sieciowy
+- efektywna konfiguracja wymaga dużej wiedzy i doświadczenia
+- istnieje wiele protokołów i one czasem ze sobą nie chcą współpracować
+- Protokoły: RIP, EIGRP, OSPF
+
+<Details summary='o tych protokołach...'>
+
+### RIP
+
+> Routing Information Protocol
+
+Prosty protokół routingu wewnętrznego, który używa liczby przeskoków (hops) jako metryki do wyboru trasy, z maksymalnym limitem 15 przeskoków
+
+### EIGRP
+
+> Enhanced Interior Gateway Routing Protocol
+
+Zaawansowany protokół routingu wewnętrznego opracowany przez Cisco, który używa złożonej metryki uwzględniającej przepustowość, opóźnienie, niezawodność i obciążenie
+
+### OSPF
+
+> Open Shortest Path First
+
+Protokół routingu wewnętrznego oparty na stanie łącza, który dynamicznie oblicza najkrótsze ścieżki w sieci za pomocą algorytmu Dijkstry
+
+</Details>
+
+## Trasa domyślna - 0.0.0.0/0
+
+> gateway of last resort
+
+- hosty wysyłają tam pakiety jeśli nie było "lepszego" wpisu
+- jest używana do przekierowywania ruchu do zewnętrznych sieci, takich jak Internet.
+- konfigurowana recznie, lub przez DHCP, lub protokoły routingu dynamicznego
+
+<Details summary='komendy...'>
+
+cisko:
+
+```bash
+ip route 0.0.0.0 0.0.0.0 192.168.1.1
+```
+
+linux:
+
+```bash
+sudo ip route add default via 192.168.1.1
+```
+
+</Details>
+
+## Agregowanie tablic routingu
+
+> niektóre wpisy są redundantne i można je zredukować
+
+- trasy biegnące przez ten sam router można zgrupować, bo i tak ważny jest tylko next hop
+- W procesie ustalania trasy dla danego pakietu routery wybierają ze swojej tablicy wpis najbardziej szczegółowy (ten, który ma najdłuższą maskę podsieci)
+
+### Przykład
+
+Zawartość tablicy routingu:
+
+```bash
+1.1.1.0/24        directly connected
+
+1.2.3.0/30        via Serial0/0
+1.4.0.4/30        via Serial0/0
+
+10.0.23.0/24      via 1.1.1.2
+10.4.8.0/21       via 1.1.1.2
+
+10.4.8.0/24       via 1.1.1.42
+193.193.65.224/27 via 1.1.1.42
+2.0.0.1/32        via 1.1.1.42
+
+10.3.0.128/25     via 1.1.1.3
+```
+
+#### 1. Grupujemy wpisy **według next_hopu**, czyli adresu który jest po `via`:
+
+<Callout type="info" emoji="">
+
+ <code>
+      <span style={{ color: 'red' }}>1.1.1.0/24 directly connected</span><br />
+      <span style={{ color: 'violet' }}>1.2.3.0/30 via Serial0/0</span><br />
+      <span style={{ color: 'violet' }}>1.4.0.4/30 via Serial0/0</span><br />
+      <span style={{ color: 'cyan' }}>10.0.23.0/24 via 1.1.1.2</span><br />
+      <span style={{ color: 'cyan' }}>10.4.8.0/21 via 1.1.1.2</span><br />
+      <span style={{ color: 'green' }}>10.4.8.0/24 via 1.1.1.42</span><br />
+      <span style={{ color: 'green' }}>2.0.0.1/32 via 1.1.1.42</span><br />
+      <span style={{ color: 'green' }}>193.193.65.224/27 via 1.1.1.42</span><br />
+      <span style={{ color: 'orange' }}>10.3.0.128/25 via 1.1.1.3   </span><br />
+  </code>
+
+</Callout>
+
+#### 2. **Łączymy każdą grupę**, biorąc kolejne zgodne liczby. (**te same bity**)
+
+> Kiedy w ramach jednej grupy zaczną się różnić, to do końca dajemy same zera w bin:masce, bin:IP
+
+- Możemy także skrócić maski podsieci do liczby zgodnych bitów
+
+---
+
+<Callout type="info" emoji="">
+
+ <code>
+      <span style={{ color: 'red' }}>1.1.1.0/24 directly connected</span><br />
+  </code>
+
+</Callout>
+
+Nie ma co tu upraszczać, bo to jest m.in sieć bezpośrednia.
+
+---
+
+<Callout type="info" emoji="">
+
+ <code>
+      <span style={{ color: 'violet' }}>1.2.3.0/30 via Serial0/0</span><br />
+      <span style={{ color: 'violet' }}>1.4.0.4/30 via Serial0/0</span><br />
+  </code>
+
+</Callout>
+
+Patrzymy co jest wspólne w binarce:
+
+```
+1.2... = 00000001.00000010...
+1.4... = 00000001.00000100...
+          ^^^^^^^^ ^^^^^
+                        000...0...
+^ - te same bity
+```
+
+Zgadza się 8+5=13 bitów == maska, pod nie wspolne bity IP wpisujemy 0, a wspolne przepisujemy
+
+> => **1.0.0.0/13 via Serial0/0**
+
+---
+
+<Callout type="info" emoji="">
+
+ <code>
+      <span style={{ color: 'cyan' }}>10.0.23.0/24 via 1.1.1.2</span><br />
+      <span style={{ color: 'cyan' }}>10.4.8.0/21 via 1.1.1.2</span><br />
+  </code>
+
+</Callout>
+
+```
+10.0... = 00001010.00000000...
+10.4... = 00001010.00000100...
+          ^^^^^^^^ ^^^^^
+                        000...0...
+^ - te same bity
+```
+
+Zgadza się 8 + 5 = 13 bitów == maska
+
+> => **10.0.0.0/13 via 1.1.1.2**
+
+---
+
+<Callout type="info" emoji="">
+
+ <code>
+      <span style={{ color: 'green' }}>10.4.8.0/24 via 1.1.1.42</span><br />
+      <span style={{ color: 'green' }}>2.0.0.1/32 via 1.1.1.42</span><br />
+      <span style={{ color: 'green' }}>193.193.65.224/27 via 1.1.1.42</span><br />
+  </code>
+
+</Callout>
+
+Nic tu nie jest wspólne wiec bedzie brama domyslna
+
+> => 0.0.0.0/0 via 1.1.1.42
+
+<Details summary='chwila dla debila:'>
+
+```
+10.4.8.0       = 00001010.00000100.00001000.00000000
+10.3.0.128     = 00001010.00000011.00000000.10000000
+193.193.65.224 = 11000001.11000001.01000001.11100000
+
+^ - te same bity - czyli nic
+```
+
+No nima wiec 0/0
+
+</Details>
+
+---
+
+<Callout type="info" emoji="">
+
+ <code>
+      <span style={{ color: 'orange' }}>10.3.0.128/25 via 1.1.1.3</span><br />
+  </code>
+
+</Callout>
+
+Nie ma co upraszczać, zostaje bez zmian
+
+---
+
+### Problem
+
+Grupowanie w ten sposób może sprawić, że wpisy będą zawierać w sobie wpisy, które wylądowały w innej grupie (a więc miały inny next hop, “via”).
+
+Grupowanie może prowadzić do sytuacji, w której bardziej szczegółowe wpisy są zawarte w szerszych grupach, co może powodować niejednoznaczności w routingu.
+
+Wpis `10.4.8.0/24` via `1.1.1.42` wylądował pierwotnie w grupie 3 (dla routera `1.1.1.42`), natomiast po zgrupowaniu zawiera go grupa `10.0.0.0/13` (bo zgadza się początek). i oznacza, że sieć `10.4.8.0/24` jest osiągalna przez router o adresie `1.1.1.42.`
+
+Grupa `0.0.0.0/0` via `1.1.1.42` zawiera w sobie wszystkie pozostałe grupy.
+
+---
+
+### Rozwiązanie
+
+> **10.4.8.0/24 via 1.1.1.42**
+
+Korzystamy z zasady, że bardziej szczegółowy wpis (z dłuższą maską) jest ważniejszy.
+
+Dlatego też wystarczy z powrotem wyodrębnić ten jeden adres i wszystko będzie działać, bo /24 > /13.
+
+> **0.0.0.0/0 via 1.1.1.42**
+
+Nie ma tu problemu ze względu na tę samą zasadę, z której skorzystaliśmy powyżej - ma maskę /0, a więc najmniej ważną, bo jest trasą domyślną
+
+Ten router i wpis zostaną użyte tylko, jeżeli żaden inny wpis nie będzie pasował, więc chociaż teoretycznie zawiera pozostałe grupy, to w praktyce to bez znaczenia
+
+### Podsumowanie
+
+```bash
+1.1.1.0/24    directly connected
+1.0.0.0/13    via Serial0/0
+10.0.0.0/13   via 1.1.1.2
+10.4.8.0/24   via 1.1.1.42
+0.0.0.0/0     via 1.1.1.42
+10.3.0.128/25 via 1.1.1.3
+```

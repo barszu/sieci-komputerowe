@@ -1,0 +1,63 @@
+import { Callout } from 'nextra/components'
+import { Details } from '../../components/details'
+
+# Co to jest Routing?
+
+- czynność polegająca na kierowaniu drogą przepływu pakietów informacji w sieci - **wyznaczanie odpowiedniej ścieżki**.
+- polega na umożliwieniu routerowi wybranie **następnego skoku** w drodze pakietu do adresata.
+
+<Callout type="warning">
+  Aby 2 urządzenia mogły się ze sobą komunikować, muszą być w tej samej sieci.
+</Callout>
+
+<Callout type="info">
+
+Jeśli nie są, to potrzebne są urządzenia pośredniczące (routery), który przekieruje pakiet do odpowiedniej sieci. - proces przesyłania pakietów między sieciami nazywany jest **routingiem**.
+
+</Callout>
+
+<Details summary='więcej o bramie domyślnej...'>
+
+- host musi mieć skonfigurowany adres `bramy domyślnej`, aby wiedział, gdzie kierować pakiety, których nie może dostarczyć bezpośrednio.
+- da się ją nadpisać zmieniając ustawienia karty sieciowej
+- brama jest w tej samej sieci co host
+- da się znaleźć ją poleceniem `ipconfig` (default gateway)
+- interfejs routera jest hostem w sieci, router może mieć wiele interfejsów
+- router ma tablice routingu, które określają, jakie pakiety kierować do jakich interfejsów
+
+</Details>
+
+## Routing źródłowy
+
+- nadawca określa `listę adresów` IP hostów (`routerów`), przez które pakiet ma przechodzić - adres docelowy jest adresem kolejnego routera, pozostałe adresy gromadzone są w polu "opcje" IP
+- realizuje **strict/loose source routing**
+  - strict - pakiet musi przechodzić przez wszystkie routery z listy
+  - loose - pakiet musi przechodzić przez routery z listy, ale niekoniecznie przez wszystkie
+- wędrujący **pakiet nabywa wiedzę o drodze powrotnej**
+- routery nie muszą znać odległych (nieprzyległych) sieci - **mają tylko przekazywać dalej zgodnie ze wskazaniami pakietu**
+
+**wady:**
+
+- niewygodny
+- ma ograniczony zasięg, bo pole obcje jest skończone
+- rzadko jest wykorzystywany
+- administratorzy sieci często go blokują
+
+## Sieć typu **stub**
+
+Jest to sieć która posiada tylko jedno wyjście na "świat" (ścieżka domyślna)
+
+- większość to sieci końcowe, np. domowe
+- wystarcza w nich jeden wpis, domyślny 0.0.0.0/0.0.0.0 (tylko 1 adres do nielokalnych hostów)
+
+## Pole TTL w nagłówku IP
+
+> Time To Live - czas życia pakietu - ile maksymalnie skoków może wykonać pakiet
+
+- TTL += -1 po przejściu przez router
+- TTL = 0 - pakiet umarł i jest odrzucany
+
+router który go zabił wysyła informację zwrotną do nadawcy (ICMP Time Exceeded) że pakiet nie dotarł do celu i umarł
+
+- TTL zapobiega zapętlaniu pakietów
+- wyznacza maksymalną liczbę routerów na ścieżce między 2 hostami: 255
