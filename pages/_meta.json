@@ -16,22 +16,22 @@
     "display": "hidden"
   },
   "lab3": {
-    "title": "lab 3 podstawy",
+    "title": "lab 3 vlan",
     "type": "page",
     "display": "hidden"
   },
   "lab4": {
-    "title": "lab 4 podstawy",
+    "title": "lab 4 stp",
     "type": "page",
     "display": "hidden"
   },
   "lab5": {
-    "title": "lab 5 ip",
+    "title": "lab 5 ip, arp, podsieci",
     "type": "page",
     "display": "hidden"
   },
   "lab6": {
-    "title": "lab 5 ip",
+    "title": "lab 6 vlsm, dhcp",
     "type": "page",
     "display": "hidden"
   },
