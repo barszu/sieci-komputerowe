@@ -2,7 +2,14 @@ import { Details } from '../../components/details'
 
 # ~Metody autokonfiguracji IPv4 i IPv6:
 
-![dhcp](/lab6/img/img5.webp)
+![img5](/lab6/img/img5.webp)
+
+## DHCP - Dynamic Host Configuration Protocol
+
+- dla IPv4 jest to najpopularniejsza metoda konfiguracji adresów IP, maski, bramy, DNS, itp.
+- dla IPv6 jest to mniej popularne, bo w IPv6 jest już auto-konfiguracja.
+
+[więcej o dhcp ...](./lab6_dhcp)
 
 ## Auto-IP (IPv4)
 
@@ -17,10 +24,6 @@ import { Details } from '../../components/details'
 - sprawdza z użyciem ARP Probe, czy adres jest wolny
   - TAK => to go bierze,
   - NIE => losuje znowu i tak do skutku.
-
-## Link-local (IPv6)
-
-każdy host posiada minimum jeden adres IPv6, powstały przez sklejenie FE80::/10, 54 bitów “0”(reprezentują brak podsieci) i adresu MAC w postaci EUI-64 (MAC rozszerzony do 64 bitów).
 
 ## RARP - Reversed ARP (IPv4)
 
@@ -38,6 +41,14 @@ każdy host posiada minimum jeden adres IPv6, powstały przez sklejenie FE80::/1
 - klient odpowiada za niezawodność połączenia przez retransmisje
 - To w nim zostali wprowadzeni relay agents
 - W przeciwieństwie do RARP pozwala uzyskiwać także dodatkowe informacje (nie tylko IP) oraz używa UDP
+
+---
+
+---
+
+## Link-local (IPv6)
+
+każdy host posiada minimum jeden adres IPv6, powstały przez sklejenie FE80::/10, 54 bitów “0”(reprezentują brak podsieci) i adresu MAC w postaci EUI-64 (MAC rozszerzony do 64 bitów).
 
 ## Stateless Address Autoconfiguration (IPv6)
 

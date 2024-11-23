@@ -1,10 +1,16 @@
+import { Callout } from 'nextra/components'
+
 # jak działa przesyłanie ramek?
 
-[wiecej o tym z rysunkiem... (działanie ARP)](../lab5/lab5_arp_protocol.mdx)
+<Callout type='warning'>
+
+Uwaga jest tutaj wykorzystany: protokół **NAT** (Network Address Translation), **routing**
+
+</Callout>
 
 ![img2](/lab2/img/img2.webp)
 
-1. adres MAC urządzenia docelowego (o ile połączenie wychodzi poza sieć) będzie to adres MAC routera
+1. adres MAC urządzenia docelowego (o ile połączenie wychodzi poza sieć) będzie to adres MAC routera (bramy domyślnej)
 
 ![img3](/lab2/img/img3.webp)
 
@@ -24,32 +30,3 @@
 9. Odczytuje adres IP stwierdza ze to nie on, tylko jakies inne urządzenie z sieci
 10. Enkapsuluje, jako zródłowy MAC daje swój a docelowy MAC serwera
 11. Komputer jest urządzeniem do celowym więc sobie to zabiera i dekapsuuje
-
-# Protokół ARP - Adress Resolution Protocol
-
-> mapuje adresy logiczne (IP) na adresy fizyczne (MAC)
-
-- na podstawie adresów MAC nie definujemy odbiorcow danych, to dzieje sie poza nami z uzyciem ARP ktory wchodzi w sklad IPv4
-- komputer ma tablice ARP ktora adresowi IP przypisuje adres MAC (cachuje to)
-  - w win trzyma to sie 10 min
-  ```bash
-  arp -a
-  ```
-- są wpisy statyczne i dynamiczne
-
-## co jesli komputer jak chce przesłać dane, zna jego adres IP ale nie zna MAC?
-
-![img6](/lab2/img/img6.webp)
-
-1. tworzy rozgłoszeniową ramke
-   - adres zródłowy MAC daje swój
-   - adres docelowy **rozgloszeniowy** MAC (same F) FF-FF-FF-FF-FF-FF
-
-![img7](/lab2/img/img7.webp)
-
-2. kazde urządzenie co odebrało dekapuluje do pakietu i sprawdza czy adress IP był jego
-
-   - jeśli to nie jego to ignoruje
-   - jesli jego to tworzy nową ramke i zapisuje w niej swój MAC zródłowy adres i wysyła
-
-3. Pierwszy komputer zna już adres MAC bo przyszedł z ramką

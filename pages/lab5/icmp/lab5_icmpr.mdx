@@ -1,0 +1,26 @@
+# ICMP Redirect
+
+### Problem:
+
+Host może nie wydajnie przekazywać dane do jakiejś sieci, tzn. używa niepotrzebnie jakiegoś routera,
+który i tak zawsze przekazuje ruch jakiemuś innemu routerowi w tej samej sieci
+
+### Rozwiązanie:
+
+Router wysyła do hosta wiadomość "słabo kierujesz ruchem, lepiej będzie jeśli dla pakietów do sieci X
+użyjesz routera Y"
+
+### A więc:
+
+Gdy router ogarnie, że jest jakieś niewydajne przekierowywanie pakietu w ramach tej samej sieci, co
+host, to informuje go komunikatem ICMP Redirect, o tym że dla pakietów do sieci X lepiej skorzystać z
+innego routera
+
+Aby router wysłał dany komunikat, muszą być spełnione 4 warunki:
+
+1. interface, na który przychodzi pakiet musi być taki sam, jak ten, na który jest on dalej przesyłany
+2. adres źródłowy sieci i podsieci muszą być takie same, jak następnego routera
+3. pakiet nie ma skonfigurowanego routingu źródłowego
+4. router ma włączone wysyłanie redirectów
+
+![img26](/lab5/img/img26.webp)

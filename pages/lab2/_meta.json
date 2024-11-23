@@ -3,6 +3,7 @@
   "topologie": "topologie",
   "urzadzenia": "urzadzenia",
   "lab2_domeny": "domeny kolizyjne, rozgłoszeniowe",
+  "lab2_MAC": "MAC",
   "lab2_ethernet": "Ethernet",
   "lab2_ramka": "ramka Ethernet",
   "lab2_odbieranie_ramek": "odbieranie ramek",

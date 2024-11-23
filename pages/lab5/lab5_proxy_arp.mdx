@@ -1,0 +1,65 @@
+import {Details} from '../../components/details'
+
+# Proxy ARP
+
+> host myśli, że jest w tej samej sieci co odbiorca, ale tak naprawde odbiorca jest w kompletnie innej
+
+> proxy “podstawia” **swój MAC za MAC celu**
+
+Umożliwia ona routerowi (interfejsowi routera) odpowiadać na zapytanie ARP kierowane z jednej dołączonej do niego sieci
+umieszczając informacje o hoście pracującym w drugiej sieci.
+
+- przydatne jeżeli chcemy np. tunelować się do naszej sieci i stwierdzać że w niej jesteśmy
+- proxy arp może być ustawione na routerze (bramie domyślnej), lub może to być osobne urządzenie (ale raczej to jest router)
+
+## Różnica z normalnym ARP
+
+W normalnym ARP, kiedy hosty wiedzą, że są w innej sieci i zaczynają korzystać z routingu i komunikują sie (przez) z bramą domyślna.
+
+Kiedy wiedzą że są w innej sieci? => 'kompletnie' różne adresy IP
+
+Ale nie zawsze tak jest sieci **mogą się różnić jedynie maską, **a komputer zna tylko maske swojej sieci
+
+![img25](/lab5/img/img25.webp)
+
+Dla komputera A komputer B jest w tej samej sieci, bo adres 199.120.10.130 to adres hosta : 199.120.10.1-254
+
+Więc nie będzie korzystał z bramy domyślnej tylko bedzie odpytywał ARP o adres 199.120.10.130, i nie dostanie odpowiedzi bo B jest w innej sieci
+
+Jeżeli na routerach włączymy proxy ARP to router odpowie na zapytanie ARP, udając że jest hostem B (poda swój MAC) okłamując hosta A
+
+Pakiet IP zostanie wysłany do routera (rzekomego hosta B) a router przekieruje go do prawdziwego hosta B
+
+## Działanie
+
+1. Komputer A wysyła zapytanie ARP do komputera B (wierzy błędnie, że są w tej samej sieci)
+2. Router z włączonym proxy ARP odpowiada na zapytanie ARP, udając że jest komputerem B
+3. Router znajduje u siebie w tablicy ARP adres docelowy (zaużmy) i zwraca swój MAC jako odpowiedź (że niby komp B ma ten MAC)
+4. A teraz myśli że komunikuje się bezpośrednio z B ale tak na prawdę rozmawia z routerem
+
+## Zalety
+
+- ukrywa istnienie wielu sieci (oba hosty mogą korzystać z tego samego adresu sieci)
+
+<Details summary="debil:">
+  pozwala hostom w różnych sieciach komunikować się tak, jakby były w tej samej
+  sieci. Router odpowiada na zapytania ARP, udając, że jest docelowym hostem, co
+  ukrywa złożoność sieci przed hostami.
+</Details>
+
+- umożliwia komunikację **źle skonfigurowanym hostom**
+- umożliwia komunikację **hostom nieobsługującym podsieci**
+- można włączyć **bez naruszania tablic routingu**
+
+## wady
+
+- skalowalność (wymaga **ustawienia proxy'ego dla każdego urządzenia**)
+- nie działa dla niektórych topologii (np. 2 routery łączące 2 fizyczne sieci)
+- brak mechanizmów niezawodności (brak planu B, jeżeli proxy padnie)
+- zwiększenie stopnia skomplikowania sieci
+- źle skonfigurowany router-proxy może zablokować ruch (bo gromadzi pakiety jako proxy, ale nie umie ich z jakiegoś powodu wysłać)
+- ukrywanie złej konfiguracji hostów
+- zwiększa ruch ARP
+- hosty muszą posiadać większe tablice ARP
+- bezpieczeństwo (np. można podszyć się pod cudzy adres)
+- nie działa w sieciach nieużywających ARP

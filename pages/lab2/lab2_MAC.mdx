@@ -1,0 +1,30 @@
+# MAC - Media Access Control - adres fizyczny
+
+![img35](/lab1/img/img35.webp)
+
+- nadawany na etapie produkcji karty sieciowej zapisany w pamieci ROM (mozna z niej tylko czytac)
+- odnajdywanie hostow w sieciach LAN - komputer musi być w tej samej sieci co serwer aby znać adres MAC
+- _Media Access Control to protokół!_
+- switche wykorzystują do komunikacji, mają MAC tablice: port_urzadzenia:MAC
+
+Wykorzystywany w :
+
+- **Ethernet**, ...
+- Protokół **ARP** - Address Resolution Protocol - przypisanie adresu IP do adresu MAC
+
+## indentyfikator producenta
+
+> 3 starsze bajty (po lewej):
+
+> **OUI** (Organizacyjnie Unikalny Identyfikator)
+
+- przydzielany producentowi przez IEEE (Institute of Electrical and Electronics Engineers)
+
+- Jeśli drugi najmłodszy bit najstarszego bajtu (bit 2) jest ustawiony na 1, to adres MAC jest zarządzany lokalnie przez administratora (jak są kolizje to jego wina)
+
+## indentyfikator karty
+
+> 3 młodsze bajty (po prawej):
+
+- unikalne dla urządzenia (Network Interface Controller specific)
+- producent / administrator sieci ustala, jak chce

@@ -1,0 +1,23 @@
+# Program PING (Packet InterNet Groper)
+
+Korzysta z komunikatów ICMP typów 0 i 8 (`echo reply`, `echo request`), sprawdza:
+
+- czy host jest osiągalny
+- czas podróży pakietu
+- liczba zgubionych i zdublowanych pakietów
+
+Działanie:
+
+1. Komputer A tworzy ramke ECHO REPLY ICMP i wysyła do B:
+
+| type | code | data                                   |
+| ---- | ---- | -------------------------------------- |
+| 8    | 0    | process ID (proces PING z komputera A) |
+
+2. Komputer B odbiera i odpowiada ramką ECHO REPLY ICMP:
+
+| type | code | data                                   |
+| ---- | ---- | -------------------------------------- |
+| 0    | 0    | process ID (proces PING z komputera A) |
+
+![img21](/lab5/img/img21.webp)
