@@ -1,0 +1,17 @@
+# ICMP router discovery (IRDP)
+
+## Router Solicitation
+
+komunikat używany przez hosty (komputery lub inne urządzenia) do odkrywania routerów w sieci lokalnej.
+Host wysyła żądanie (solicitation) do wszystkich routerów w sieci, prosząc o przesłanie informacji o sobie.
+Routery odpowiadają na to żądanie poprzez `Router Advertisement`, dostarczając hostowi niezbędne informacje, takie jak adresy IP routerów i inne parametry konfiguracyjne.
+
+> **host przy podłączeniu** się wysyła na adres multicastowy 224.0.0.2 komunikat ICMP “Router Solicitation”
+
+## Router Advertisement
+
+Każdy router wspierający protokół IRDP wysyła w regularnych odstępach czasu
+komunikaty Router Advertisement w celu poinformowania o swojej obecności w podsieci.
+
+Dodatkowo komunikat Router Advertisement jest wysyłany jako odpowiedź na zapytanie
+komunikatem Router Solicitation

@@ -4,15 +4,15 @@ import { Details } from '../../components/details'
 
 ## HOST
 
-urządzenie z przypisanym IP, jego zadaniem jest odbieranie i wysylanie danych od/do innych urządzeń
+> urządzenie z przypisanym IP, jego zadaniem jest odbieranie i wysylanie danych od/do innych urządzeń
 
 ## SERWER
 
-'komputer' oferujący usługi jak strony www, poczta, wymiana plików z innym 'komputerem'
+> 'komputer' oferujący usługi jak strony www, poczta, wymiana plików z innym 'komputerem'
 
 ## PROTOKÓŁ KOMUNIKACYJNY
 
-sposob komunikacji i wymiany danych okreslajacy reguly i zasady tej komunikacji
+> sposob komunikacji i wymiany danych okreslajacy reguly i zasady tej komunikacji
 
 (debil: jak interpretowac binarke)
 
@@ -37,47 +37,29 @@ Przykłady protokołów:
 
 ## Medium Transmisyjne
 
-po czym przesylane jest fizycznie (np. swiatlowod, fale radiowe)
+> po czym przesylane jest fizycznie (np. swiatlowod, fale radiowe)
 
 ## INTERNET
 
-zbiór sieci rozległych stanowiących globalna sieć
+> zbiór sieci rozległych stanowiących globalna sieć
 
 **Intranet** - prywatna sieć
 
 **Extranet** - intranet ++
 
-## DNS - Domain Name System
+## DNS - Domain Name System/Server
 
-zamienia domeny (nazwy mnemoniczne) na adresy IP
+> zamienia domeny (nazwy mnemoniczne) na adresy IP
 
 ## DHCP - Dynamic Host Configuration Protocol
 
-protokół automatycznej konfiguracji ustawień sieci przydzielający hostom adresy IP, maski podsieci i adresy bram (gateway)
+> protokół automatycznej konfiguracji ustawień sieci przydzielający hostom adresy IP, maski podsieci i adresy bram (gateway)
 
-## adres MAC - Media Access Control address - adres fizyczny
+## MAC - Media Access Control - adres fizyczny
+
+> 'stale' nadany intentifikator urządzenia sieciowego (w sieci lokalnej)
 
 ![img35](/lab1/img/img35.webp)
-
-- nadawany na etapie produkcji karty sieciowej zapisany w pamieci ROM (mozna z niej tylko czytac)
-- odnajdywanie hostow w sieciach LAN - komputer musi być w tej samej sieci co serwer aby znać adres MAC
-- _Media Access Control to protokół!_
-- switche wykorzystują do komunikacji, mają MAC tablice: port_urzadzenia:MAC
-
-3 starsze bajty (po lewej):
-
-- **OUI** (Organizacyjnie Unikalny Identyfikator) - przydzielany producentowi przez IEEE
-- Jeśli drugi najmłodszy bit najstarszego bajtu (bit 2) jest ustawiony na 1, to adres MAC jest zarządzany lokalnie przez administratora (jak są kolizje to jego wina)
-
-3 młodsze bajty (po prawej):
-
-- unikalne dla urządzenia (Network Interface Controller specific)
-- producent / administrator sieci ustala, jak chce
-
-Wykorzystywany w :
-
-- **Ethernet**, ...
-- Protokół **ARP** - Address Resolution Protocol - przypisanie adresu IP do adresu MAC
 
 ## DTE - Data **Terminal** Equipment
 
@@ -115,3 +97,9 @@ Konstruowane jest zgodnie z normami 568-C.0 i TIA 568-C.1 w oparciu o topologie 
 
 topologia gwiazdy: układ sieci, gdzie mamy centralne urządzenie (punkt dystrybucyjny, np. switch lub
 hub) z którego wyprowadza się połączenia do innych urządzeń np. komputerów.
+
+## Default gateway - brama domyślna
+
+> adres `IP interfejsu routera`, do którego komputery wysyłają pakiety, jeżeli ich odbiorca jest poza siecią lokalną.
+
+Jest częścią podstawowej konfiguracji hosta (więc zna ją np. od serwera DHCP, dostaje ją razem ze swoim IP)

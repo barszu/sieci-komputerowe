@@ -31,7 +31,12 @@
     "display": "hidden"
   },
   "lab6": {
-    "title": "lab 6 vlsm, dhcp",
+    "title": "lab 6 vlsm, routing",
+    "type": "page",
+    "display": "hidden"
+  },
+  "lab7": {
+    "title": "lab 7 dhcp",
     "type": "page",
     "display": "hidden"
   },
@@ -63,6 +68,10 @@
       "06-lab": {
         "title": "lab 6",
         "href": "/lab6"
+      },
+      "07-lab": {
+        "title": "lab 7",
+        "href": "/lab7"
       }
     }
   }

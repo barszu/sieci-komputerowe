@@ -1,35 +1,49 @@
 import { Callout } from "nextra/components";
+import {Details} from "../../components/details";
 
-# ARP Protocol
-
-<Callout>
-  Wysyłanie pakietu odbywa się po warstwie 2, np. adresem MAC w Ethernecie,
-  <br />a pakiet IP wysyłamy na adres IP, nie znając docelowego adresu MAC.
-</Callout>
+# Protokół ARP - Adress Resolution Protocol
 
 <Callout type="info">
-  Dynamiczne mapowanie adresów IP (warstwy 3) na adresy MAC (warstwy 2) => ARP
-  (Address Resolution Protocol).
+
+Dynamiczne mapuje adresy logiczne IP (warstwy 3) na adresy fizyczne MAC (warstwy 2) <br/>
+Potrzebne jeśli nie znamy adresu MAC, ale znamy IP w sieci lokalnej
+
 </Callout>
 
 <Callout type="success">
-  ARP działa poprzez wysyłanie zapytania ARP (ARP Request) do wszystkich
-  urządzeń w sieci lokalnej. <br />
-  Urządzenie, które posiada dany adres IP, odpowiada zapytaniem ARP (ARP Reply),
-  podając swój adres MAC. <br /> Informacja o adresie MAC jest zapisywana w tablicy
-  ARP.
-</Callout>
+  ARP działa poprzez wysyłanie pakiety ARP (ARP Request) do wszystkich urządzeń w sieci lokalnej. (broadcast) <br />
+  Urządzenie, które posiada dany adres IP, odpowiada zapytaniem ARP (ARP Reply), podając swój adres MAC. (unicast)<br />
 
-jeżeli hosty są w tej samej sieci, to nie ma problemu, jak nie to możliwe, że trzeba dodatkowych mechanizmów, np. Proxy ARP
+Informacja o adresie MAC jest zapisywana w tablicy ARP.
+
+</Callout>
+<Details summary="pakiet czy ramka ARP ?">
+
+`Ramka ARP` odnosi się do jednostki danych, która jest przesyłana przez sieć i zawiera nagłówek Ethernet oraz ładunek ARP. W przypadku Ethernetu, ramka ARP ma typ EtherType ustawiony na 0x0806, co identyfikuje ją jako ramkę ARP.
+
+`Pakiet ARP` to termin, który może być używany do opisania samego ładunku ARP (czyli zapytania lub odpowiedzi), ale w kontekście sieciowym bardziej poprawne jest mówienie o ramkach.
+
+</Details>
+
+<Callout type='error' emoji='❗'>
+
+ARP służy tylko do odpytania o `MAC` (znając IP) hostów z `sieci lokalej` (nie wychodzi poza router) <br/>
+\- jeżeli hosty są w tej samej sieci, to nie ma problemu, <br/>
+\- `jak nie to trzeba użyć routowania`, lub Proxy ARP
+
+</Callout>
 
 Adres IP służy do odnalezienia (przynależność) hosta w sieci, MAC indentyfikuje samo urządzenie
 
-## Działanie ogólnie
+O ARP ...
+
+- jest protokołem warstwy 3 (sieciowej), ale działa na warstwie 2 (łącza danych) bo używamy MAC z warstwy 2 do wysyłania ramek z **pakietami ARP** wewnątrz. <br />
+- działa dla IPv4 i jest dodatkowym protokołem, a w IPv6 jest wbudowany NDP (Neighbor Discovery Protocol)
+- generuje dodatkowy ruch w sieci, ale jest niezbędny do poprawnego działania sieci przy dynamicznych wpisach w tablicy ARP
+
+## Działanie komunikacji z ARP
 
 ![img24](/lab5/img/img24.webp)
-
-_wydaje mi się że jeśli są w różnych sieciach to jest potrzebny proxy ARP ? => TODO sprawdz_
-_bo wtedy router klamie z MAC_
 
 ## Tablica ARP, IP : MAC
 
@@ -38,6 +52,10 @@ _bo wtedy router klamie z MAC_
 - adresy są odczytywane z zapytań oraz z odpowiedzi ARP
 - wpisy mają **czas życia**, są dynamicznie tworzone i kasowane
 - można stworzyć **wpisy statyczne**, np. dla większego bezpieczeństwa
+- na win trzyma sie 10s, można sprawdzić komendą:
+  ```bash
+  arp -a
+  ```
 
 ![img17](/lab5/img/img17.webp)
 
@@ -55,13 +73,30 @@ _bo wtedy router klamie z MAC_
 
 1. Komputer A szukający komputera B zna jego adres IP. Tworzy ramkę Ethernet z zapytaniem ARP (o MAC) (o ile nie ma go w tablicy ARP):
 
+> adres zródłowy: `MAC_A` , `IP_A` <br/>
+> adres docelowy: broadcast MAC (same F) `FF-FF-FF-FF-FF-FF` , `IP_B`
+
+![img6](/lab2/img/img6.webp)
+
+<Details summary="budowa ramki ARP">
+
 ![img18](/lab5/img/img18.webp)
+
+</Details>
 
 2. Ramka ARP jest `broadcastowana` do wszystkich hostów w sieci lokalnej:
 
+> każdy host dekapsuluje ramkę i sprawdza (interpretuje pakiet ARP), czy adres IP jest jego, jeśli nie to ignoruje
+
 3. Komputer B odbiera ramkę i tworzy ramkę Ethernet z odpowiedzią ARP: (podaje swój MAC)
 
-![img19](/lab5/img/img19.webp)
+![img7](/lab2/img/img7.webp)
+
+<Details summary="budowa ramki ARP">
+
+![img18](/lab5/img/img19.webp)
+
+</Details>
 
 Różnice względem poprzedniej ramki:
 
@@ -72,73 +107,37 @@ Różnice względem poprzedniej ramki:
 
 4. Komputer A odbiera ramkę ARP i zapisuje adres MAC komputera B w swojej tablicy ARP
 
-## Działanie w różnych sieciach
+## Komunikacja hostów w różnych sieciach
 
-**Brama domyślna** (sieciowa, `default gateway`) - adres **IP routera**, do którego komputery wysyłają pakiety, jeżeli ich odbiorca jest poza siecią lokalną. Jest częścią podstawowej konfiguracji hosta (więc zna ją np. od serwera DHCP, dostaje ją razem ze swoim IP)
+<Callout type='warning'>
+
+**Wykorzystujemy tu routing!** To jest tylko symulacja komunikacji `nie ARP` !
+
+</Callout>
 
 1. Komputer A porównuje sieci swoją i docelową.
 
-- Są różne - tworzy więc zapytanie ARP do bramą domyślnej A. - jeśli nie zna jej MAC
+> Są różne - tworzy więc zapytanie ARP do bramą domyślnej A. - jeśli nie zna jej MAC
 
-2. Wysyła ramkę do routera A
-3. Router A tworzy odpowiedź ARP ze swoim MAC i odsyła do A.
-4. Komputer A wysyła ramkę z pakietem IP do routera A.
-5. Router dekapsuluje ramkę, sprawdza adres IP komputera B. - i Nie zna MAC_B
+2. Komputer A będzie komunikował się ze swoją **bramą domyślną** - interfejs routera A
 
-- Gdyby było więcej routerów po drodze, to punkt 5 składałby się z ciągu zapytań i odpowiedzi między routerami po drodze.
+> **musi znać MAC bramy domyślnej**, bo to ona przekieruje pakiet do odpowiedniej sieci
+
+> komputer musi mieć skonfigurowany adres IP bramy domyślnej, MAC jej może sie zmieniać z czasem, inaczej nie będzie działać
+
+- jeśli **nie zna MAC bramy domyślnej**, to pyta się używając ARP (brodcastem)
+- Router A tworzy odpowiedź ARP ze swoim MAC i odsyła do A.
+
+3. Komputer A wysyła ramkę z pakietem IP do routera A.
+4. Router dekapsuluje ramkę, sprawdza adres IP komputera B. - i Nie zna MAC_B zaużmy
+
+> Gdyby było więcej routerów po drodze, to ten punkt składałby się z ciągu zapytań i odpowiedzi między routerami po drodze.
 
 6. Router tworzy zapytanie ARP do B (trzymając oryginalny pakiet od A w sobie).
 7. Komputer B dostaje zapytanie od routera B (od swojej strony) i odsyła mu odpowiedź ze swoim adresem MAC
 8. Router A dostaje MAC_B. Tworzy ramkę Ethernet z tym adresem oraz oryginalnym pakietem IP od A i wysyła go do komputera B.
 
-[wiecej o tym z rysunkiem... (jak działa przesyłanie ramek?)](../lab2/lab2_koncentrat2.md)
-
-## Proxy ARP
-
-- wybór proxy device jako pośrednika w przekazywaniu informacji do innej sieci
-- proxy “podstawia” **swój MAC za MAC celu** (tzn. tego IP, do którego chce się wysłać pakiet), a potem sam przesyła pakiety dalej
-- przydatne jeżeli chcemy np. tunelować się do naszej sieci i stwierdzać że w niej jesteśmy
-- proxy arp może być ustawione na routerze
-
-### Różnica z normalnym ARP
-
-- w normalnym ARP, hosty wiedzą, że są w innej sieci i wysyłają zapytanie ARP do bramy domyślnej (debil: routera)
-- tutaj zapytanie nie jest kierowane do bramy tylko do proxy, które udaje, że jest celem w tej samej sieci
-
-### Działanie
-
-1. Komputer A wysyła zapytanie ARP przez bramę domyślną do komputera B (wierzy błędnie, że są w tej samej sieci)
-2. Router znajduje u siebie w tablicy ARP adres docelowy (zaużmy) i zwraca swój MAC jako odpowiedź (że niby komp B ma ten MAC)
-3. A teraz myśli że komunikuje się bezpośrednio z B ale tak na prawdę rozmawia z routerem
-
-### zalety
-
-- ukrywa istnienie wielu sieci (oba hosty mogą korzystać z tego samego adresu sieci)
-
-import { Details } from "../../components/details";
-
-<Details summary="debil:">
-  pozwala hostom w różnych sieciach komunikować się tak, jakby były w tej samej
-  sieci. Router odpowiada na zapytania ARP, udając, że jest docelowym hostem, co
-  ukrywa złożoność sieci przed hostami.
-</Details>
-
-- umożliwia komunikację źle skonfigurowanym hostom
-- umożliwia komunikację hostom nieobsługującym podsieci
-- można włączyć bez naruszania tablic routingu
-
-### wady
-
-- skalowalność (wymaga **ustawienia proxy'ego dla każdego urządzenia**)
-- nie działa dla niektórych topologii (np. 2 routery łączące 2 fizyczne sieci)
-- brak mechanizmów niezawodności (brak planu B, jeżeli proxy padnie)
-- zwiększenie stopnia skomplikowania sieci
-- źle skonfigurowany router-proxy może zablokować ruch (bo gromadzi pakiety jako proxy, ale nie umie ich z jakiegoś powodu wysłać)
-- ukrywanie złej konfiguracji hostów
-- zwiększa ruch ARP
-- hosty muszą posiadać większe tablice ARP
-- bezpieczeństwo (np. można podszyć się pod cudzy adres)
-- nie działa w sieciach nieużywających ARP
+[wiecej o tym z rysunkiem... (jak działa internet - przesyłanie ramek?)](../lab2/lab2_przesylanie_ramek)
 
 ## GRRP - Gratuitoous ARP - ARP bez pytania
 
