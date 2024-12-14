@@ -1,0 +1,143 @@
+import { Details } from "../../components/details";
+
+# Routing Information Protocol v1
+
+- co `30 sekund` routery wysyłają `broadcastem RIP response` - informacje do sąsiadów
+- `metryka - liczba hopów` (routerów po drodze do sieci) - `maksymalnie 15`
+- **czas życia wpisu w tablicy routingu to 180 s**
+- pakiety RIP są enkapsulowane w polu danych `datagramu UDP` (warstwy 4!), a dopiero potem w polu danych pakietu IP
+- pakiety wysyłane z portu i na port `520 UDP, broadcastem`, zawierają dane o wszystkich sieciach znanych routerowi
+- kiedy nowy router podłącza się do sieci, wysyła `broadcastem RIP request` i w ten sposób dostaje od sąsiadów ich tablice routingu
+
+## Wady
+
+- pakiety są po 24 B, ale mają dużą część pustą (marnują to miejsce)
+- wolna zbieżność - `30 sekund` na zmianę topologii sieci
+- `zliczanie do nieskończoności` - jeśli router nie zna drogi do jakiejś sieci, to ustawia metrykę na `16` (maksymalna wartość | infinity) i przesyła ją dalej
+- protokół klasowy, `nie obsługuje VLSM`
+- **generuje dużo ruchu**
+- `nie ma autoryzacji i zabezpieczeń `
+- limit maksymalnej rozległości sieci - `max 15 skoków`
+- nie bierze pod uwagę obciążenia, przepustowości sieci
+
+<Details>
+
+`Decyzja:` wolniejsza droga przez 1 router lub szybsza przez 2 routery
+
+> RIPv1 wybierze pierwszą
+
+</Details>
+
+- co 30s spada wydajność sieci przez wymianę informacji przez routery
+- broadcast nie jest dobry np. dla dużych sieci
+- w sieciach niejednorodnych przez prostą metrykę działa bardzo słabo
+
+## Zliczanie do nieskończoności
+
+> w RIP v1 czy v2 odległość `16` oznacza `nieskończoność`, a 15 to maksymalna osiągalna
+
+import { Callout } from 'nextra/components';
+
+<Callout type="error" emoji="❗">
+  -> router nie jest świadomy, że może być częścią trasy biegnącej przez niego samego.
+</Callout>
+
+import Carousel from '../../components/carousel'
+
+<Carousel>
+
+![inf](/lab8/slides2/slide1.jpg)
+
+<div>
+
+![inf](/lab8/slides2/slide2.jpg)
+
+Przez 180 sekund router B nie dostanie wiadomości od A i usunie wpis o nim ze swojej tablicy routingu. Uznaje przez ten czas, że odległość między nim a A to nieskończoność (jak w przypadku każdego nieznanego routera). Po 30 sekundach poinformuje o tym router C.
+
+</div>
+
+<div>
+
+![inf](/lab8/slides2/slide3.jpg)
+
+Podczas tych 30 sekund jednak może przyjść informacja od routera C, który dalej sądzi, że
+z routerem A jest dalej wszystko w porządku. C mówi B, że “odległość od C do A to 2”.
+Router B `nie jest świadomy, że jest częścią takiej trasy`. Porównuje odległości: od B do A
+jest nieskończoność, od C do A jest 3 (2 do C + 1 za łącze B-C). Wpisuje więc do swojej
+tablicy routingu, że odległość przez C do A to 3.
+
+</div>
+
+<div>
+
+![inf](/lab8/slides2/slide4.jpg)
+
+Router B w końcu wysyła wiadomość do C. C nadal uważa, że może dostać się do A przez
+B. Nie interesuje go, że odległość jest gorsza, niż była (bo było 2, teraz jest 4), bo z
+perspektywy C to jedyny sposób na dostanie się do A. C aktualizuje więc swój wpis:
+odległość przez B do A to 4.
+
+No i tak w 'nieskończoność' ...
+
+</div>
+
+</Carousel>
+
+## Zapobieganie zliczaniu do INF
+
+import { Steps } from 'nextra/components';
+
+<Steps>
+
+### górne ograniczenie na odległość
+
+> narzuca się maksymalną liczbę hopów, np. 15 dla RIPa
+
+- kiedy router dostanie wiadomość z odległością 15, to odrzuca
+- wada - wykrycie anomalii zajmuje bardzo dużo czasu - pesymistycznie aż 16 \* 30 s = 8 minut!
+
+### Split Horizon
+
+> nie odsyłamy informacji do tego, od kogo ją dostaliśmy
+
+- nie wysyła się informacji o dostępności danej sieci w kierunku tego routera, przez który prowadzi najlepsza trasa do tej sieci.
+- zmniejsza prawdopodobieństwo zliczania do nieskończoności, ale go nie eliminuje
+
+### Poison Reverse
+
+> modyfikacja dzielonego horyzontu, gdzie zamiast nie informować z powrotem, odsyłamy taką informację, ale z odległością `ustawioną na INF`
+
+<Details summary="przykład..." >
+
+Przykład: router Z wysyła pakiety do X przez router Y, dystanse na rysunku
+
+![poison reverse](/lab8/img/img3.jpg)
+
+Zwiększamy koszt ścieżki między Z a Y:
+
+![poison reverse](/lab8/img/img4.jpg)
+
+Nastąpiłoby tutaj zliczanie do nieskończoności, bo Y nie widzi, że jest częścią ścieżki między Z a X.
+
+Teraz następuje zatruwanie, gdy Z wysyła wiadomość do swoich sąsiadów. Y widzi, że
+koszt do Z wzrósł do 1000 (połączenie zostało zatrute), więc za chwilę dostanie wiadomość
+od X o lepszej drodze do Z i jej użyje.
+
+</Details>
+
+### Holddown
+
+> czeka (zwykle 60s) jeśli dostanie informację, że sieć jest niedostępna, po upłynięciu licznika wpis dla danej sieci jest usuwany
+>
+> - jeżeli się znowu odezwie to **OK**
+> - jeżeli dostanie od innego routera z lepszą trasą to **zmienia** trase (dla gorszych ignoruje)
+
+### wymuszone odświeżanie
+
+> Router wysyła informację o niedostępności sieci (pakiet RIP) natychmiast, nie czekając na moment regularnego powiadomienia
+
+- de facto nie przeciwdziała zliczaniu do nieskończoności, ale przyspiesza zbieżność
+- “natychmiast” to często kilka sekund, żeby nie zalać sieci takimi komunikatami
+- wysyła się tylko informację o zmianach
+
+</Steps>
