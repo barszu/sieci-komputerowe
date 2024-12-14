@@ -1,0 +1,120 @@
+import {Details} from '../../components/details';
+import {Callout, Steps} from 'nextra/components';
+
+# Metryka, wektor odległości
+
+> wartość liczona przez protokół routingu, określająca jakość trasy pomiędzy dwoma punktami
+
+Może być to (w zależności od protokołu):
+
+- liczba hopów : **RIR** = 15
+- przepustowość łącza : **EIGRP**
+- obciążenie łączy : **EIGRP**
+- niezawodność łączy : **EIGRP**
+- koszt łączy : **OSPF**
+
+<Details summary='więcej o tych metrykach...'>
+
+<Steps>
+### RIP
+
+- liczba hopów
+- maksymalnie 15 hopów
+- metryka = 1
+
+### EIGRP
+
+- przepustowość
+- opóźnienie
+- niezawodność
+- obciążenie
+- metryka = 1 / przepustowość + opóźnienie + niezawodność + obciążenie
+
+### OSPF
+
+- koszt łącza
+- metryka = koszt łącza
+
+</Steps>
+
+</Details>
+
+## Zbieżność metryki
+
+> **gwarancja**, że po pewnym czasie t (czasie zbieżności) będzie stan ustalony. Ważne np. przy zmianie topologii.
+
+<Callout type="info" emoji="ℹ️">
+  Szybko zbieżny = małe t = lepiej
+</Callout>
+
+<Callout>
+  `Stan ustalony` - stan sieci, w którym wszystkie routery mają taki sam obraz sieci. (widzą takie same trasy)
+</Callout>
+
+# Distance Vector Routing Algorithm
+
+> używamy tu algorytmu Bellmana-Forda (dystans-wektor) | ze źródła do wszystkich wierzchołków (jak Dijkstra)
+
+<Details summary='więcej o Bellmana-Ford...'>
+
+```python
+def bellman_ford(graph, source):
+    distance = [float('inf') for _ in range(len(graph))]
+    distance[source] = 0
+
+    for k in range(len(graph) - 1): # relaksacja, dla trasy o długości k
+        for u in range(len(graph)):
+            for v, w in graph[u]:
+                if distance[u] + w < distance[v]:
+                    distance[v] = distance[u] + w
+
+    return distance
+
+```
+
+</Details>
+
+Router regularnie wysyła wszystkim swoim sąsiadom informacje na temat każdej dostępnej, znanej sobie sieci:
+
+<Steps>
+### **dystans** - jak daleko do niej jest
+ 
+- czas podróży
+- liczba przeskoków
+- koszt przesyłu
+ 
+### **wektor** - jak można się do niej dostać
+ 
+- zwykle: "wyślij do mnie bo ja wiem jak to przesłać dalej"
+- inny router, rzadko spotykane
+</Steps>
+
+## Właściwości
+
+<Steps>
+
+### rozproszony
+
+każdy router wysyła swoje informacje tylko do bezpośrednich sąsiadów
+
+### iteracyjny
+
+występuje w kolejnych iteracjach, aż nastąpi brak wymiany informacji
+
+### asynchroniczny
+
+każdy router działa niezależnie od innych
+
+### zbieżny
+
+po pewnym czasie (t) (liczbie kroków) stan będzie stan ustalony (wszyscy mają takie same trasy)
+
+</Steps>
+
+<Callout type="warning" emoji="⚠️">
+
+W zależności od protokołu bedzię inna wartość odległości bezpośredniej
+
+</Callout>
+
+## Przykład działania
