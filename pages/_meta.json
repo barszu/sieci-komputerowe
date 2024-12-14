@@ -40,6 +40,11 @@
     "type": "page",
     "display": "hidden"
   },
+  "lab8": {
+    "title": "lab 8 RIP",
+    "type": "page",
+    "display": "hidden"
+  },
 
   "menu": {
     "title": "Rozdziały",
@@ -72,6 +77,10 @@
       "07-lab": {
         "title": "lab 7",
         "href": "/lab7"
+      },
+      "08-lab": {
+        "title": "lab 8",
+        "href": "/lab8"
       }
     }
   }

@@ -1,0 +1,46 @@
+# Routing dynamiczny
+
+[Więcej o routing dynamiczny...](lab6/lab6_tablica_routingu/#routing-dynamiczny)
+
+- routery współdzielą informacje o znanych sobie sieciach.
+- dostosowuje zawartość tablicy routingu do zmian w topologii sieci
+- informacje i ich wymiana są utrzymywane przez protokół
+
+### zalety:
+
+- **zawartość tablic routingu jest na bieżąco dostosowywana do warunków w sieci**
+- skalowalność - łatwo dodawać nowe routery
+- łatwość konfiguracji (w stosunku do wielkości sieci) i stosowanej metryki
+
+### wady:
+
+- `obciąża sieć` informacjami potrzebnymi protokołowi routingu
+- bezpieczeństwo - informacje można podsłuchać
+- ciężko skonfigurować pracę między różnymi protokołami
+- większa złożoność działania sieci, protokoły są skomplikowane
+
+![routing dynamiczny](/lab8/img/img1.webp)
+
+## Protokoły wewnęrzne:
+
+- stosowane wewnątrz jednej domeny administracyjnej
+- proste, mało obciążają routery
+- mało skalowalne
+
+import { Callout } from 'nextra/components';
+
+<Callout type="info" emoji="📡">
+  **RIP** - Routing Information Protocol <br />
+  **OSPF** - Open Shortest Path First
+</Callout>
+
+## Protokoły zewnętrzne:
+
+- wymiana informacji między niezależnymi administracyjnie sieciami
+- skalowalne
+- złożone, obciążające routery, wymagają przesyłu dużej ilości dodatkowych informacji
+
+<Callout type="info" emoji="🌐">
+  **BGP** - Border Gateway Protocol <br />
+  **EGP** - Exterior Gateway Protocol
+</Callout>

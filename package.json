@@ -8,6 +8,9 @@
     "start": "next start"
   },
   "dependencies": {
+    "embla-carousel": "^8.5.1",
+    "embla-carousel-autoplay": "^8.5.1",
+    "embla-carousel-react": "^8.5.1",
     "next": "^15.0.2",
     "nextra": "2.13.4",
     "nextra-theme-docs": "2.13.4",

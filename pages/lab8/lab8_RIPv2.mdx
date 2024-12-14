@@ -1,0 +1,34 @@
+import { Callout } from 'nextra/components';
+
+# RIPv1 vs RIPv2
+
+<Callout type="success" emoji="✅">
+  RIPv2 to rozszerzenie RIPv1, które dodaje m.in dodatkowe informacje do pakietów.
+</Callout>
+
+<Callout type="warning" emoji="⚠️">
+  RIPv2 do rozgłaszania używa adresu multicastowego `224.0.0.9`, 
+  
+  - zmniejsza to obciążenie sieci;
+  - nie trzeba ich też routować, bo dotyczą tylko sieci lokalnej
+</Callout>
+
+<Callout type="error" emoji="🔒">
+  RIPv2 pozwala na użycie 20-bajtowego hasła używającego MD5
+</Callout>
+
+<Callout type="info" emoji="ℹ️">
+  RIPv2 nie eliminuje wszystkich wad RIPv1, a w szczególności:
+
+- ryzyko zliczania do nieskończoności
+- prosta metryka
+
+</Callout>
+
+![RIPv1](/lab8/img/img5.jpg)
+
+> pakiety mają dodatkowe informacje tam, gdzie w v1 były puste miejsca:
+>
+> - maska podsieci
+> - numer domeny routingu - usunięty w RFC 1721
+> - adres następnego routera (next hop)
