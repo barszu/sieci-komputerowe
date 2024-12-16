@@ -1,0 +1,51 @@
+import Carousel from '../../../components/carousel'
+
+# DR - Designated Router
+
+> Routery komunikują się głównie z DR, zamiast każdy z każdym (optymalizacja)
+
+- występuje wersja jako **Backup Designated Router** (BDR)
+- **DR i BDR nie występują na połączeniach punkt-punkt**
+
+### Funkcje DR:
+
+- Zbiera informacje o stanie łącza (LSA) od wszystkich routerów w sieci.
+- Rozsyła zebrane informacje do pozostałych routerów.
+- Zapewnia spójność topologii sieci.
+
+### Wybór DR:
+
+- najwyższy priorytet OSPF + RID - (identyfikator routera )
+- Backup Designated Router (BDR) przejmuje rolę DR w przypadku jego awarii.
+
+### metryka
+
+| Źródło          | Cel             | Koszt komunikacji |
+| --------------- | --------------- | ----------------- |
+| DR              | Normalny router | 0                 |
+| Normalny router | DR              | (wynika z sieci)  |
+
+### Działanie DR
+
+<Carousel>
+<div>
+
+![slide1](/lab9/slides5/slide1.jpg)
+
+połączenie padło, router skrajnie lewy informuje reszte, na środku jest hub
+
+</div>
+
+<div>
+
+![slide1](/lab9/slides5/slide2.jpg)
+
+wszystkie oprócz DR ignorują, DR przechwyci to i przekaże innym a oni odbiorą
+
+</div>
+
+![slide1](/lab9/slides5/slide3.jpg)
+
+![slide1](/lab9/slides5/slide4.jpg)
+
+</Carousel>

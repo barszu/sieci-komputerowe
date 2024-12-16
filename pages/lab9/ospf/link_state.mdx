@@ -1,0 +1,13 @@
+# Protokoły stanu łącza (link state):
+
+- router wysyła wszystkim routerom informacje o stanie swoich łączy
+- router ma dynamicznie uaktualnianą `LSD` (Link State Database) - “mapę sieci”
+- szybko reagują na zmianę topologii
+- male obciazenie sieci - wykorzystują małe pakiety informacyjne (w porównaniu do protokołów dystans-wektor)
+- bardziej wydajne i skalowalne od protokołów dystans-wektor
+- szybko zbieżne
+- brak pętli, brak zliczania do nieskończoności
+- możliwość stosowania wielu metryk
+- skomplikowane
+
+- np: OSPF, IS-IS

@@ -15,6 +15,10 @@ const EmblaCarousel = ({
   const [emblaRef, emblaApi] = useEmblaCarousel(options, [Autoplay()]);
 
   if (slides.length == 0 && children) {
+    if (!Array.isArray(children)) {
+      children = [children];
+    }
+
     slides = children;
   }
 
@@ -38,7 +42,7 @@ const EmblaCarousel = ({
   } = usePrevNextButtons(emblaApi, onNavButtonClick);
 
   return (
-    <section className="embla">
+    <section className="embla" style={{ marginTop: "1rem" }}>
       <div className="embla__viewport" ref={emblaRef}>
         <div className="embla__container">
           {slides.map((index) => (

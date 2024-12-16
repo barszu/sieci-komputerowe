@@ -1,0 +1,31 @@
+import { Details } from '../../../components/details'
+
+# LSA - Link State Advertisement
+
+> zawiera informacje o stanie łącza
+
+```
+(ID sąsiada (destination), sieć, metryka), wiek
+```
+
+- router wysyła LSA do sąsiadów (lub DR)
+- są to tablice topologii każdego routera, wysyłane do sąsiadów, a potem z ich pomocą do reszty routerów w systemie autonomicznym
+- pozwalają routerom zbudować LSDB (Link State Database), bo informują o stanie sieci (w tym możliwe, że odległych jej fragmentów względem danego routera)
+
+<Details summary='LSDB (Link State Database)'>
+
+> (źródło, docelowy router, sieć, metryka)
+
+- **mapa sieci**, **każdy** router ma **taką samą**
+- każdy router ma taką, z ich pomocą tworzy się tablice routingu
+- LSA + wiadomość, skąd przyszedł pakiet
+- dla każdego routera (czyli źródła) jest tyle wpisów, ile ma on kabli do innych routerów
+- każdy wpis to pojedynczy krok, tzn. zawsze wpis dotyczy sąsiednich routerów (bo ma się z tego potem zbudować tablicę routingu)
+
+</Details>
+
+## Zalewanie sieci
+
+1. odebranie nowego pakietu (stare odrzucane)
+2. router zapamiętuje jego informacje (aktualizuje swój LSD)
+3. rozsyła pakiet na wszystkie interfejsy poza tym, z którego przyszedł (zalewanie sieci)

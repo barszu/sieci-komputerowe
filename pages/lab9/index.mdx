@@ -1,0 +1,32 @@
+## Routing wielościeżkowy:
+
+> wiele ścieżek może prowadzić do tego samego celu
+
+zwiększa niezawodność (zapasowe ścieżki) oraz wydajność (load balancing)
+
+## Dzielenie obciążenia:
+
+> ścieżki o zbliżonych metrykach mogą równocześnie służyć do przesyłania pakietów <br/>
+> (zwykle wymaga się identycznych, ale jest często używany parametr variance dla umożliwienia “delty” dla podobnych metryk)
+
+- nie gwarantuje dotarcia pakietów w kolejności wysyłania
+- przyspiesza transfer
+- trzeba dokonać analizy grafu i rozwiązać problem maksymalnego przepływu, żeby zoptymalizować części ruchu na poszczególne ścieżki
+
+## Dystans administracyjny
+
+- miara zaufania (wiarygodności) wobec źródła o trasie
+- liczba naturalna od 0 do 255
+- mając wybór między kilkoma trasami do tego samego celu, wybiera się tą z niższymdystansem administracyjnym (a więc bardziej godną zaufania)
+
+### Przykładowe:
+
+- directly connected - 0
+- wpis statyczny - 1
+- EIGRP, agregowana - 5
+- EIGRP, wewnętrzna - 90
+- IGRP - 100
+- OSPF - 110
+- IS-IS - 115
+- RIP - 120
+- EGP - 140
