@@ -1,0 +1,147 @@
+import { Steps} from 'nextra/components'
+import { Details } from '../../../components/details'
+import Carousel from '../../../components/carousel'
+
+# Działanie OSPF - Open Shortest Path First
+
+<Steps>
+
+### znajdź sąsiadów
+
+> dwa routery sąsiedujące ze sobą, obsługujące OSPF
+
+każdy router ma RID (Router ID) - unikalny identyfikator
+
+1. ustawiony ręcznie
+2. highest 'up' status loopback interface IP adress (np. 192.168.1.1)
+
+> Interfejs loopback to wirtualny interfejs, który zawsze jest w stanie "up" i jest używany do testowania oraz zarządzania routerem
+
+3. highest 'up' status non-loopback interface IP adress (np. 152.16.0.100)
+
+> rzeczywiste interfejsy sieciowe routera, takie jak interfejsy Ethernet
+
+<Carousel>
+
+<div>
+
+![sąsiedzi](/lab9/slides4/slide1.jpg)
+
+Routery wysyłają do siebie **Hello**, zawierające m.in. RID, liste sąsiadów
+
+</div>
+
+<div>
+
+![sąsiedzi](/lab9/slides4/slide2.jpg)
+
+Po otrzymaniu sprawdza czy są **takie same**:
+
+<Details summary='co jest czym ?'>
+
+- AreaID - identyfikator obszaru, w którym się znajduje
+- Subnet - maska podsieci
+- Hello, Dead interval - default 10 s - czas między wysłaniem Hello, czas oczekiwania na odpowiedź (po tym czasie uznaje za umarłe)
+- Autentication - hasło
+- Stub area flag - czy jest to obszar zewnętrzny
+- unique RID - czy jest unikalne
+
+</Details>
+
+</div>
+
+</Carousel>
+
+### init state
+
+<Carousel>
+
+<div>
+![init](/lab9/slides4/slide3.jpg)
+
+R2 odpowiada R1, że chce być sąsiadem, wysyłając mu Hello, R1 widzi że R2 jest sąsiadem
+
+</div>
+
+<div>
+![init](/lab9/slides4/slide4.jpg)
+
+R1 wysyła kolejne Hello, z dodanym R2 jako sąsiadem
+
+</div>
+
+<div>
+![init](/lab9/slides4/slide5.jpg)
+
+R2 to zatwierdza
+
+</div>
+
+</Carousel>
+
+### exstart state
+
+1. routery przechodzą w stan `exstart`
+2. jeden zostanie `master`, drugi `slave` wdł. RID
+3. master wysyła `DBD` (Database Description) do slave
+
+![exstart state](/lab9/img/img7.jpg)
+
+### exchange state
+
+> wymiana informacji o LSA (database description)
+> ![init](/lab9/slides4/slide6.jpg)
+
+### loading state
+
+> router dopyta o brakujące LSA, po to to jest aby nie było cykli
+
+> Notka tutaj R1 daje R2 jak i R2 daje R1, ale tego nie przedstawiono bo to to samo
+
+<Carousel>
+
+![init](/lab9/slides4/slide7.jpg)
+
+![init](/lab9/slides4/slide8.jpg)
+
+<div>
+
+![init](/lab9/slides4/slide9.jpg)
+
+R1 wysyła zapytanie LSR (Link State Request) o brakujące LSA
+
+</div>
+
+<div>
+
+![init](/lab9/slides4/slide10.jpg)
+
+R2 wysyła odpowiedź LSU (Link State Update) z brakującymi LSA
+
+</div>
+
+<div>
+
+![init](/lab9/slides4/slide11.jpg)
+
+R1 daje znać do R2 ze otrzymał jego odpowiedz poprzez LSAck (Link State Acknowledgment)
+
+</div>
+
+</Carousel>
+
+### full neighbour state
+
+> oba routery mają pełną informację o sieci
+
+![full neighbour state](/lab9/img/img8.jpg)
+
+### wybierz najlepszą trasę
+
+> korzystamy z algorytmu Dijkstry
+
+![full neighbour state](/lab9/img/img9.jpg)
+
+można modyfikować zmieniając `reference value`
+
+</Steps>

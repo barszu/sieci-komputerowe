@@ -1,0 +1,37 @@
+import { Steps } from 'nextra/components'
+import { Details } from '../../components/details'
+
+# IGRP - Interior Gateway Routing Protocol
+
+- używa algorytmu Bellmana-Forda do obliczania tras.
+
+<Steps>
+
+### Uwzględnia:
+
+- `B` - bandwidth [ s ]
+- `L` - load [ % ]
+- `D` - delay [ μs ]
+- `R` - reliability [ % ]
+
+### Wzór:
+
+Skrócony:
+
+![wzór](/lab9/img/img3.jpg)
+
+domyślnie bierze się pod uwagę tylko statyczne parametry, więc nie trzeba dynamicznie przeliczać wartości metryki
+
+Pełny:
+
+![wzór](/lab9/img/img2.jpg)
+
+współczynniki `K` to wagi metryk i są modyfikowalne
+
+<Details summary='default values:'>
+
+![wzór](/lab9/img/img4.jpg)
+
+</Details>
+
+</Steps>

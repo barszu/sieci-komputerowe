@@ -1,0 +1,8 @@
+{
+  "link_state": "o protokołach stanu łącza",
+  "ospf": "OSPF",
+  "lsa": "'pakiety' LSA",
+  "dzialanie": "Działanie OSPF",
+  "dr": "Designated Router",
+  "hierarchiczny_ospf": "Hierarchiczny OSPF"
+}

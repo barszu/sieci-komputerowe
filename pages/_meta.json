@@ -45,6 +45,11 @@
     "type": "page",
     "display": "hidden"
   },
+  "lab9": {
+    "title": "lab 9 EIGRP, OSPF",
+    "type": "page",
+    "display": "hidden"
+  },
 
   "menu": {
     "title": "Rozdziały",
@@ -81,6 +86,10 @@
       "08-lab": {
         "title": "lab 8",
         "href": "/lab8"
+      },
+      "09-lab": {
+        "title": "lab 9",
+        "href": "/lab9"
       }
     }
   }

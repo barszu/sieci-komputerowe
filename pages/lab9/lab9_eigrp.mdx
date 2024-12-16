@@ -1,0 +1,150 @@
+import { Details } from '../../components/details'
+import Carousel from '../../components/carousel'
+import { Steps } from 'nextra/components'
+
+# EIGRP - Enhanced IGRP
+
+- wykorzystuje się [algorytm DUAL](/lab9/lab9_dual.mdx) do obliczania tras, co zapewnia szybszą konwergencję i większą stabilność sieci.
+- uwzględnia te same metryki co IGRP (przepustowość, obciążenie, opóźnienie, niezawodność), ale dodatkowo wspiera metrykę MTU (Maximum Transmission Unit).
+- wpiera VLSM (Variable Length Subnet Masking) i CIDR (Classless Inter-Domain Routing).
+- **nie używa TCP ani UDP**, ale protokół RTP - **Reliable Transport Protocol**
+- wartosc metryki jest zapisana jako priorytet trasy w routerze
+
+## Wzór
+
+```
+M = ( B + D ) * 256
+```
+
+mogą być dodane modyfikowalne współczynniki wagowe `K` do metryki, bandwidth i delay można nadpisywać
+
+<Details summary='czemu *256 ?'>
+
+IGRP i EIGRP mają różną liczbę bitów na wielkość metryki (24 vs 32 bity); pomnożenie przez 256 zapewnia kompatybilność tych protokołów
+
+</Details>
+
+## Działanie
+
+wiadomości **Hello** są wysyłane **multicastowo** (224.0.0.10) z informacjami o sobie
+
+- `Hello interval` - co ile czasu wysyłane są wiadomości Hello
+
+  > 5s - hight bandwidth (1 Gbps)
+
+  > 60s - low bandwidth
+
+- `Hold time` - czas, przez jaki router czeka na odpowiedź od sąsiada
+
+  > 3 x Hello interval (15s | 3 minuty)
+
+hello interval i hold time są konfigurowalne i mogą być różne dla różnych interfejsów
+
+<Steps>
+
+### odkryj sąsiadów
+
+<Carousel>
+
+<div>
+
+![sąsiedzi](/lab9/slides1/slide1.jpg)
+
+R2 po odebraniu stwierdza czy chce zostać sąsiadem R1
+
+</div>
+
+<div>
+
+![sąsiedzi](/lab9/slides1/slide2.jpg)
+
+R2 chce zostać sąsiadem R1 i odpowiada mu Hello
+
+</div>
+
+</Carousel>
+
+### wymień się informacjami o trasach
+
+wymieniają sie informacjami zawierającymi wszystkie informacje o trasach, a drugi wysyła ze zaakceptował
+
+<Carousel>
+
+![wymiana](/lab9/slides2/slide1.jpg)
+
+![wymiana](/lab9/slides2/slide2.jpg)
+
+![wymiana](/lab9/slides2/slide3.jpg)
+
+![wymiana](/lab9/slides2/slide4.jpg)
+
+</Carousel>
+
+aby podtrzymać sąsiedztwo, routery wysyłają `Hello` co `Hold interval`
+
+<Carousel options = {{ dragFree: true, loop: true }} >
+
+![wymiana](/lab9/slides2/slide5.jpg)
+
+![wymiana](/lab9/slides2/slide6.jpg)
+
+</Carousel>
+
+### zmiana w topologi
+
+będą wysyłame partial updates, trasa jest przeliczana
+
+<Carousel>
+
+![wymiana](/lab9/slides3/slide1.jpg)
+
+<div>
+
+![wymiana](/lab9/slides3/slide2.jpg)
+
+1. R2 wchodzi w stan Active -> uruchomił się algorytm DUAL,
+2. wysyła `Query` do wszystkich sąsiadów i pyta się czy mieli oni jakies trasy do utraconej sieci
+
+</div>
+
+<div>
+
+![wymiana](/lab9/slides3/slide3.jpg)
+R1 potwierdza otrzymanie wiadomosci
+
+</div>
+
+<div>
+
+![wymiana](/lab9/slides3/slide4.jpg)
+R1 odpowiada, że ma (inna, nowa) / nie ma trasy
+
+</div>
+
+<div>
+
+![wymiana](/lab9/slides3/slide5.jpg)
+R2 potwierdza otrzymanie wiadomosci
+
+</div>
+
+</Carousel>
+
+jeżeli sąsiedzi nie mają trasy, to połączenie jest uznawane za całkiem martwe
+
+### wybierz najlepszą trasę
+
+zapisze najlepszą i ją bedzie używał/podawał dalej, ale zapamięta trase Feasible Successor
+
+wartość metryki oblicza zgodnie z wzorem:
+
+przykład:
+
+```
+bandwidth = 128 kbps
+delay = 1200 μs
+
+M = ( (10^7 / 128) + 1200 ) * 256 = 20307200
+```
+
+</Steps>

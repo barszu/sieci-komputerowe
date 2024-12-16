@@ -1,0 +1,86 @@
+import { Steps } from 'nextra/components'
+
+# Algorytm DUAL - Diffusing Update Algorithm
+
+### zadanie:
+
+- usuwa pętle routingu
+
+- zaletą jest, że robi zamieszanie tylko w pobliżu zmiany sieci - reszta nie musi wiedzieć
+  o tym, że gdzieś nastąpiła zmiana
+
+### wykorzystanie:
+
+- protokoły dystans-wektor
+- protokoły stanu łącza
+- m.in EIGRP
+
+## działanie:
+
+<Steps>
+
+### używa 3 tablic
+
+- `Neighbor Table` - zawiera informacje o sąsiadach
+- `Topology Table` - zawiera informacje o sieciach
+- `Routing Table` - zawiera informacje o trasach - najlepsze adresy docelowe wybierane z topology table
+
+### funcje metryk
+
+- `d( k, j )` - odległość od routera `k` do routera `j`
+- `l( i, k )` - koszt łącza między routerami `i` i `sąsiadem k`
+
+![obrazek](/lab9/img/img5.jpg)
+
+### Neighbour table:
+
+> sąsiedzi danego routera
+
+- routery przesyłają sobie **multicastowo** wiadomości **Hello**, żeby utrzymywać te tablice
+- wiadomość zawiera HoldTime, czyli czas życia wpisu
+- jeżeli przez HoldTime nie przyjdzie kolejne Hello, to router uznaje, że zmieniła się topologia
+
+### Topology table:
+
+> sieci docelowe rozgłaszane przez sąsiednie routery
+
+rekordy zawierają:
+
+- `Destination` - sieć docelowa
+- `feasible distance` - odległość do sieci
+- `reported distance` - odległość do sieci od sąsiada
+- `stan trasy`
+  - `passive` - trasa stabilna i gotowa do użycia
+  - `active` - DUAL oblicza jeszcze tą trasę
+
+![dist](/lab9/img/img6.jpg)
+
+### Feasible distance
+
+> najlepsza suma odleglosci od source do celu
+
+> (**włącznie z odległością do sąsiada**, który rozgłasza tę ścieżkę, przez którą ona biegnie).
+
+najlepsza metryka (najmniejszy koszt) na drodze od routera do docelowej sieci
+
+### Reported distance - advertised distance
+
+> fearible distance ale **BEZ source->source_neighbour**
+
+rozgłaszają to routery - odbiorcy muszą sami dodać kabel do sąsiada, od którego dostali wiadomość (aby mieć feasible distance)
+
+### Successor
+
+> sąsiad, przez którego biegnie obecna najlepsza ścieżka
+
+ten, od którego otrzymaliśmy wiadomość, z której jest feasible distance.
+
+### Feasible successor
+
+> sąsiad, który jest następnym najlepszym wyborem
+
+sąsiad, którego `reported distance` jest krótsze niż obecne feasible distance - wystarczy więc, że jego odległość do docelowej sieci jest mniejsza,
+
+nie bierzemy pod uwagę kabla od naszego routera do tego sąsiada, jak w przypadku feasible distance!
+
+</Steps>

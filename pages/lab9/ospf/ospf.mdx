@@ -1,0 +1,54 @@
+import { Steps} from 'nextra/components'
+import { Details } from '../../../components/details'
+import Carousel from '../../../components/carousel'
+
+# OSPF - Open Shortest Path First
+
+- `link-state` routing protocol
+- `open standard`
+- **zalewanie z potwierdzeniami**
+- zabezpieczanie pakietów z opisami sieci
+- każdy rekord opisu łącza ma czas życia (potem są usuwane)
+- wszystkie rekordy są zabezpieczone sumą kontrolną
+- możliwość autoryzacji komunikatów (np. hasłem)
+- korzysta z algorytmu Dijkstra
+
+## Zalewanie z potwierdzeniami
+
+> gdy zostanie wykryta zmiana w topologii sieci, to wszystkie routery są powiadamiane i oczekuje się na potwierdzenie otrzymania tego powiadomienia.
+
+## Założenia protokołu
+
+<Steps>
+
+### separacja routerów od innych komputerów:
+
+- łącze z sąsiednim routerem identyfikowane adresem routera
+- łącze z innym komputerem adresowane numerem sieci
+
+### obsługa sieci rozgłoszeniowych (Ethernet, FDDI):
+
+- używa pakietów `LSA` - link state advertisement
+- wykorzystuje `multicast` **224.0.0.6** do informowania wybranych routerów (designated routers)
+- DR (designated routers) po otrzymaniu takiego pakietu jeżeli zawiera on nowe informacje rozsyłają go na adres 224.0.0.5
+
+### obsługa sieci bez rozgłoszeń (X.25, ATM):
+
+- łącza, gdzie rozgłoszenia są drogie
+- używa się wielu połączeń punkt-punkt, bo jest taniej
+
+### podział wielkich sieci na mniejsze:
+
+- zmniejsza czas obliczeń ścieżki
+- oszczędza pamięć routera
+
+### kryteria wyboru ścieżki
+
+> można wybrać ścieżkę według jednego lub kilku:
+
+- minimalny **koszt**
+- **reliability**
+- max path **bandwidth**
+- min **delay**
+
+</Steps>
