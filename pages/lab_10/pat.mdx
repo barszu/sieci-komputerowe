@@ -1,0 +1,24 @@
+import { Steps } from 'nextra/components'
+import { Details } from '../../components/details'
+
+# PAT - Port Address Translation
+
+> wersja NAT, która pozwala na mapowanie **wielu adresów IP wewnętrznych** na `jeden zewnętrzny` adres IP , ale z różnymi portami aby odróżnić hosty
+
+> `(IP, port)` -> `(IP, port)`
+
+<br/ >
+
+<Details>
+
+> multipleksuje adres IP za pomocą portów
+
+świat na zewnątrz widzi całą sieć jako ten jeden router, tak jakby on wszystko nadawał; jak coś przyjdzie z zewnątrz do tego routera, to przychodzi jednak na konkretny port, dzięki czemu on wie, gdzie to przesłać wewnątrz
+
+</Details>
+
+![PAT](/lab10/img/img4.jpg)
+
+<iframe src="/sieci-komputerowe/lab10/dzialanie_nat.pdf" width="100%" height="1000px">
+
+</iframe>

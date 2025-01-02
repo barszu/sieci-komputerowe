@@ -50,6 +50,11 @@
     "type": "page",
     "display": "hidden"
   },
+  "lab_10": {
+    "title": "lab 10 NAT, PAT",
+    "type": "page",
+    "display": "hidden"
+  },
 
   "menu": {
     "title": "Rozdziały",
@@ -90,6 +95,10 @@
       "09-lab": {
         "title": "lab 9",
         "href": "/lab9"
+      },
+      "10-lab": {
+        "title": "lab 10",
+        "href": "/lab_10"
       }
     }
   }
