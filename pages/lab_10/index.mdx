@@ -1,0 +1,35 @@
+import { Steps } from 'nextra/components'
+import { Details } from '../../components/details'
+
+# NAT vs PAT
+
+<Steps>
+
+## Simple NAT = NAT , (1:1)
+
+> (Simple) Network Address Translation
+
+- działa `dwukierunkowo` - translacja adresów IP odbywa się zarówno dla ruchu wychodzącego, jak i przychodzącego
+
+<Details>
+
+**Ruch wychodzący:**
+
+Gdy urządzenie w sieci lokalnej (z prywatnym adresem IP) wysyła pakiet do Internetu, NAT zmienia prywatny adres IP źródłowy na publiczny adres IP routera. Dzięki temu pakiet może być przesłany przez Internet.
+
+**Ruch przychodzący:**
+
+Gdy odpowiedź na pakiet wraca z Internetu, NAT zmienia publiczny adres IP docelowy z powrotem na prywatny adres IP urządzenia w sieci lokalnej. Dzięki temu pakiet trafia do właściwego urządzenia w sieci lokalnej.
+
+</Details>
+
+## PAT - Port Address Translation , (N:1)
+
+> Extended NAT
+
+- działa `jednokierunkowo` - translacja adresów IP odbywa się tylko dla ruchu wychodzącego
+- mapuje pary (adres IP, port)
+- porty jednoznacznie identykują hostów - wiele portów tego samego adresu IP
+- oszczędza przestrzeń adresową, bo od ISP wykupuje się 1 publiczny adres, a router będzie ogarniał hosty wewnątrz po portach
+
+</Steps>
