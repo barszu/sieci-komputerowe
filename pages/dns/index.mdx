@@ -1,0 +1,66 @@
+import { Callout, Steps} from 'nextra/components'
+
+# DNS - Domain Name System
+
+<Callout type="info">
+  
+rozproszona baza danych z obustronnym mapowaniem `nazwa_hosta <-> IP`
+
+</Callout>
+
+> rozproszona na wiele serwerów (każdy posiada część informacji).
+
+## budowa:
+
+![DNS](/dns/img/img1.jpg)
+
+```
+[szczegółowa].[mniej szczegolowa].[ogolna].[root]
+
+np: www.agh.edu.pl
+```
+
+pozostałe domeny dzielą się na podstawowe (np. rodzaj instytucji z danym adresem) oraz geograficzne (wiążą adres IP z położeniem geograficznym)
+
+## Nazwy węzłów
+
+- a-z, A-Z, 0-9, '-'
+- odzielenie '.' (kropką)
+- nie ma znaczenia wielkość liter
+- długość węzła do 63 znaków
+- nazwa bez końcowej kropki musi być uzupełniona;
+  - jeżeli ma 2+ członów, to można ją traktować jak w pełni określoną lub uzupełnić o nazwę zależną od lokalizacji węzła
+
+> np. `www` , `agh` , `edu` , `pl`
+
+### FQDN - Fully Qualified Domain Name
+
+<Callout type="info">
+
+pełna nazwa domeny, od samego dołu (zwykle “www”), aż do najwyższej
+
+</Callout>
+
+> np: `www.agh.edu.pl`
+
+## Obszar DNS
+
+- część drzewa DNS, która jest oddzielnie administrowana
+- dzielony na podobszary (delegacja odpowiedzialności), co zwiększa skalowalność
+- każdy obszar musi mieć `podstawowy serwer DNS` i 1+ `drugoplanowych serwerów DNS`
+
+<Steps>
+
+### serwer podstawowy
+
+- zawiera pełne informacje dla obszaru
+- autorytatywny
+- główny
+
+### serwery drugoplanowe
+
+- zwiększają wydajność
+- otrzymują informacje od podstawowego serwera DNS poprzez transfer obszaru
+- trzymają tylko ich część
+
+</Steps>
