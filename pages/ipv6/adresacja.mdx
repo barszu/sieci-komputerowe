@@ -1,0 +1,77 @@
+import { Steps } from 'nextra/components'
+
+# Adresacja IPv6
+
+## adresy globalne
+
+- `unicast`
+- przydzielane przez IANA rozpoczynające się od wartości binarnej 001 (2000::/3).
+
+![Adresy globalne](/ipv6/img/img2.jpg)
+
+Struktura tych adresów umożliwia agregację wpisów routingu w celu uzyskania
+mniejszej globalnej tablicy routingu IPv6.
+
+## link-local
+
+> umożliwienie węzłom podłączonym do wspólnego łącza komunikacji bez konieczności stosowania globalnie unikalnych adresów
+
+- Automatycznie przypisywany do dowolnego interfejsu obsługującego protokół IPv6.
+- `Nie routowalne`. Obowiązują one tylko w zakresie interfejsu.
+- **Używany do wykrywania sąsiadów i automatycznej konguracji bezstanowej.**
+- Przedrostek FE80::/10.
+
+![link-local](/ipv6/img/img3.jpg)
+
+## loopback
+
+> `::1/128` = 0:0:0:0:0:0:0:1/128
+
+- Zazwyczaj `używany do testowania` stosu protokołów TCP/IP w systemach operacyjnych.
+- Podobna koncepcja do 127.0.0.0/8 w IPv4.
+
+## multicast
+
+> `ff00::/8`
+
+- mają podobną funkcje jak 224.0.0.0/24 w IPv4.
+
+Budowa adresu IPv6 multicast :
+
+| multicast address [8bit] | Flags [4bit]                                       | Scope [4bit]                                                                                                | Group ID [112bit]                                |
+| ------------------------ | -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| FF                       | 01 - chwilowy <br/> 00 - permamentny, dobrze znany | 01 - node-local <br/> 02 - link-local <br/> 05 - site-local <br/> 08 - organization-local <br/> 0F - global | pierwsze 80 cyfr to 0, w celu uniknięcia kolizji |
+
+<Steps>
+
+### Node-local
+
+Adresy multicastowe o zakresie node-local są **używane tylko w obrębie jednego węzła (komputera).**
+
+Pakiety wysyłane na taki adres nie opuszczają węzła.
+
+### Link-local
+
+Adresy multicastowe o zakresie link-local są używane w obrębie **jednej sieci lokalnej** (linku).
+
+Pakiety wysyłane na taki adres są dostarczane tylko do urządzeń w tej samej sieci lokalnej.
+
+### Site-local
+
+Adresy multicastowe o zakresie site-local są używane w obrębie jednej lokalizacji (site).
+
+Pakiety wysyłane na taki adres mogą być dostarczane do urządzeń w **różnych sieciach lokalnych w obrębie tej samej lokalizacji.**
+
+### Organization-local
+
+Adresy multicastowe o zakresie organization-local są używane w obrębie jednej organizacji.
+
+Pakiety wysyłane na taki adres mogą być dostarczane do urządzeń w **różnych lokalizacjach w obrębie tej samej organizacji**.
+
+### Global
+
+Adresy multicastowe o zakresie global są **używane w całym internecie**.
+
+Pakiety wysyłane na taki adres mogą być dostarczane do urządzeń na całym świecie.
+
+</Steps>
