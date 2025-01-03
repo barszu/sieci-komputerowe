@@ -1,0 +1,64 @@
+import { Steps } from 'nextra/components'
+import Carousel from '../../components/carousel'
+
+# Autokonguracja SLAAC (Stateless Address Autoconguration)
+
+> to mechanizm konfiguracji adresów IPv6, który pozwala na automatyczne przydzielanie adresów IPv6 hostom w sieci. W przeciwieństwie do DHCPv6, SLAAC nie wymaga serwera DHCPv6, a hosty same generują swoje adresy IPv6.
+
+> umożliwia hostom samodzielne generowanie unikalnego, rutowalnego adresu IPv6.
+
+## Algorytm
+
+<Steps>
+
+### Host konfiguruje sobie link-local adres
+
+> `FE80::/10`
+
+### Host wykonuje DAD
+
+> Duplicate Address Detection
+
+Host po wygenerowaniu adresu, dołącza do grupy multicastowej
+
+> `FF02::1:FFxx:xxxx` gdzie xx:xxxx to ostatnie 6 hexdecymalnych wartości z adresu unicast
+
+### Host wysyła wiadomość o żądaniu routera
+
+1. Host wysyła komunikat ICMPv6 Router Solicitation (RS):
+
+> pyta wszystkie routery IPv6 dołączone do danego segmentu sieci o globalny prez unicast
+
+2. Po otrzymaniu zapytania router odsyła Router Adertisement (RA)
+
+> RA zawiera globalny prefix IPv6 łącza oraz długość prefixu
+
+**routery same z siebie okresowo tez wyslają RA** (default 200s), ale jak host nie chce czekac to pyta
+
+<Carousel>
+
+![SLAAC](/ipv6/img/img6.jpg)
+
+![SLAAC](/ipv6/img/img7.jpg)
+
+![SLAAC](/ipv6/img/img8.jpg)
+
+![SLAAC](/ipv6/img/img9.jpg)
+
+</Carousel>
+
+### Host konfiguruje swój globalny unicast
+
+> Host generuje swój adres IPv6 na podstawie prefiksu otrzymanego od routera i swojego identyfikatora interfejsu (np. adresu MAC).
+
+> Prefiks jest przesyłany w komunikacie Router Advertisement (RA) od routera.
+
+### Host ponownie wykonuje DAD
+
+> Host sprawdza, czy wygenerowany adres IPv6 jest unikalny w sieci.
+
+> Wysyła komunikat Neighbor Solicitation (NS) z adresem, który chce sprawdzić.
+
+> jeśli nie otrzyma odpowiedzi Neighbor Advertisement (NA), oznacza to, że adres jest unikalny i może być używany.
+
+</Steps>

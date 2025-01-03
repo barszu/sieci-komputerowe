@@ -1,0 +1,115 @@
+import { Steps } from 'nextra/components'
+import { Details } from '../../components/details'
+
+# IPv6 vs IPv4
+
+IPv4 dobrze służył przez wiele lat, ale IPv6 rozwiązuje jego ograniczenia, szczególnie wyczerpanie przestrzeni adresowej. Przejście na IPv6 jest konieczne dla dalszego rozwoju internetu.
+
+IPv6 wymaga ICMPv6 do działania:
+
+- NDP (Neighbor Discovery Protocol) - zamiast ARP, ICMP Router Discovery i ICMP Redirect (jak w IPv4)
+  - NS (Neighbor Solicitation) - odkrywanie sąsiadów
+    > NA (Neighbor Advertisement) - odpowiedź na NS
+  - RS (Router Solicitation) - pytanie konfiguracyjne o routery
+    > RA (Router Advertisement) - odpowiedź na RS
+- SLAAC (Stateless Address Autoconfiguration) - zamiast DHCP, ale można używać DHCPv6
+
+![IPv6 vs IPv4](/ipv6/img/img4.jpg)
+
+| Cecha                   | IPv4                                            | IPv6                                                                                                                                                                   |
+| ----------------------- | ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Długość adresu**      | 32-bitowy                                       | 128-bitowy                                                                                                                                                             |
+| **Ilość adresów**       | 2^32 = 4,3 miliarda                             | 2^128 = 4,3 miliarda \* 2^96                                                                                                                                           |
+| **Format adresu**       | Dziesiętny, cztery pola po 8 bitów              | Szesnastkowy, osiem pól po 16 bitów                                                                                                                                    |
+| **Przykład**            | 192.168.0.1                                     | 2001:0db8:0000:0000:0000:0000:0000:0001 = 2001:0db8::1 <br/> <br/> Podwójne dwukropki mogą być użyte tylko raz w adresie IPv6, aby zastąpić jedną lub więcej grup zer. |
+| **Konfiguracja adresu** | Ręczna lub przez DHCP                           | Autokonfiguracja (SLAAC) i DHCPv6                                                                                                                                      |
+| **Fragmentacja**        | Routery i hosty mogą fragmentować pakiety       | Tylko hosty mogą fragmentować pakiety, <br/> `brak fragmentowania po drodze`                                                                                           |
+| **Broadcast**           | 👍                                              | ❌ Zastąpiony przez multicast i anycast                                                                                                                                |
+| **Bezpieczeństwo**      | Opcjonalne, przez dodatkowe protokoły jak IPsec | Wbudowane IPsec                                                                                                                                                        |
+| **Unikalność**          | Lokalne ❌ <br/> Globalne 👍                    | 👍 każdy unikalny jak MAC (w teori)                                                                                                                                    |
+| **Przejście**           | Obecny standard, ale adresy się kończą          | Zaprojektowany jako następca IPv4, mechanizmy przejściowe (dual-stack, tunelowanie)                                                                                    |
+
+## Fragmentacja
+
+- wysyłający host musi znać MTU ścieżki przed wysłaniem
+- można tunelować, czyli pakować IPv6 do pakietów IPv4 i tak wysyłać
+- fragmentacja zachodzi poprzez użycie extension headera “Fragmentation header”
+- kolejne fragmenty dostają własne bazowe nagłówki
+
+## Złożoność nagłówka
+
+- IPv4: 20-60 bajtów, wiele pól opcji i flag
+- IPv6: 40 bajtów, uproszczony
+
+![IPv6 Header](/ipv6/img/img1.jpg)
+
+<Details summary='co robi każde pole?'>
+<Steps>
+### Version [4 bit]
+
+> wersja protokołu, Ipv6 = 6
+
+### Traffic Class [8 bit]
+
+> priorytet pakietu, jakość usługi
+
+- 3 bity priorytetu (Quality of Service)
+
+  - im wyższa wartość, tym ważniejszy pakiet
+  - jeżeli router musi odrzucić pakiety, to odrzuci te o niższym priorytecie
+
+- 4 bity DSCP (Differentiated Services Code Point)
+
+  - określa sposób obsługi pakietu przez routery
+  - np. VoIP ma wyższy priorytet niż e-mail
+
+- 1 bit ECN (Explicit Congestion Notification)
+  - informuje o przeciążeniu sieci
+
+### Flow Label [20 bit]
+
+> identyfikator przepływu, np. dla pakietów VoIP
+
+- routery mogą zapamiętać przepływ i obsługiwać go szybciej
+
+### Payload Length [16 bit]
+
+> długość całego pakietu po tym nagłówku - zarówno danych, jak i kolejnych nagłówków IPv6
+
+### Next Header [8 bit]
+
+> typ nagłówka następnego po nagłówku IPv6. Może to być nagłówek TCP, UDP, ICMPv6, itp.
+
+- coś jak opcje w IPv4
+- nagłówek warstwy 4 (TCP = 6, UDP = 17)
+- pola te zwykle przetwarzane są dopiero u odbiorcy
+
+### Hop Limit [8 bit]
+
+> maksymalna liczba skoków
+
+- coś jak TTL w IPv4
+- jeżeli docelowy host będzie miał **Hop Limit = 0**, to **przetworzy pakiet**, a nie odrzuci go
+
+</Steps>
+</Details>
+
+## Anycast
+
+> rodzaj wysyłania pakietu typu “traf gdziekolwiek”.
+
+W praktyce trafia do najbliższego topologicznie hosta.
+
+## Autokonfiguracja
+
+### SLAAC (Stateless Address Autoconfiguration)
+
+- routery rozgłaszają prefix sieci, trasę domyślną i MTU
+- adres link-local - FE:80::/10, nie forwardowany poza łącze
+- host robi tymczasowy adres IP, sklejając adres link-local i swój MAC i wysyła multicast, chcąc dostać informacje od routera
+- potem używa adresu: prefix sieci + własny MAC
+- w razie potrzeby można używać adresu z link-local
+
+### stateful - używa DHCPv6
+
+> host multicastem zgłasza się do serwera (serwerów) DHCP i dostaje informacje

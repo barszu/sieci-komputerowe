@@ -60,6 +60,11 @@
     "type": "page",
     "display": "hidden"
   },
+  "ipv6": {
+    "title": "IPv6",
+    "type": "page",
+    "display": "hidden"
+  },
 
   "menu": {
     "title": "Rozdziały",
@@ -108,6 +113,10 @@
       "DNS": {
         "title": "DNS",
         "href": "/dns"
+      },
+      "IPv6": {
+        "title": "IPv6",
+        "href": "/ipv6"
       }
     }
   }
