@@ -32,6 +32,7 @@ IPv6 wymaga ICMPv6 do działania:
 ## Fragmentacja
 
 - wysyłający host musi znać MTU ścieżki przed wysłaniem
+  > routery IPv6 rozgłaszają MTU, komunikując się z hostami
 - można tunelować, czyli pakować IPv6 do pakietów IPv4 i tak wysyłać
 - fragmentacja zachodzi poprzez użycie extension headera “Fragmentation header”
 - kolejne fragmenty dostają własne bazowe nagłówki
@@ -94,14 +95,6 @@ IPv6 wymaga ICMPv6 do działania:
 </Steps>
 </Details>
 
-## Anycast
-
-> zamiast broadcastu
-
-> rodzaj wysyłania pakietu typu “traf gdziekolwiek”, ale trafiają do najbliższego hosta z punktu widzenia routingu
-
-działa jak numer alarmowy 112 - gdziekolwiek sie znajdujemy to połączymy się z najbliższym centrum alarmowym
-
 ## Autokonfiguracja
 
 ![Autokonfiguracja](/ipv6/img/img12.jpg)
@@ -131,7 +124,7 @@ działa jak numer alarmowy 112 - gdziekolwiek sie znajdujemy to połączymy się
 
 ### Tunneling
 
-> pakowanie pakietu IPv6 w pakiet IPv4
+> pakowanie pakietu IPv6 w pakiet IPv4 (można też odwrotnie)
 
 - urządzenia obsługujące IPv4 nie są świadome ze w polu dane jest IPv6
 - adres docelowy IPv4 to adres końca tunelu (np. routera po drodze z sieci WAN)

@@ -13,9 +13,32 @@ import { Details } from '../../components/details'
 
 ![Adresy globalne](/ipv6/img/img2.jpg)
 
-- przydzielane przez IANA rozpoczynające się od wartości binarnej 001
-
 ![Adresy globalne](/ipv6/img/img11.jpg)
+
+<Details>
+
+Adres globalny IPv6 jest postaci:
+
+```
+(bin) '001' + TLA + NLA + SLA + Interface ID
+      ^^^^^^^^^^^^^^^^^^^^^^^
+      adres sieci
+```
+
+- `TLA` (Top Level Aggregator) - 13 bit
+  > przydzielane przez IANA, dla operatorów sieci szkieletowej
+- `NLA` (Next Level Aggregator) - 32 bit
+  > przydzielane przez ISP
+- `SLA` (Site Level Aggregator) - 16 bit
+  > przydzielane przez administratora sieci (dotyczy danej instytucji)
+
+Zmieniając operatora (ISP) zmnienia sie `NLA` , `TLA`
+
+- `Interface ID` - 64 bit
+  > identyfikator interfejsu, cześć adresu dla hosta
+  - na ostatnich 48 bitach jest adres MAC, ARP nie jest potrzebny
+
+</Details>
 
 Struktura tych adresów umożliwia agregację wpisów routingu w celu uzyskania
 mniejszej globalnej tablicy routingu IPv6.
@@ -24,22 +47,18 @@ mniejszej globalnej tablicy routingu IPv6.
 
 > umożliwienie węzłom podłączonym do wspólnego łącza komunikacji bez konieczności stosowania globalnie unikalnych adresów
 
+> ala podsieć z warstwy II
+
 - Automatycznie przypisywany do dowolnego interfejsu obsługującego protokół IPv6.
 - `Nie routowalne`. Obowiązują one tylko w zakresie jednej sieci.
 - **Używany do wykrywania sąsiadów i automatycznej konguracji bezstanowej.**
 - tworzone poprzez EUI-64, losowo, statycznie
-- Przedrostek FE80::/10.
+
+> Przedrostek `FE80::/10`.
 
 ![link-local](/ipv6/img/img3.jpg)
 
-### loopback
-
-> `::1/128` = 0:0:0:0:0:0:0:1/128
-
-- Zazwyczaj `używany do testowania` stosu protokołów TCP/IP w systemach operacyjnych.
-- Podobna koncepcja do 127.0.0.0/8 w IPv4.
-
-### unikalne lokalne
+### site-local | unikalne lokalne
 
 > odpowiednik `adresów prywatnych` w IPv4, ale są unikatowe
 
@@ -47,6 +66,13 @@ mniejszej globalnej tablicy routingu IPv6.
 - `nie rutowalne`
 
 > od `FC00::/7` do `FDFF::/7`
+
+### loopback
+
+> `::1/128` = 0:0:0:0:0:0:0:1/128
+
+- Zazwyczaj `używany do testowania` stosu protokołów TCP/IP w systemach operacyjnych.
+- Podobna koncepcja do 127.0.0.0/8 w IPv4.
 
 ## multicast
 
@@ -61,9 +87,13 @@ Podzielono na 2 rodzaje:
 
 <Details summary='budowa adresu IPv6 multicast'>
 
-| multicast address [8bit] | Flags [4bit]                                       | Scope [4bit]                                                                                                | Group ID [112bit]                                |
+| multicast address [8bit] | Flags [4bit]                                       | Scope (zasięg pakietu) [4bit]                                                                               | Group ID [112bit]                                |
 | ------------------------ | -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
 | FF                       | 01 - chwilowy <br/> 00 - permamentny, dobrze znany | 01 - node-local <br/> 02 - link-local <br/> 05 - site-local <br/> 08 - organization-local <br/> 0F - global | pierwsze 80 cyfr to 0, w celu uniknięcia kolizji |
+
+> dobrze znany - adresy multicastowe zdefiniowane w RFC, np. NTP (Network Time Protocol)
+
+Group ID - określony indentyfikator serwisu
 
 <Steps>
 
@@ -132,3 +162,11 @@ adres żądania węzła jest tworzony automatycznie jeśli host posiada lokalny/
 tworzony z użyciem prefixu: `FF02::1:FFxx:xxxx/104`
 
 ![solicited-node](/ipv6/img/img16.jpg)
+
+## Anycast
+
+> zamiast broadcastu
+
+> rodzaj wysyłania pakietu typu “traf gdziekolwiek”, ale trafiają do najbliższego hosta z punktu widzenia routingu
+
+działa jak numer alarmowy 112 - gdziekolwiek sie znajdujemy to połączymy się z najbliższym centrum alarmowym
