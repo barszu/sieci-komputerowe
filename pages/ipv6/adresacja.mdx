@@ -1,42 +1,65 @@
 import { Steps } from 'nextra/components'
+import { Details } from '../../components/details'
 
 # Adresacja IPv6
 
-## adresy globalne
+## unicast
+
+![IPv6 Address](/ipv6/img/img10.jpg)
+
+### adresy globalne
 
 - `unicast`
-- przydzielane przez IANA rozpoczynające się od wartości binarnej 001 (2000::/3).
 
 ![Adresy globalne](/ipv6/img/img2.jpg)
+
+- przydzielane przez IANA rozpoczynające się od wartości binarnej 001
+
+![Adresy globalne](/ipv6/img/img11.jpg)
 
 Struktura tych adresów umożliwia agregację wpisów routingu w celu uzyskania
 mniejszej globalnej tablicy routingu IPv6.
 
-## link-local
+### link-local | adres łącza lokalnego
 
 > umożliwienie węzłom podłączonym do wspólnego łącza komunikacji bez konieczności stosowania globalnie unikalnych adresów
 
 - Automatycznie przypisywany do dowolnego interfejsu obsługującego protokół IPv6.
-- `Nie routowalne`. Obowiązują one tylko w zakresie interfejsu.
+- `Nie routowalne`. Obowiązują one tylko w zakresie jednej sieci.
 - **Używany do wykrywania sąsiadów i automatycznej konguracji bezstanowej.**
+- tworzone poprzez EUI-64, losowo, statycznie
 - Przedrostek FE80::/10.
 
 ![link-local](/ipv6/img/img3.jpg)
 
-## loopback
+### loopback
 
 > `::1/128` = 0:0:0:0:0:0:0:1/128
 
 - Zazwyczaj `używany do testowania` stosu protokołów TCP/IP w systemach operacyjnych.
 - Podobna koncepcja do 127.0.0.0/8 w IPv4.
 
+### unikalne lokalne
+
+> odpowiednik `adresów prywatnych` w IPv4, ale są unikatowe
+
+- stosowane do komunikacji wewnątrz pojedyńczych sieci
+- `nie rutowalne`
+
+> od `FC00::/7` do `FDFF::/7`
+
 ## multicast
 
-> `ff00::/8`
+> zaczynają się od `FF`, podobana funkcjonalność jak adresy 224.x.x.x w IPv4
 
-- mają podobną funkcje jak 224.0.0.0/24 w IPv4.
+Podzielono na 2 rodzaje:
 
-Budowa adresu IPv6 multicast :
+- `przypisany`
+- `solicited-node` - adres żądania węzła
+
+![multicast](/ipv6/img/img17.jpg)
+
+<Details summary='budowa adresu IPv6 multicast'>
 
 | multicast address [8bit] | Flags [4bit]                                       | Scope [4bit]                                                                                                | Group ID [112bit]                                |
 | ------------------------ | -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
@@ -75,3 +98,37 @@ Adresy multicastowe o zakresie global są **używane w całym internecie**.
 Pakiety wysyłane na taki adres mogą być dostarczane do urządzeń na całym świecie.
 
 </Steps>
+
+</Details>
+
+## przypisany multicast
+
+<Steps>
+
+### wszystkie węzły
+
+> rozsyłanie danych do wszystkich węzłów (hostów) w danej sieci.
+
+odpowiednik adresów broadcast z IPv4
+
+### wszystkie routery
+
+> przesyłanie danych do wszystkich routerów w danej sieci.
+
+hosty wysyłają na ten adres komunikaty **RS** (Router Solicitation), aby dowiedzieć się, jakie routery są dostępne w sieci.
+
+</Steps>
+
+## solicited-node multicast
+
+1. Stosowany w protokole **NDP** (Neighbor Discovery Protocol) do uzyskiwania adresów MAC kart sieciowych hostów
+
+> w IPv6 nie ma ARP, ale jest NDP
+
+2. Wykorzystanie w detekcji duplikatów adresów IP przy auto-konfiguracji
+
+adres żądania węzła jest tworzony automatycznie jeśli host posiada lokalny/globalny adres IPv6
+
+tworzony z użyciem prefixu: `FF02::1:FFxx:xxxx/104`
+
+![solicited-node](/ipv6/img/img16.jpg)

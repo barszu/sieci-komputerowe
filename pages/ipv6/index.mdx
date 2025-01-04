@@ -20,7 +20,7 @@ IPv6 wymaga ICMPv6 do działania:
 | ----------------------- | ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Długość adresu**      | 32-bitowy                                       | 128-bitowy                                                                                                                                                             |
 | **Ilość adresów**       | 2^32 = 4,3 miliarda                             | 2^128 = 4,3 miliarda \* 2^96                                                                                                                                           |
-| **Format adresu**       | Dziesiętny, cztery pola po 8 bitów              | Szesnastkowy, osiem pól po 16 bitów                                                                                                                                    |
+| **Format adresu**       | Dziesiętny, cztery pola po 8 bitów (oktet)      | Szesnastkowy, osiem pól po 16 bitów (hexet)                                                                                                                            |
 | **Przykład**            | 192.168.0.1                                     | 2001:0db8:0000:0000:0000:0000:0000:0001 = 2001:0db8::1 <br/> <br/> Podwójne dwukropki mogą być użyte tylko raz w adresie IPv6, aby zastąpić jedną lub więcej grup zer. |
 | **Konfiguracja adresu** | Ręczna lub przez DHCP                           | Autokonfiguracja (SLAAC) i DHCPv6                                                                                                                                      |
 | **Fragmentacja**        | Routery i hosty mogą fragmentować pakiety       | Tylko hosty mogą fragmentować pakiety, <br/> `brak fragmentowania po drodze`                                                                                           |
@@ -96,11 +96,18 @@ IPv6 wymaga ICMPv6 do działania:
 
 ## Anycast
 
-> rodzaj wysyłania pakietu typu “traf gdziekolwiek”.
+> zamiast broadcastu
 
-W praktyce trafia do najbliższego topologicznie hosta.
+> rodzaj wysyłania pakietu typu “traf gdziekolwiek”, ale trafiają do najbliższego hosta z punktu widzenia routingu
+
+działa jak numer alarmowy 112 - gdziekolwiek sie znajdujemy to połączymy się z najbliższym centrum alarmowym
 
 ## Autokonfiguracja
+
+![Autokonfiguracja](/ipv6/img/img12.jpg)
+![Autokonfiguracja](/ipv6/img/img13.jpg)
+![Autokonfiguracja](/ipv6/img/img14.jpg)
+![Autokonfiguracja](/ipv6/img/img15.jpg)
 
 ### SLAAC (Stateless Address Autoconfiguration)
 
@@ -113,3 +120,45 @@ W praktyce trafia do najbliższego topologicznie hosta.
 ### stateful - używa DHCPv6
 
 > host multicastem zgłasza się do serwera (serwerów) DHCP i dostaje informacje
+
+## Rozwiązania przejściowe
+
+### Dual-stack
+
+> urządzenia mają adres IPv4 i IPv6 jednocześnie
+
+- który protokół użyć zależy od aplikacji
+
+### Tunneling
+
+> pakowanie pakietu IPv6 w pakiet IPv4
+
+- urządzenia obsługujące IPv4 nie są świadome ze w polu dane jest IPv6
+- adres docelowy IPv4 to adres końca tunelu (np. routera po drodze z sieci WAN)
+- adres źródłowy IPv4 to adres routera, który pakuje pakiet
+
+![Tunneling](/ipv6/img/img18.jpg)
+
+<Steps>
+
+#### statyczny tunel - punkt-punt
+
+- ręcznie konfigurowany
+
+#### dynamiczny tunel - punkt-wielopunkt
+
+- automatycznie konfigurowany
+- wykorzystuje się adresy pętli zwrotnych routerów, które konfigurowane są podczas zestawiania tunelu
+
+Metody:
+
+- **6to4** - z adresami 2002::/16 lub unikatowych adresów globalnych
+- **ISATAP** - z tylko adresów globalnych
+
+</Steps>
+
+### NAT-PT
+
+> Network Address Translation - Protocol Translation
+
+adres IPv6 jest przetłumaczony na adres IPv4 i odwrotnie (tak jak w NAT)
