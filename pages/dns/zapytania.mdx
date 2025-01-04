@@ -1,0 +1,120 @@
+import { Callout, Steps} from 'nextra/components'
+import { Details } from '../../components/details'
+
+# Zapytania DNS:
+
+<Callout type="info">
+
+host wydaje zapytanie do serwera DNS i chce odpowiedzi, przy czym serwery też mogą odpytywać inne serwery
+
+</Callout>
+
+każdy serwer zna:
+
+- adresy hostów ze swojej domeny DNS
+- adresy serwerów, do których delegował odpowiedzialność
+- adresy głównych serwerów nazw
+- adres serwera domeny macierzystej (nadrzędnej)
+
+## Zapytania rekurencyjne
+
+![DNS](/dns/img/img2.jpg)
+
+<Details summary='opis kroków...'>
+
+1. host wysyła zapytanie do serwera `lokalnego DNS` (np. ISP) o adres IP celu
+2. serwer DNS z domeny hosta **rekurencyjnie odpytuje swój główny serwer** nazw o adres, bo go nie zna
+3. główny serwer wie, że delegował odpowiedzialność do domeny `.pl` do innego serwera, więc go rekurencyjnie odpytuje
+4. serwer `.pl` wie, że delegował odpowiedzialność do domeny `agh.edu.pl` do innego serwera, więc go rekurencyjnie odpytuje
+5. serwer `agh.edu.pl` zna ten adres domeny, więc daje odpowiedź i zaczyna zwijać rekurencję
+6. \- 8. serwery zwracają sobie odpowiedzi, aż odpowiedź dojdzie do hosta
+
+</Details>
+
+## Zapytania iteracyjne
+
+![DNS](/dns/img/img3.jpg)
+
+<Details summary='opis kroków...'>
+
+1. host odpytuje swój lokalny serwer DNS o adres IP poszukiwanego celu
+2. serwer DNS z domeny hosta nie zna tego adresu, ale wie, jaki jest serwer główny i jego można zapytać, więc przekazuje tę informację hostowi
+3. \- 4. host pyta serwer główny, który wie, że delegował tę informację do serwera .pl, więc odpowiada hostowi, żeby to jego zapytał
+4. \- 6. identycznie jak wyżej, ale .pl delegował dla agh.edu.pl
+5. \- 8. serwer agh.edu.pl zna adres IP i odpowiada nim hostowi
+
+</Details>
+
+## Zapytania mieszane
+
+![DNS](/dns/img/img4.jpg)
+
+- realnie stosowane
+- serwer główny nie używa rekurencyjnych zapytań, tylko iteracyjne
+
+## Cache'owane wpisów DNS:
+
+<Callout type="info">
+
+Wpisy DNS są przechowywane w pamięci podręcznej, aby zmniejszyć liczbę zapytań DNS i zwiększyć wydajność.
+
+</Callout>
+
+Dzięki temu niektóre zapytania, jak te opisane powyżej, nie muszą być ponownie wysyłane.
+
+### Odpowiedź autorytatywna
+
+odpowiedź pochodząca bezpośrednio od serwera DNS, który jest odpowiedzialny za daną domenę.
+
+### Odpowiedzi z pamięci podręcznej
+
+Nie są autorytatywne, ale zawierają informacje o serwerze, od którego można uzyskać autorytatywną odpowiedź.
+Pomagają w szybszym uzyskaniu odpowiedzi bez konieczności kontaktowania się z serwerem autorytatywnym.
+
+### Time To Live (TTL)
+
+Odpowiedzi autorytatywne zawierają wartość TTL, która określa, jak długo wpis może być przechowywany w pamięci podręcznej.
+Po upływie tego czasu wpis musi być odświeżony przez ponowne zapytanie do serwera autorytatywnego.
+
+## Rodzaje zapytań DNS:
+
+<Steps>
+
+### Zapytania proste (typu A)
+
+- najczęstsze
+- znamy domenę, szukamy IP
+- typu “Jaki jest adres IP urządzenia o nazwie www.X.Y.Z?”
+
+### Zapytania wskazujące (typu PTR)
+
+- tzw. reverse DNS lookup
+- znamy IP, szukamy domeny
+- wykorzystuje się specjalną domenę in-addr.arpa.
+- odwraca kolejność oktetów adresu IP, np. dla 149.156.98.14 szukamy wpisu 14.98.156.149.in-addr.arpa. i otrzymujemy domenę
+
+### MX
+
+> serwer poczty dla określonego adresu e-mail
+
+### NS
+
+> autorytatywny serwer DNS dla danej domeny
+
+### CNAME
+
+> canonical name, alias
+
+### HINFO
+
+> informacje na temat komputera
+
+</Steps>
+
+## Sposób przesyłania komunikatów DNS:
+
+- DNS używa zarówno UDP, jak i TCP, na porcie 53.
+- Zazwyczaj używa się UDP, ale jeśli odpowiedź przekracza 512 bajtów (maksymalny rozmiar pakietu UDP, który musi być obsługiwany przez każdy host), wtedy używa się TCP.
+- Jeśli odpowiedź UDP jest większa niż 512 bajtów i została obcięta, resolver ponawia zapytanie za pomocą TCP.
+- Transfer stref DNS odbywa się za pomocą TCP.
+- W przypadku UDP, programy muszą same zarządzać czasem oczekiwania i retransmisjami.
