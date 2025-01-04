@@ -11,17 +11,6 @@ import { Details } from '../../components/details'
 - eliminuje potrzebę readresacji hostów przy zmianie ISP (Internet Service Provider) lub sposobów adresacji
 - jest wersja lepsza w wersji PAT oszczędza przestrzeń adresową IPv4
 
-![NAT](/lab10/img/img1.webp)
-
-<Details summary='Patrząc z perspektywy hosta wewnątrz sieci z NAT:'>
-
-- on wie, że ma na prawdę adres IL
-- na zewnątrz myślą, że ma adres IG
-- jak widzi hosta to widzi u niego adres OL
-- tak na prawdę host z zewnątrz ma adres OG
-
-</Details>
-
 <Details summary='Ważne, że te adresy mogą być takie same!'>
 
 Przykładowo IL może być takie samo, jak IG, po prostu wtedy nie ukrywamy tego prawdziwego adresu (ale musi być wtedy globalnie unikatowy).
@@ -29,6 +18,10 @@ Przykładowo IL może być takie samo, jak IG, po prostu wtedy nie ukrywamy tego
 </Details>
 
 ## Rodzaje adresów w NAT:
+
+![NAT](/lab10/img/img1.jpg)
+
+> Patrząc z perspektywy hosta wewnątrz sieci z NAT
 
 <Steps>
 
@@ -42,41 +35,52 @@ Przykładowo IL może być takie samo, jak IG, po prostu wtedy nie ukrywamy tego
 
 ### OL - Outside Local
 
-adres hosta zewnętrznego tak, jak jest widoczny wewnątrz
+> adres hosta obcego tak, jak jest widoczny wewnątrz naszej sieci lokalnej
+
+Niekoniecznie jest to adres publiczny, może to być adres przypisany do serwera w innej sieci, który nie jest routowalny w Internecie.
 
 ### OG - Outside Global
 
-prawdziwy adres hosta zewnętrznego
+> adres hosta obcego z zewnątrz
+
+publiczny adres IP przypisany do urządzenia na zewnętrznej sieci (np. serwera internetowego)
 
 </Steps>
 
+<Details summary='dla opornych z perspektywy hosta z sieci "lokalnej"'>
+
+- on wie, że ma na prawdę adres IL
+- na zewnątrz myślą, że ma adres IG
+- jak widzi hosta to widzi u niego adres OL
+- tak na prawdę host z zewnątrz ma adres OG
+
+</Details>
+
 ## Rodzaje tłumaczenia w NAT
 
-### inside source address
-
-> `IL -> IG` inside local -> inside global
+### inside source address `IL -> IG`
 
 hosty wewnętrzne używają wtedy różnych adresów publicznie widocznych
 
-![NAT](/lab10/img/img2.jpg)
-
-### outside source address
-
-> `OL -> OG` outside local -> outside global
-
-![NAT](/lab10/img/img3.jpg)
+### outside source address `OL -> OG`
 
 to właśnie to pozwala współpracować sieciom z pokrywającymi się adresami, bo
 nawet jak przyjdzie to samo z zewnątrz (Outside Global), to możemy to
 przetłumaczyć na unikatowe wewnątrz (Outside Local)
 
-## IP Spoofing - maskarada adresów
+## Przykładowe działanie
 
-> polega na podmianie adresu źródłowego w pakiecie IP na inny, fałszywy adres IP
+Zaużmy, że:
 
-> hosty widzą co innego, niż jest naprawdę.
+- komputer z sieci lokalnej ma adres 192.168.1.2 (IL), publiczny 203.0.113.6 (IG) (**nie routera!**), wystąpi tłumaczenie adresów (IL -> IG)
+  > zaużmy że był to adres dynamicznie przydzielony z puli przez NAT
+- router ma adres publiczny 203.0.113.5
+- serwer ma adres publiczny 69.21.37.5 (OG = OL)
 
-## Rodzaje translacji:
-
-- `Static` - 1:1, stałe przypisanie adresów
-- `Dynamic` - przypisanie adresów z puli dostępnych adresów (dynamicznie zarządzane przez mechanizm)
+1. **Wysyłanie żądania** komputer chce wysłać pakiet do serwera (69.21.37.5) (OL), kieruje go na router
+2. **Tłumaczenie adresu** Router odbiera pakiet i zmienia jego nagłówek, zastępując prywatny adres IP (192.168.1.2) publicznym adresem IP (203.0.113.6).
+   - Router zapisuje tę informację w swojej tabeli NAT, aby wiedzieć, do którego urządzenia powinien wysłać odpowiedź.
+3. **Wysyłanie do Internetu** Router wysyła zmieniony pakiet do serwisu internetowego.
+4. **Odpowiedź z serwisu**: Pakiet wraca do routera z destination jako publicznym adresem (203.0.113.6).
+5. **Tłumaczenie powrotne** Router sprawdza swoją tabelę NAT i widzi, że odpowiedź powinna być skierowana do komputera o adresie 192.168.1.2, więc zmienia nagłówek pakietu z powrotem na prywatny adres IP.
+6. **Dostarczenie odpowiedzi** Router przesyła odpowiedź do komputer
