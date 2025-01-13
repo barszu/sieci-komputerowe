@@ -55,6 +55,16 @@
     "type": "page",
     "display": "hidden"
   },
+  "dns": {
+    "title": "DNS",
+    "type": "page",
+    "display": "hidden"
+  },
+  "ipv6": {
+    "title": "IPv6",
+    "type": "page",
+    "display": "hidden"
+  },
 
   "menu": {
     "title": "Rozdziały",
@@ -99,6 +109,14 @@
       "10-lab": {
         "title": "lab 10",
         "href": "/lab_10"
+      },
+      "DNS": {
+        "title": "DNS",
+        "href": "/dns"
+      },
+      "IPv6": {
+        "title": "IPv6",
+        "href": "/ipv6"
       }
     }
   }

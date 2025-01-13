@@ -1,0 +1,21 @@
+# Notacja Colon-Hex
+
+**Notacja Colon-Hex** to sposób zapisu adresów IPv6, w którym adres jest zapisany w postaci szesnastkowej, a poszczególne _~~oktety~~_ hexety są oddzielone dwukropkami.
+
+> Dot-Decimal: 149.156.97.23
+
+> Colon-Hex: FEDC:0000:0000:0000:0043:0000:0000:ABCD
+
+- każdy _~~oktet~~_ `hexet` to 4 znaki szesnastkowe (2 Bajty)
+- `zera wiodące` w każdym hexecie można pominąć _(000c => c)_
+- `grupy zer wewnątrz` _(2+)_ adresu można zastąpić podwójnym dwukropkiem, ale `tylko raz`
+
+> FEDC::43:0:0:ABCD
+
+- ostatnie 32 bity można zapisać w notacji dziesiętnej, ale nie jest to zalecane
+
+> ::149.156.97.23
+
+- można specyfikować prefix przez podanie długości
+
+> 2345:BA23:: / 40
