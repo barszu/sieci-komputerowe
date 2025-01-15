@@ -1,0 +1,21 @@
+# Pseudonagłówek TCP
+
+> obliczany z nagłówka TCP oraz nagłówka IP (adresy IP, reserved, protocol, TCP length)
+
+![Pseudonagłówek TCP](/lab11/img/img22.jpg)
+
+- przechowuje się go w buforze na czas obliczania sumy kontrolnej tuż przed nagłówkiem TCP, a potem usuwa
+
+- dodatkowo chroni przed pewnymi problemami, które mogą wystąpić przy sumie kontrolnej samego nagłówka TCP, bez potrzeby przesyłania dodatkowych danych (wszystkie dodatkowe informacje są już w nagłówku IP)
+
+## Zalety - chroni przed:
+
+- `niepoprawną adresacją segmentu` - wykrywa różne adresy źródłowe i docelowe
+- `niepoprawnym protokołem` - TCP zakłada, że segment jest skierowany do niego; pseudonagłówek pozwala wykryć, że np. jest skierowany do UDP
+- `niepoprawną długością segmentu` - pozwala wykryć zgubienie części segmentu TCP (TCP w nagłówku trzyma tylko długość nagłówka, nie całego segmentu)
+
+## Wady
+
+- TCP w dzisiejszych sieciach jest bardzo niezawodny, więc korzyści z tych dodatkowych elementów są niewielkie
+- suma kontrolna jest liczona w dość prymitywny sposób i jest słaba w porównaniu do nowoczesnych algorytmów sum kontrolnych
+- narusza architekturę warstwową modelu (używa informacji z warstwy 3 w warstwie 4)

@@ -1,0 +1,86 @@
+import {Details} from '../../components/details'
+import {Steps} from 'nextra/components'
+
+## Asocjacja
+
+> piątka w postaci: [ `protokół`, `lokalny IP`, `port lokalny`, `obcy IP`, `obcy port` ]
+
+![asocjacja](/lab11/img/img3.jpg)
+
+<Details>
+
+- **`protokół`** - TCP/UDP
+- **`lokalny IP`** - IP hosta, który wysyła dane
+- **`port lokalny`** - port hosta, który wysyła dane
+- **`obcy IP`** - IP hosta, który odbiera dane
+- **`obcy port`** - port hosta, który odbiera dane
+
+</Details>
+
+## Socket - gniazdo (półasocjacja):
+
+> `[ protokół, adres lokalny, proces (port) lokalny ]` lub <br/> `[ protokół, adres obcy, proces (port) obcy ]`
+
+### Porty a połączenia
+
+- **Problem:** Serwer nie chce zmieniać portu dla każdego połączenia.
+- **Idea:** Wiele połączeń może korzystać z jednego portu.
+- **Rozwiązanie:** Połączenie (dialog) to para punktów końcowych (dwie asocjacje).
+
+To rozwiązanie pozwala na:
+
+- Niezależne, jednoczesne połączenia TCP i UDP na ten sam adres i port (różnią się pierwszym polem krotki, nawet jeśli pozostałe cztery są identyczne).
+- Obsługę wielu klientów na tym samym porcie (różnią się polami 4-5 krotki).
+
+### Socket API (BSP - Berkeley Sockets)
+
+<Steps>
+
+#### `socket()`
+
+> tworzenie gniazda (serwer, klient)
+
+#### `bind()`
+
+> przypisanie adresu i portu do gniazda
+
+zwykle po stronie serwera (żeby klienci łączyli się z tym adresem)
+
+#### `listen()`
+
+> oznaczenie gniazda jako pasywne (serwer)
+
+- oznaczenie, że socket służy do słuchania (czekania na połączenia i akceptowania ich)
+- serwer oznacza w ten sposób, że gniazdo jest gotowe do przyjmowania połączeń
+
+#### `accept()`
+
+> oczekuje i akceptowanie połączenia przychodzącego na dany adres i port (serwer)
+
+- serwer potwierdza w ten sposób połączenie od klienta
+- socket musi być wcześniej związany z danym adresem (bind) i nasłuchiwać połączeń na tym porcie (listen)
+
+#### `connect()`
+
+> ustanawia połączenie z serwerem (klient)
+
+#### `send(to)` (TCP) | sendto(to) (UDP)
+
+> wysyłanie danych (klient, serwer)
+
+#### `recv(from)` (TCP) | recvfrom(from) (UDP)
+
+> pobieranie danych (klient, serwer)
+
+</Steps>
+
+<Details>
+
+**send/recv** używają `TCP`, bo wymagają wcześniej połączenia się z kimś konkretnym; nie
+trzeba w nich podawać adresata, bo i tak jest znany (to ten, z którym połączył się TCP
+wcześniej poprzez connect)
+
+**send`to`/recv`from`** używają `UDP`, bo wymagają podania adresata; trzeba go podawać, bo
+to protokół bezpołączeniowy i nie wiadomo z góry, kto jest adresatem
+
+</Details>

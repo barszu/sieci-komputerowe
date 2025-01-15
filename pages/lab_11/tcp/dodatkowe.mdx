@@ -1,0 +1,40 @@
+## Okno przeciążenia łącza (congestion window)
+
+![Okno przeciążenia łącza](/lab11/img/img23.jpg)
+
+> ilość danych, które mogą być przesłane w jednym czasie (nadawca dostosowuje prędkość przesyłu dla sieci)
+
+- **slow start** - zaczyna od małej ilości danych, aż do osiągnięcia maksymalnej prędkości
+- **congestion avoidance** - po osiągnięciu maksymalnej prędkości, zaczyna zwiększać ilość danych wolniej
+- **fast retransmit** - jeśli nie dostanie potwierdzenia, to od razu retransmituje dane - timeout (chodź może wystąpić z innego powodu np. niezgodności sumy kontrolnej)
+- **fast recovery** - po retransmisji, zaczyna od połowy ilości danych, a nie od zera
+
+## Algorytmy dodatkowe
+
+> zazwyczaj działają razem
+
+### Nagle'a
+
+> wysyłam co mam zebrałem w buforze (min 1 B), i czekam na potwierdzenie otrzymania, itd..
+
+### Clarka
+
+> odbiorca czeka z otwarciem okna, aż możliwe bedzie powiekszenie go o MSS (Maximum Segment Size) lub 1/2 bufora odbiorcy
+
+## Zegary TCP
+
+### Retransmition Timer
+
+> czas, po którym TCP uznaje, że pakiet został zgubiony i trzeba go wysłać ponownie (nie dotarło potwierdzenie)
+
+- odmierza TIMEOUT
+- może być zmienny (retransmisja z adaptacją)
+- obliczany poprzez RTT (Round Trip Time) - czas potrzebny na przesłanie danych i otrzymanie potwierdzenia
+
+### Persistence Timer
+
+> czas, po którym TCP uznaje, że informacja od odbiorcy o zwiekszeniu okna nie dotarła
+
+### Keepalive Timer
+
+> czas, po którym TCP podstrzymuje 'sesje' jeśli nie ma ruchu - wysyłają 'hello'

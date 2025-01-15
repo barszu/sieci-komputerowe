@@ -1,0 +1,76 @@
+import { Steps } from 'nextra/components';
+
+# Budowa nagłówka TCP [20 byte]
+
+> do 60 bajtów, jeśli z obcjami
+
+![Nagłówek TCP](/lab11/img/img5.jpg)
+
+## numery portów [2 B]
+
+> `2^16 - 1` możliwości
+
+- źródłowy i docelowy - znane, bo to protokół połączeniowy
+- port klienta - zwykle efemeryczny (duże numery)
+- port serwera - dobrze znany (< 1024) lub zarezerwowany
+
+## [numery sekwencyjny, potwierdzenia [4 B] ](dzialanie.mdx)
+
+## długość nagłówka (data offset) [4 bit]
+
+> długość **samego nagłówka TCP** w słowach (4 bajtowych) - długość nagłówka TCP w bajtach musi być zawsze podzielna przez 4
+
+## zarezerwowane [6 bit]
+
+> Zarezerwowane do przyszłego użytku, powinno być ustawione na 0
+
+## flagi [6 * 1 bit]
+
+- **URG** - Dane są priorytetowe, używa się mechanizmu priorytetowego przesyłu danych i Urgent Pointera (patrz niżej)
+
+- **[ACK](/lab_11/tcp/dzialanie/#3-way-handshake)** - Pakiet stanowi potwierdzenie, pole numeru potwierdzenia zawiera następny numer sekwencji oczekiwany przez źródło
+
+- **PSH** - Push, nadawca żąda usługi pushowania danych, czyli natychmiastowego wysłania do aplikacji u odbiorcy
+
+- **[RST](/lab_11/tcp/dzialanie/#closing-connection)** - Reset, nadawca chce zresetować połączenie, bo wykrył problem
+
+- **[SYN](/lab_11/tcp/dzialanie/#3-way-handshake)** - Wiadomość ma zsynchronizować numery sekwencyjne i nawiązać połączenie, pole numeru sekwencyjnego zawiera ISN nadawcy
+
+- **[FIN](/lab_11/tcp/dzialanie/#closing-connection)** - Finish, nadawca chce zakończyć połączenie
+
+## rozmiar [okna](/lab_11/tcp/dzialanie/#window-size---bytes-in-flight--flow-control) [2 B]
+
+> ile bajtów może być przesłane w jednym czasie (nadawca jest gotów otrzymać tyle danych od odbiorcy)
+
+- wyrażone w Bajtach (1 - > 1B)
+- maksymalny rozmiar okna:
+  - bez skalowania: 2^16 - 1 B (64 KB)
+  - ze skalowaniem: (max mnożnik 2^16) ~ 2^32 B (4 GB)
+    > mnożnik ustawia się w obcjach, maksymalnie 16
+- host będzie się przypominał jeśli przez długi czas okno będzie 0 (segment z nowym oknem mógł sie zgubić)
+
+## suma kontrolna [2 B]
+
+> sprawdzenie, czy dane nie zostały uszkodzone w transmisji
+
+> obliczana z nagłówka TCP oraz pseudonagłówka - fragment IP (warstwa III)
+
+## wskaźnik pilności (urgent pointer) [2 B]
+
+> wskaźnik na dane, które są pilne, powinny być przetworzone natychmiast (kiedy ustawione jest URG flag = 1),
+
+- można wysłac mimo okna = 0
+- są "poza" głównym strumieniem transmisji
+
+## obcje [0-40 B]
+
+> składają się z rodzaju opcji, długości opcji (w bajtach) i danych opcji (zmienna długość)
+
+- `koniec listy opcji` - nie musi być używana, jeżeli koniec opcji jest jednocześnie końcem nagłówka TCP
+- `brak opcji` - 1-bajtowa “spacja” pomiędzy opcjami, używana, jeżeli poprzednia opcja nie kończyła się na wielokrotności 32 bitów (4 bajtów)
+- `MSS` **(Maximum Segment Size)** - wielkość w bajtach największego segmentu, który wysyłające urządzenie może otrzymać; tylko w wiadomościach SYN
+- `window scale` - zawiera jakąś liczbę x zapisaną binarnie; realna wielkość okna powinna wynosić: size = 2^x \* (wielkość z nagłówka); pozwala na wykorzystanie bardzo dużych okien (o ile oba urządzenia się na takie zgodzą), używane np. w łączach wysokiej wydajności
+- `selective acknowledgement permitted` - pozwala na używanie SACK
+- `SACK` **(selective acknowledgement)** - wybiera (bez wymagania ciągłości!) bajty, które są potwierdzane i nie muszą być retransmitowane (więc mogą być “luki” danych do retransmisji)
+- `alternatywny algorytm sumy kontrolnej`
+- `znacznik czasowy` - RTT (Round Trip Time) - czas, jaki mija między wysłaniem pakietu a otrzymaniem potwierdzenia

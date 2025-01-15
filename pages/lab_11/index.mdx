@@ -1,0 +1,71 @@
+import {Details} from '../../components/details'
+import {Steps} from 'nextra/components'
+
+# Warstwa transportowa - IV warstwa
+
+- segmentacja danych z warstw wyższych
+- składanie danych od warstw niższych w punkcie docelowym (reassembly)
+- może zapewniać niezawodność przesyłania danych i parametry jakości transmisji (QoS)
+
+## Port
+
+> adres w warstwie IV (transportowej)
+
+> abstrakcyjny punkt docelowy identykowany za pomocą liczb z zakresu `0-65665` (16 bit)
+
+> - `1-1023` - znane usługi (np. ogólne HTTP: 80, FTP: 21, SSH: 22)
+> - 1024-49151 - zarejestrowane (znane ogólnie) usługi (np. HTTP: 8080, FTP: 2121)
+> - 49152-65535 - porty dynamiczne/prywatne (np. serwery gier) <br/>
+>   efemeryczne - numery od (2^14 + 2^15) do (2^16 - 1), na krótkotrwałe połączenia
+
+- **numery portów dla różnych protokołów warstwy 4 mogą się powtarzać**- jest inna pula dla TCP a inna dla UDP, ICMP
+- na nich opiera się schemat adresacji procesów wewnątrz hosta (działa lepiej niż np. przy ID procesów, bo one zmieniają się ciągle)
+
+### Dostęp do portów
+
+- **`synchroniczny`** - przetwarzanie jest wstrzymywane na czas komunikacji (proces czeka
+  na komunikację)
+- **`asynchroniczny`** - bez przerywania przetwarzania (proces dalej sobie działa)
+
+### Buforowanie portów:
+
+- każdy port ma bufor na dane przychodzące zazwyczaj (FIFO)
+- zapobiegają utracie danych, jeżeli proces nie może od razu obsłużyć tych danych
+- może skracać czas oczekiwania procesu na dane (bo proces nie musi czekać na dane, tylko je odbiera z bufora)
+
+## Rodzaje protokołów
+
+<Steps>
+
+### bezpołączeniowe
+
+> UDP - User Datagram Protocol
+
+- tylko transmisja
+- szybsze
+- mniejsze narzuty na informacje kontrolne
+- dobre dla bardzo małych pakietów
+
+Używane w:
+
+- DNS (Domain Name System)
+- DHCP (Dynamic Host Configuration Protocol)
+- NTP (Network Time Protocol)
+- SNMP (Simple Network Management Protocol)
+- Syslog (System Logging Protocol)
+
+### połączeniowe
+
+> TCP - Transmission Control Protocol
+
+- QoS (Quality of Service), np. zapewnienie, że dane dotrą do celu, potwierdzenia
+- nawiązywanie połączenie, transmisja, zamykanie połączenia
+- większe możliwości
+
+Używane w:
+
+- HTTP (HyperText Transfer Protocol)
+- FTP (File Transfer Protocol)
+- SMTP (Simple Mail Transfer Protocol)
+
+</Steps>
