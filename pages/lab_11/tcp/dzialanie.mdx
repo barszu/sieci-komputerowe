@@ -1,0 +1,263 @@
+import { Details } from "../../../components/details"
+import { Callout, Steps } from "nextra/components"
+import Carousel from "../../../components/carousel"
+
+## Sequence / Acknowledgement number
+
+![sequence/acknowledgement number](/lab11/img/img6.jpg)
+
+> informuje o `ilości bajtów` (nie wprost) , a nie o ilości pakietów
+
+> każdy wysyłany bajt jest enumerowany (trackowany) - numer sekwencyjny + i , i - numer bajtu w danych
+
+- **sequence number** - trackuje co jest wysłane
+
+<Details summary="Numery sekwencyjne...">
+
+- **Problem**: TCP musi śledzić, które dane są od kogo i do kogo, aby zapewnić niezawodność (np. do potwierdzeń i retransmisji). Nie może jednak przypisać ID do każdego pakietu, ponieważ traktuje dane jako strumień bajtów.
+- **Rozwiązanie**: Przypisanie numeru sekwencyjnego każdemu bajtowi.
+- **Korzyści**: Numer sekwencyjny pozwala sprawdzić, czy każdy bajt został wysłany i potwierdzony. Umożliwia również pakowanie bajtów z różnymi numerami sekwencyjnymi do jednego segmentu.
+- **W praktyce**:
+  - Używa się bloków bajtów, ponieważ segmenty zawierają ciągi bajtów.
+  - Numer sekwencyjny to numer pierwszego bajtu w segmencie.
+  - Początkowy numer sekwencyjny dla sesji jest ustalany na początku połączenia w wiadomościach SYN (synchronizacja numerów sekwencyjnych).
+
+</Details>
+
+- **acknowledgement number** - trackuje co jest odebrane
+
+<Details summary="Numery potwierdzenia..">
+
+- **Problem**: Gdy pakujemy dane ze strumienia do segmentu TCP, chcemy mieć pewność, że konkretny segment dotarł do odbiorcy.
+- **Idea**: Przypisanie numeru potwierdzenia każdemu segmentowi.
+- **Korzyści**: Umożliwia to asynchroniczne wysyłanie segmentów - możemy wysłać wiele segmentów naraz i otrzymać potwierdzenie dla każdego z nich, dzięki czemu wiadomo, który segment został potwierdzony.
+- **W praktyce**:
+  - Numer sekwencyjny identyfikuje zarówno dane, jak i potwierdzenie.
+  - Potwierdzenie używa numeru sekwencyjnego ostatniego bajtu z segmentu + 1.
+  - Numer potwierdzenia to następny numer sekwencyjny, którego wysyłający wiadomość ACK (acknowledge) się spodziewa, co zapewnia właściwą kolejność.
+
+</Details>
+
+'wysyłający' i 'odbierający' mają swoje numery sekwencyjne i potwierdzenia (po 2 , w obie strony)
+
+## Retransmisja
+
+<Carousel>
+
+![Retransmisja](/lab11/img/img7.jpg)
+
+<div>
+
+![Retransmisja](/lab11/img/img8.jpg)
+
+<span> przykład z `duplikatem` potwierdzenia </span>
+
+</div>
+
+</Carousel>
+
+TCP cashuje wysłany segment na czas `retransmisji` (ponownego wysłania)
+
+jeśli **nie dostanie potwierdzenia**, to po prostu **wyśle jeszcze raz**
+
+## Delayed Acknowledgement
+
+![Delayed Acknowledgement](/lab11/img/img9.jpg)
+
+> odebrałem `2` poprzednie, potwierdzam 2 wcześniejsze (send ACK every other segment)
+
+- Fix na problem: TCP wysyła ACK, zawsze po odebraniu segmentu (i zapycha to łącze)
+
+- ACK musi zostać wysłane po 500ms
+
+## Window Size - bytes in flight | Flow Control
+
+> rozmiar 'bufora' odbiorcy
+
+> ile danych można wysłać przed wymaganiem potwierdzenia (ogranicza ilość danych, które mogą być wysłane bez potwierdzenia)
+
+<Carousel>
+
+![Window Size](/lab11/img/img10.jpg)
+
+![Window Size](/lab11/img/img11.jpg)
+
+![Window Size](/lab11/img/img12.jpg)
+
+</Carousel>
+
+Może się zmieniać dynamicznie w trakcie transmisji ( `Flow Control` ), i ustawia ona window size u wysyłającego (tak więc można np. obniżyć )
+
+![Window Size](/lab11/img/img13.jpg)
+
+## Dwukierunkowość TCP
+
+> dwie strony mogą wysyłać dane w obrębie jednej 'sesji' tcp
+
+- SEQ i ACK są dla każdej strony
+- ACK przechodzi w SEQ (w drugą stronę) i odwrotnie
+- ułożenie SEQ, ACK nie jest przypadkowe (popsuj sobie kolejność na rysunku, aby to zobaczyć)
+
+### ISN - Initial Sequence Number
+
+> ACK u wysyłającego
+
+- losowo wybierany (A wybiera swój SEQ , B wybiera swój SEQ (z perspektywy A to ACK))
+- A i B muszą sie nimi wymienić przed wysyłaniem danych - podczas `3-way handshake`
+
+![bidirectional](/lab11/img/img14.jpg)
+
+<Details summary="opis co sie dzieje na rysunku...">
+
+<Steps>
+
+### 1) A wysyła dane do B
+
+- `SEQ` - losowe
+- `ACK` - ISN (Initial SEQ number), będzie używane przez B jako jego `SEQ`
+
+### 2) B wysyła dane do A
+
+- `ACK` = 1001 (old_seq) + 200 (odebranie) - przy okazji akceptuje 1)
+- `SEQ` = 3001 (nowo ustawione) (wysyłając 300)
+
+### 3) B wysyła dane do A
+
+- `ACK` = 1001 + 200 (znowu sobie potwierdza odebranie) - przy okazji akceptuje 2)
+- `SEQ` = 3001 + 300 (bo wcześniej wysłał 300)
+
+### 4) A wysyła dane do B
+
+- `SEQ` = 1001 + 200 (bo wczesniej wysłał 200)
+- `ACK` = 3001 + 300 + 300 (bo odebrał 300 i 300) - nie ma tu Acknowledgement powiadomienia, bo było ono zawarte przez ACK w 2., 3.
+
+### 5) A wysyła dane do B
+
+- `SEQ` = 1201 + 200 (bo wczesniej wysłał 200)
+- `ACK` = 3001 + 300 + 300 (bo odebrał 300 i 300) - nie ma tu Acknowledgement powiadomienia, bo było ono zawarte przez ACK w 2.,
+
+### 6) B potwierdza odebranie od a
+
+> B nie chciał wysyłać danych, ale musiał potwierdzić odebranie (bo otrzymał już 2 i jest zmuszony)
+
+- `ACK` = 1201 + 200 + 200 (bo odebrał 200 , 200)
+- `SEQ` = 3601
+
+### 7) A wysyła dane do B
+
+- `SEQ` = 1601 (ACK z 6. )
+- `ACK` = 3601 (SEQ z 6.) + 0 bo B nic nie wysłał było to tylko potwierdzenie
+
+</Steps>
+
+</Details>
+
+## 3-way handshake
+
+> = jak rozpoczyna się połączenie TCP ?
+
+- `SYN` , `ACK` dla każdej ze stron (w obie strony)
+
+![TWH](/lab11/img/img2.jpg)
+
+<Steps>
+
+### SYN - synchronize | A -> B
+
+A wysyła `SYN` , `SEQ = x` , x = ISN
+
+<Details summary='wygląd nagłówka TCP'>
+
+![SYN](/lab11/img/img15.jpg)
+
+flagi:
+
+- SYN = 1
+- ACK = 0 -> ACK nie jest brane pod uwage (bo to jest pierwszy pakiet)
+
+wartości:
+
+- SEQ = 1000 (x) (ISN)
+- ACK = 0 (jaki kolwiek tak naprawde)
+
+</Details>
+
+### SYN + ACK - synchronize + acknowledge | B -> A
+
+B odpowiada `SYN-ACK` , `SEQ = y`, `ACK = x+1` (jestem gotów na x+1, odebralem) , y = ISN
+
+<Details summary='wygląd nagłówka TCP'>
+
+![SYN](/lab11/img/img16.jpg)
+
+flagi: (SYN, ACK powinny byc brane pod uwage)
+
+- SYN = 1
+- ACK = 1
+
+wartości:
+
+- SEQ = 3000 (y) (ISN)
+- ACK = 1001 (x+1) (akceptuje krok poprzedni)
+
+</Details>
+
+### ACK - acknowledge | A -> B
+
+A odpowiada `ACK`, `SEQ = x+1` , `ACK = y+1` (jestem gotów na y+1, odebrałem)
+
+<Details summary='wygląd nagłówka TCP'>
+
+![SYN](/lab11/img/img17.jpg)
+
+flagi:
+
+- SYN = 0
+- ACK = 1
+
+</Details>
+
+</Steps>
+
+### all done
+
+> już mamy aktywną sesje TCP
+
+<Details summary='całość, flagi...'>
+
+![TWH](/lab11/img/img18.jpg)
+
+flagi: (teraz same ACK lecą)
+
+- SYN = 0
+- ACK = 1
+
+</Details>
+
+## closing connection
+
+### gracefull , `FIN`
+
+> flaga `FIN` = 1 (finished)
+
+![closing connection](/lab11/img/img19.jpg)
+
+- A -> B `FIN` (zamykam połączenie z mojej strony) , `SEQ = x`
+- B -> A `ACK-FIN` (potwierdzam otrzymanie, wyslalem co mialem - zamykam połączenie z mojej strony), `SEQ = y`, `ACK = x+1`
+  > mogą być jeszcze dane do przesłąnia więc bedzie ACK , dosłanie danych , FIN
+- A -> B `ACK` (ok), `SEQ = x+1`, `ACK = y+1`
+
+<Details summary='przyklad z wyslaniem danych przed FIN'>
+
+![closing connection](/lab11/img/img20.jpg)
+
+4. ma `ACK` = 1602 zamiast 1601 aby potwierdzić odebranie 1601 (FIN)
+
+</Details>
+
+### brutal , `RST`
+
+> flaga `RST` = 1 (reset)
+
+- one way kill
+- w sytuacji kiedy coś bardzo się popsuło w `SEQ` , `ACK` , `Window Size` etc.

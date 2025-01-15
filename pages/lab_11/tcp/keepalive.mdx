@@ -1,0 +1,22 @@
+## Keepalive
+
+- Wysyłanie okresowo wiadomości keepalive (tylko nagłówek, zero danych), na które powinno normalnie przyjść ACK
+- Nie jest obowiązkowy, nie jest częścią standardu
+
+### Elementy:
+
+- **Keepalive timer** - odpala ten licznik, jak dojdzie do 0, to wysyła wiadomość keepalive; jest puszczany od nowa, jak przyjdzie ACK
+- **Keepalive interval** - jeżeli ACK keepalive'a nie przyjdzie w tym czasie, to znowu wysyła keepalive (timer dalej jest 0)
+- **Keepalive retry** - liczba retransmisji keepalive'a; jeżeli się zużyją, to zakładamy, że druga strona przestała istnieć
+
+### Zalety:
+
+- Pozwala szybko wykryć problemy z połączeniem
+- Oszczędność np. przy serwerach - pozwala eliminować bierne połączenia (bo np. klient się zcrashował i socket “wisi” na serwerze)
+
+### Wady:
+
+- Potencjalnie niepotrzebne - nawet, jeżeli nie ma komunikacji przez długi czas i jest to przez błąd, to zostałoby to wykryte, kiedy komunikacja w końcu nastąpi (i naprawione przez reset)
+- Generuje dodatkowy ruch na łączu
+- Trzeba dodatkowo zrobić mechanizm obsługi takich segmentów
+- Teoretycznie może wyłączyć dobre połączenie - może się zdarzyć tak, że normalnie wszystko z łączem jest ok, tylko urządzenia milczą, a akurat zepsuje się przy wiadomości keepalive i zostanie to uznane za ogólny problem z połączeniem (chociaż to mało prawdopodobna sytuacja)

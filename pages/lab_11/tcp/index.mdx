@@ -1,0 +1,69 @@
+import { Details } from "../../../components/details"
+import { Callout, Steps } from "nextra/components"
+import Carousel from "../../../components/carousel"
+
+# TCP - Transmission Control Protocol
+
+![TCP](/lab11/img/img21.jpg)
+
+<Steps>
+
+### Połączeniowy
+
+<Callout type="info" emoji="🔗">
+
+każde połączenie ma dokładnie `2 końce`- `2 stronny strumień` , komunikacja zawsze `point-to-point`, (np. `brak multicastu`)
+
+</Callout>
+
+- nawiązuje połączenie zanim prześle dane, co zapycha łącze
+- zamyka połączenie
+- transmisja `full duplex` (bidirectional) (jedna strona inicjuje transmisję, ale potem oba mogą się naraz komunikować)
+- połączenia są buforowane w sposób niewidoczny dla aplikacji
+- `strumieniowy` - w tej samej kolejności spłyną dane co zostały wysłane, i nie ma potrzeby na obsługę błędów
+
+### Niezawodny
+
+> pakiet może być zgubiony, ale TCP najprawdopodobniej to wykryje, tu chodzi o system potwierdzeń
+
+- **potwierdza odbiór** (positive acknowledgment)
+- **retransmituje** dane, które nie dotarły
+- `kontroluje przepływ` danych (flow control) - dostosowuje prędkość przesyłu **dla odbiorcy** - **odbiorca mówi nadawcy** ile danych może odbierać
+- `kontrola przeciążeń` (congestion control) - **nadawca dostosowuje** prędkość przesyłu **dla sieci** widząc przeciążenie
+- posiada **sumę kontrolną **dla nagłówka i danych
+- **porządkuje kolejność segmentów**
+- **usuwa zdublowane** fragmenty
+
+</Steps>
+
+<Callout type="warning" emoji="!">
+
+szybość wysyłania danych nie zależy wprost od szybkości łącza, a od `RTT` (Round Trip Time) - czasu potrzebnego na przesłanie danych i otrzymanie potwierdzenia,
+
+> lepiej wysłać jeden duży segment niż wiele małych
+
+</Callout>
+
+z perspektywy API wykorzystuje strumień danych (w przeciwieństwie do np. UDP czy IP, które wymagają otrzymania konkretnych datagramów)
+
+## TCP nie zapewnia:
+
+<Steps>
+
+### bezpieczeństwa
+
+trzeba zapewnić osobnym protokołem, np. IPSec
+
+### rozróżnienia wiadomości
+
+TCP wysyła strumień informacji, nie dyskretne, podzielone wiadomości; aplikacje muszą same ogarniać, gdzie kończy się jeden komunikat i zaczyna drugi
+
+### gwarancji komunikacji
+
+TCP zapewnia wiele usług QoS (potwierdzenia odbioru, retransmisje, kontrolę przepływu danych etc.), ale nie daje gwarancji komunikacji, np. w żaden sposób nie naprawi problemów na warstwach niższych; jest to szczegół techniczny, ale protokół ten polega właśnie na “usilnie próbuję”, a nie “na pewno dasz radę dogadać się z innym hostem z moją pomocą”
+
+### API
+
+to trzeba zapewnić programowo, np. socket API
+
+</Steps>

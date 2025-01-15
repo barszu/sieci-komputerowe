@@ -1,0 +1,91 @@
+import { Details } from "../../components/details"
+import { Callout, Steps } from "nextra/components"
+
+# UDP - User Datagram Protocol
+
+<Callout type="warning" emoji="🚧">
+
+cel: `tylko przesłać dane`
+
+</Callout>
+
+- `bezpołączeniowy`
+- `prosty`
+- `less overhead`, ma małe narzuty danych ( nie szybkość, ale ilość danych kontrolnych)
+- `zawodny` (nie gwarantuje niezawodności na IV warstwie ):
+  - **brak** komunikatów potwierdzających **przyjęcie** pakietów, lub o tym że się **zgubiły**
+  - nie gwarantuje że dane zostaną dostarczone do miejsca docelowego
+  - pakiety mogą być **zduplikowane**
+  - nie zawiera **mechanizmu kontroli prędkości przesyłania** danych między hostami
+
+![UDP](/lab11/img/img4.jpg)
+
+> część danych będzie gubiona jeśli łącze nie wyrabia
+
+warstwy wyższe muszą same sobie radzić z tymi problemami
+
+## Zastosowania
+
+<Callout type="default">
+
+`jak coś się zgubi to trudno`
+
+dane mało wrażliwe na gubienie pakietów, np. multimedia - utrata kilku klatek przy streamingu wideo pewnie nawet nie zostanie zauważona
+
+</Callout>
+
+<Steps>
+
+### transmisje grupowe
+
+<Callout type="info" emoji="📡">
+  UDP pozwala na multicast, TCP nie (połączeniowe = zawsze point-to-point)
+</Callout>
+
+np. IPTV używa multicastu, a więc i UDP
+
+### transmisje w czasie rzeczywistym
+
+np. gry multiplayer - UDP jest szybkie, więc może być też używane w modelu mieszanym (to, co nie wymaga kontroli cały czas idzie szybko przez UDP, a przez TCP tylko to, co musi)
+
+### przesyłanie w sieci LAN
+
+np. DHCP, DNS - sieci LAN mają zwykle wysoką niezawodność i UDP działa w nich dobrze w takich protokołach konfiguracyjnych (do tego przesyłają stosunkowo małe dane)
+
+<Details summary="przesyłanie sieci LAN:">
+  Sieci lokalne (LAN) mają wysoki poziom niezawodności, dlatego możemy testować programy z uzyciem UDP, ale dla produkcji jest to nie zalecane bo sieć ogólna jest zawodna
+</Details>
+
+</Steps>
+
+## Nagłówek UDP [8 byte]
+
+![Nagłówek UDP](/lab11/img/img1.jpg)
+
+- **Port źródłowy** 2[B] - port z którego wysyłamy dane
+
+  > przy odsyłaniu odbiorca wie, do kogo odesłać - wystarczy zamienić miejscami adresy
+
+- **Port docelowy** 2[B] - port na który wysyłamy dane
+
+- **Długość** 2[B] - długość całego pakietu (nagłówek + dane)
+
+  > min długość = 8 [B] <br/>
+  > max długość = 2^16 - 29 [B]
+  >
+  > ```
+  > 2^16 - 1 [B] - maksymalna wartości, jaką można zapisać w 2-bajtowym polu
+  > - 20 [B] - IP nagłówek
+  > - 8 [B] - UDP nagłówek
+  > ```
+
+- `Obcjonalna` **Suma kontrolna** 2[B] - sprawdza, czy dane nie zostały uszkodzone podczas transmisji
+
+  > długość datagramu = nagłówek UDP + dane enkapsulowane
+
+  - obliczana z użyciem `pseudonagłówka` - chwilowo uwzględnia nagłówek IP razem z UDP
+
+  > same 0 = brak sumy kontrolnej <br/>
+  > same 1 = suma kontrolna obliczona i równa 0 (nie jest to brak sumy) - kod U1
+
+Tutaj też występuje pseudonagłówek do zliczania sumy kontrolnej (jak w TCP)

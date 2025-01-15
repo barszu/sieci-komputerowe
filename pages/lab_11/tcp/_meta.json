@@ -1,0 +1,9 @@
+{
+  "index": "o TCP",
+  "budowa": "budowa segmentu TCP",
+  "dzialanie": "działanie",
+  "przejscia": "przejśćia",
+  "pseudonaglowek": "pseudonagłówek",
+  "dodatkowe": "dodatkowe",
+  "keepalive": "keepalive w TCP"
+}

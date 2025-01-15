@@ -1,0 +1,113 @@
+# Stany i przejścia:
+
+![TCP](/lab11/img/img21.jpg)
+
+## `CLOSED`
+
+> Połączenia nie ma (jeszcze lub zostało zamknięte), przejścia:
+
+### Passive Open
+
+> Po stronie serwera, otwiera port TCP i inicjalizuje TCB (nie wie jeszcze, kto się z nim połączy, więc w części na socket klienta ma 0 i czeka na połączenie, wtedy robi bind); przechodzi do stanu LISTENING
+
+### Active Open
+
+> Po stronie klienta, otwiera port TCP, inicjalizuje TCB oraz inicjalizuje połączenie - wysyła SYN do serwera, żeby rozpocząć three-way handshake (patrz niżej)
+
+## `LISTEN`
+
+> Serwer nasłuchuje inicjalizacji przez klientów (wiadomości SYN):
+
+### Otrzymanie SYN od klienta, wysłanie SYN+ACK
+
+> Kiedy serwer otrzyma w końcu SYN od klienta (czyli zainicjuje on połączenie w stanie SYN-SENT), odsyła potwierdzenie z jego własnym SYN i potwierdzeniem ACK; przechodzi do stanu SYN-RECEIVED
+
+## `SYN-SENT`
+
+> Klient wysyła SYN do serwera, inicjalizując połączenie:
+
+### Otrzymanie SYN+ACK, wysłanie ACK
+
+> Normalna sytuacja w której klient wysłał SYN i dostał od serwera potwierdzenie własnego SYN oraz informacje od serwera; przechodzi do stanu ESTABLISHED
+
+### Otrzymanie SYN, wysłanie ACK
+
+> Klient wysłał SYN, ale dostał SYN od kogoś innego, a nie SYN+ACK w odpowiedzi na własną wiadomość (bo można być klientem i serwerem jednocześnie!); potwierdza otrzymanie SYN i będzie dalej czekał na potwierdzenie SYN, które sam wysłał - przechodzi do stanu SYN-RECEIVED
+
+## `SYN-RECEIVED`
+
+> Urządzenie dostało SYN i wysłało SYN (albo serwer dostał SYN od klienta i wysyłał SYN+ACK, albo klient wysłał SYN i dostał jakiś inny SYN - bez ACK):
+
+### Otrzymanie ACK
+
+> Urządzenie musi w końcu dostać ACK na ten SYN, które wysłało; kiedy w końcu dostanie, to przechodzi do ESTABLISHED
+
+## `ESTABLISHED`
+
+> Normalny stan połączenia TCP, kiedy oba urządzenia się po prostu komunikują w tę i z powrotem:
+
+### Chcemy zamknąć połączenie, wysyłamy FIN
+
+> Ta aktywna strona, która chce się odłączyć wysyła wiadomość FIN i przechodzi do FIN-WAIT-1
+
+### Ktoś chce zamknąć połączenie, otrzymujemy FIN
+
+> Aktywna strona prosi bierną o zamknięcie; wysyłamy potwierdzenie otrzymania prośby ACK i przechodzimy do CLOSE-WAIT
+
+## `CLOSE-WAIT`
+
+> Druga strona poprosiła o koniec połączenia, czekamy aż aplikacja się wyłączy:
+
+### Aplikacja oznajmia, że jest gotowa do zamknięcia, wysyłamy FIN
+
+> Jesteśmy gotowi na spełnienie prośby o zakończenie połączenia, wysyłamy FIN i przechodzimy do LAST-ACK
+
+## `LAST-ACK`
+
+> Spełniliśmy prośbę o zamknięcie, czekamy na potwierdzenie:
+
+### Otrzymanie ACK do FIN
+
+> Druga strona potwierdza zamknięcie, przechodzimy do CLOSED
+
+## `FIN-WAIT-1`
+
+> Wysłaliśmy FIN mówiąc, że chcemy zamknąć połączenie i czekamy na potwierdzenie otrzymania tej prośby:
+
+### Otrzymanie ACK na nasze FIN
+
+> Bierna strona potwierdziła, że dostała naszą prośbę; przejście do FIN-WAIT-2
+
+### Otrzymanie FIN, odsyłamy ACK
+
+> Nie dostaliśmy ACK naszej własnej prośby, ale z kolei drugie urządzenie samo poprosiło o zamknięcie połączenia (prośby są asynchroniczne, więc np. obie strony mogły wysłać naraz); odsyłamy ACK i przechodzimy do CLOSING
+
+## `FIN-WAIT-2`
+
+> Druga strona potwierdziła naszą chęć zakończenia połączenia, czekamy, aż zamknie aplikację u siebie i odeśle nam FIN:
+
+### Otrzymanie FIN, odesłanie ACK
+
+> Druga strona wysłała FIN (czyli zamknęła u siebie aplikację), odsyłamy ACK z potwierdzeniem; przejście do TIME-WAIT
+
+## `CLOSING`
+
+> Chcieliśmy zakończyć połączenie i wysłaliśmy FIN, ale zamiast ACK dostaliśmy FIN od drugiego urządzenia; potwierdziliśmy je ACK i czekamy na ACK naszego własnego FIN:
+
+### Otrzymanie ACK na nasze własne FIN
+
+> Obie strony wysłały teraz FIN i otrzymały ACK z powrotem, przechodzimy do TIME-WAIT
+
+## `TIME-WAIT`
+
+> Na wszelki wypadek jeszcze chwilę czekamy, żeby np. nowe połączenie nie namieszało nam czegoś ze starym:
+
+- Zapewnia, że ACK dotrze do drugiego urządzenia, a nawet w razie potrzeby zdąży się to zretransmitować i dotrzeć.
+- Segmenty z różnych połączeń nie pomieszają się (to taki bufor czasowy).
+- Standardowo wynosi 2 \* maximum segment lifetime (MSL) = 4 minuty.
+- MSL = 120 sekund (2 minuty).
+- Często obniża się MSL, bo jest strasznie długie jak na dzisiejsze standardy.
+
+### Uruchamiany timer i czekamy
+
+> Czeka się jakiś czas, jak zegar minie, to kończymy i przechodzimy do CLOSED
