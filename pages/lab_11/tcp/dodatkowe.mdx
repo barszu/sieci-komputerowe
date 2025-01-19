@@ -38,3 +38,13 @@
 ### Keepalive Timer
 
 > czas, po którym TCP podstrzymuje 'sesje' jeśli nie ma ruchu - wysyłają 'hello'
+
+## MSL - Maximum Segment Lifetime - 120 s
+
+> czas, po którym TCP uznaje, że segment jest przeterminowany i stwierdzamy że jest zgubiony
+
+- zabezpiecza przed zduplikowanymi segmentami
+- zabezpiecza przed segmentami, które nie dotarły
+- może się różnić w zależności od systemu operacyjnego (ustawienia systemu)
+
+MSL jest szczególnie istotny podczas zamykania połączenia TCP. Po zakończeniu połączenia, system musi czekać przez dwa razy MSL (czyli 4 minuty) przed ponownym użyciem tych samych numerów sekwencyjnych, aby upewnić się, że żadne spóźnione pakiety z poprzedniej sesji nie będą mylone z nowymi pakietami

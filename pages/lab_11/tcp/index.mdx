@@ -4,7 +4,13 @@ import Carousel from "../../../components/carousel"
 
 # TCP - Transmission Control Protocol
 
+![TCP](/lab11/img/img24.jpg)
+
+<Details summary="diagram z opisami:">
+
 ![TCP](/lab11/img/img21.jpg)
+
+</Details>
 
 <Steps>
 
@@ -36,7 +42,7 @@ każde połączenie ma dokładnie `2 końce`- `2 stronny strumień` , komunikacj
 
 </Steps>
 
-<Callout type="warning" emoji="!">
+<Callout type="error" emoji="!">
 
 szybość wysyłania danych nie zależy wprost od szybkości łącza, a od `RTT` (Round Trip Time) - czasu potrzebnego na przesłanie danych i otrzymanie potwierdzenia,
 
@@ -45,6 +51,12 @@ szybość wysyłania danych nie zależy wprost od szybkości łącza, a od `RTT`
 </Callout>
 
 z perspektywy API wykorzystuje strumień danych (w przeciwieństwie do np. UDP czy IP, które wymagają otrzymania konkretnych datagramów)
+
+<Callout type="warning" emoji="🚧">
+
+Wysyłając segment na zamknięty port dostaniemy od serwera odpowiedź `RST` (reset) - nie ma takiego portu (gdyby było ack to był by to zwykły reset połączenia)
+
+</Callout>
 
 ## TCP nie zapewnia:
 
