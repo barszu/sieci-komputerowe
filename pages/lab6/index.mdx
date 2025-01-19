@@ -55,9 +55,9 @@ Jest to sieć która posiada tylko jedno wyjście na "świat" (ścieżka domyśl
 > Time To Live - czas życia pakietu - ile maksymalnie skoków może wykonać pakiet
 
 - TTL += -1 po przejściu przez router
-- TTL = 0 - pakiet umarł i jest odrzucany
+- TTL = 0 - pakiet umarł i jest odrzucany (nie wysyłamy z TTL = 0)
 
 router który go zabił wysyła informację zwrotną do nadawcy (ICMP Time Exceeded) że pakiet nie dotarł do celu i umarł
 
 - TTL zapobiega zapętlaniu pakietów
-- wyznacza maksymalną liczbę routerów na ścieżce między 2 hostami: 255
+- wyznacza maksymalną liczbę routerów na ścieżce - `255`

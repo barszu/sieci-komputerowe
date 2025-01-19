@@ -2,5 +2,6 @@
   "index": "o ICMP...",
   "lab5_ping": "ping",
   "lab5_traceroute": "traceroute",
-  "lab5_irdp": "ICMP router discovery"
+  "lab5_irdp": "ICMP router discovery",
+  "lab5_icmpr": "ICMP redirect"
 }
