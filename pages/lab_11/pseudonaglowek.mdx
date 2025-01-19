@@ -1,4 +1,12 @@
-# Pseudonagłówek TCP
+import { Callout } from "nextra/components"
+
+# Pseudonagłówek TCP/UDP
+
+<Callout type="warning">
+
+**Dla UDP jest dokładnie tak samo**
+
+</Callout>
 
 > obliczany z nagłówka TCP oraz nagłówka IP (adresy IP, reserved, protocol, TCP length)
 
@@ -10,12 +18,18 @@
 
 ## Zalety - chroni przed:
 
-- `niepoprawną adresacją segmentu` - wykrywa różne adresy źródłowe i docelowe
+- `niepoprawną adresacją segmentu` - weryfikuje, czy adresy IP z dekapsulacji z warstwy III są takie same jak w nagłówku TCP (czy rzeczywiście do tego odbiorcy)
 - `niepoprawnym protokołem` - TCP zakłada, że segment jest skierowany do niego; pseudonagłówek pozwala wykryć, że np. jest skierowany do UDP
 - `niepoprawną długością segmentu` - pozwala wykryć zgubienie części segmentu TCP (TCP w nagłówku trzyma tylko długość nagłówka, nie całego segmentu)
 
 ## Wady
 
+- **narusza architekturę warstwową modelu** (używa informacji z warstwy 3 w warstwie 4)
 - TCP w dzisiejszych sieciach jest bardzo niezawodny, więc korzyści z tych dodatkowych elementów są niewielkie
 - suma kontrolna jest liczona w dość prymitywny sposób i jest słaba w porównaniu do nowoczesnych algorytmów sum kontrolnych
-- narusza architekturę warstwową modelu (używa informacji z warstwy 3 w warstwie 4)
+
+## Po co nam tyle sum kontrolnych?
+
+- warstwa II - poprawność ramki, ewentualna korekta błędów o ile to możliwe
+- warstwa III - poprawność `tylko nagłówka IP`
+- warstwa IV - poprawność `danych` i najważniejszych informacji w nagłówku IP (`pseudonagłówka`)

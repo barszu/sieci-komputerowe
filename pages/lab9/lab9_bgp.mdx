@@ -1,0 +1,40 @@
+import { Callout} from 'nextra/components';
+
+# BGP - Border Gateway Protocol
+
+<Callout type="info" emoji="🌐">
+  BGP (Border Gateway Protocol) to zewnętrzny protokół trasowania (EGP - External Gateway Protocol), który odgrywa kluczową rolę w funkcjonowaniu współczesnego Internetu. Jest zaprojektowany z myślą o dużej skali i redundancji, co pozwala na efektywne zarządzanie trasami w rozbudowanych sieciach z wieloma dostawcami Internetu.
+</Callout>
+
+## Kluczowe cechy BGP
+
+- **Zewnętrzny**: Działa między różnymi AS (Autonomous System).
+- **Wektorowy**: Oparty na wektorach trasowania.
+- **Stanowy**: Zapamiętuje informacje o trasach.
+- **Połączeniowy**: Wymaga połączenia **`TCP`** (port 179).
+- **Niezawodny**: Wymaga potwierdzeń.
+- **Dłuższy czas zbieżności**: W porównaniu do protokołów IGP (Interior Gateway Protocol).
+
+## Zastosowania BGP
+
+- **Wymiana informacji o trasach** między różnymi dostawcami Internetu, co jest kluczowe dla funkcjonowania globalnego Internetu.
+- **Zarządzanie ruchem w sieciach CDN** (Content Delivery Network), co pozwala na efektywne dostarczanie treści do użytkowników na całym świecie.
+- **Utrzymywanie połączeń redundantnych**, co zwiększa dostępność i niezawodność sieci.
+
+## Zalety BGP
+
+- **Skalowalność**: Zaprojektowany do pracy w dużych sieciach z wieloma dostawcami Internetu.
+- **Redundancja**: Umożliwia utrzymywanie połączeń redundantnych dla zwiększenia dostępności.
+- **Elastyczność**: Pozwala na zarządzanie ruchem w sieciach CDN i wymianę informacji o trasach między różnymi dostawcami. (np. nie puszczamy ruchu z Polski do USA przez Chiny mimo, że mniejszy dynstans)
+
+## Wady BGP
+
+- **Dłuższy czas zbieżności**: W porównaniu do protokołów IGP, BGP ma dłuższy czas zbieżności, co może prowadzić do opóźnień w aktualizacji tras.
+- **Złożoność konfiguracji**: Konfiguracja BGP może być skomplikowana, szczególnie w dużych sieciach z wieloma dostawcami.
+
+## Wiadomości BGP
+
+- **Open**: Nawiązanie połączenia BGP i autentykacja nadawcy.
+- **Update**: Aktualizacja tras, ogłoszenie nowej
+- **Keepalive**: Potwierdzenie połączenia, akceptuje OPEN req.
+- **Notification**: Powiadomienie o błędzie z ostatnio przesłanej wiadomości, używane do zamykania połączenia.

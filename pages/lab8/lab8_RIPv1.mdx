@@ -3,13 +3,13 @@ import { Details } from "../../components/details";
 # Routing Information Protocol v1
 
 - co `30 sekund` routery wysyłają `broadcastem RIP response` - informacje do sąsiadów
-- `metryka - liczba hopów` (routerów po drodze do sieci) - `maksymalnie 15`
+- `metryka - liczba hopów` (routerów po drodze do sieci) - `maksymalnie 15` (0b:1111)
 - **czas życia wpisu w tablicy routingu to 180 s**
 - pakiety RIP są enkapsulowane w polu danych `datagramu UDP` (warstwy 4!), a dopiero potem w polu danych pakietu IP
 - pakiety wysyłane z portu i na port `520 UDP, broadcastem`, zawierają dane o wszystkich sieciach znanych routerowi
 - kiedy nowy router podłącza się do sieci, wysyła `broadcastem RIP request` i w ten sposób dostaje od sąsiadów ich tablice routingu
 
-## Wady
+## Wady RIPv1
 
 - pakiety są po 24 B, ale mają dużą część pustą (marnują to miejsce)
 - wolna zbieżność - `30 sekund` na zmianę topologii sieci
@@ -109,7 +109,7 @@ import { Steps } from 'nextra/components';
 
 <Details summary="przykład..." >
 
-Przykład: router Z wysyła pakiety do X przez router Y, dystanse na rysunku
+Przykład: router Z wysyła pakiety do X przez router Y, dystanse na rysunku _(INF = 1000)_
 
 ![poison reverse](/lab8/img/img3.jpg)
 
@@ -132,12 +132,12 @@ od X o lepszej drodze do Z i jej użyje.
 > - jeżeli się znowu odezwie to **OK**
 > - jeżeli dostanie od innego routera z lepszą trasą to **zmienia** trase (dla gorszych ignoruje)
 
-### wymuszone odświeżanie
+</Steps>
+
+## Wymuszone Odświeżanie - przyśpieszanie zbieżności
 
 > Router wysyła informację o niedostępności sieci (pakiet RIP) natychmiast, nie czekając na moment regularnego powiadomienia
 
 - de facto nie przeciwdziała zliczaniu do nieskończoności, ale przyspiesza zbieżność
 - “natychmiast” to często kilka sekund, żeby nie zalać sieci takimi komunikatami
 - wysyła się tylko informację o zmianach
-
-</Steps>

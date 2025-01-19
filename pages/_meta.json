@@ -55,6 +55,11 @@
     "type": "page",
     "display": "hidden"
   },
+  "lab_11": {
+    "title": "lab 11 TCP, UDP",
+    "type": "page",
+    "display": "hidden"
+  },
   "dns": {
     "title": "DNS",
     "type": "page",
@@ -62,11 +67,6 @@
   },
   "ipv6": {
     "title": "IPv6",
-    "type": "page",
-    "display": "hidden"
-  },
-  "lab_11": {
-    "title": "lab 11 TCP, UDP",
     "type": "page",
     "display": "hidden"
   },
@@ -115,6 +115,10 @@
         "title": "lab 10",
         "href": "/lab_10"
       },
+      "11-lab": {
+        "title": "lab 11",
+        "href": "/lab_11"
+      },
       "DNS": {
         "title": "DNS",
         "href": "/dns"
@@ -122,10 +126,6 @@
       "IPv6": {
         "title": "IPv6",
         "href": "/ipv6"
-      },
-      "11-lab": {
-        "title": "lab 11",
-        "href": "/lab_11"
       }
     }
   }

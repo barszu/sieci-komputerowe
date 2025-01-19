@@ -156,7 +156,9 @@ Nie ma co upraszczać, zostaje bez zmian
 
 ---
 
-### Problem
+### Problem - 2 różne inne mają ten sam prefix
+
+> wpisy z różnym via są tak samo traktowane przez prefix adresu (powstały przez ścięcie maską)
 
 Grupowanie w ten sposób może sprawić, że wpisy będą zawierać w sobie wpisy, które wylądowały w innej grupie (a więc miały inny next hop, “via”).
 
@@ -168,7 +170,7 @@ Grupa `0.0.0.0/0` via `1.1.1.42` zawiera w sobie wszystkie pozostałe grupy.
 
 ---
 
-### Rozwiązanie
+### Rozwiązanie - wyodrębnienie bardziej szczegółowych wpisów
 
 > **10.4.8.0/24 via 1.1.1.42**
 

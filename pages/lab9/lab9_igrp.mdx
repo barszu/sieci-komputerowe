@@ -9,10 +9,12 @@ import { Details } from '../../components/details'
 
 ### Uwzględnia:
 
-- `B` - bandwidth [ s ]
-- `L` - load [ % ]
-- `D` - delay [ μs ]
-- `R` - reliability [ % ]
+1. `B` - bandwidth [ s ] = **`10^7 / min przepustowość [bps]`**
+2. `L` - load [0-255]
+3. `D` - delay [ **`10 μs`** ] = **`suma delays [μs] / 10`**
+4. `R` - reliability [0-255]
+
+k po kolei dla powyższych ^
 
 ### Wzór:
 

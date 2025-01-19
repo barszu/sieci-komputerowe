@@ -12,15 +12,41 @@ import { Steps } from 'nextra/components'
 
 ## Wzór
 
-```
-M = ( B + D ) * 256
-```
+> `M = ( M z IGRP ) * 256` , [wiecej o M z IGRP...](/lab9/lab9_igrp)
 
 mogą być dodane modyfikowalne współczynniki wagowe `K` do metryki, bandwidth i delay można nadpisywać
 
 <Details summary='czemu *256 ?'>
 
 IGRP i EIGRP mają różną liczbę bitów na wielkość metryki (24 vs 32 bity); pomnożenie przez 256 zapewnia kompatybilność tych protokołów
+
+</Details>
+
+## parametr Variance - Load Balancing
+
+Parametr Variance jest **`mnożnikiem`**, który określa, jakie trasy mogą być używane do **równoważenia obciążenia**.
+
+> tylko EIGRP używa, IGRP nie
+
+Trasy, których metryki są mniejsze lub równe (\<=) najniższej metryce pomnożonej przez Variance, mogą być używane do równoważenia obciążenia.
+
+<Details summary='przykład...'>
+
+Załóżmy, że mamy trzy trasy do celu z następującymi metrykami:
+
+```
+Trasa A: Metryka = 10
+Trasa B: Metryka = 15
+Trasa C: Metryka = 25
+```
+
+Jeśli ustawimy Variance na 2, EIGRP będzie używać tras, których metryki są mniejsze lub równe (10 \* 2) = 20.
+
+```
+Trasa A: Metryka = 10 (używana) <= 20
+Trasa B: Metryka = 15 (używana) <= 20
+Trasa C: Metryka = 25 (nie używana) > 20
+```
 
 </Details>
 
@@ -135,16 +161,5 @@ jeżeli sąsiedzi nie mają trasy, to połączenie jest uznawane za całkiem mar
 ### wybierz najlepszą trasę
 
 zapisze najlepszą i ją bedzie używał/podawał dalej, ale zapamięta trase Feasible Successor
-
-wartość metryki oblicza zgodnie z wzorem:
-
-przykład:
-
-```
-bandwidth = 128 kbps
-delay = 1200 μs
-
-M = ( (10^7 / 128) + 1200 ) * 256 = 20307200
-```
 
 </Steps>
