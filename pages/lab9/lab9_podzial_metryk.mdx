@@ -8,36 +8,36 @@ import { Steps } from 'nextra/components'
 
 <Steps>
 
-### `D` - delay [ μs ]
+### `D` - delay [ μs ] , [10 μs]
 
-> suma opóźnień między routerem a adresem docelowym
+> **`suma`** opóźnień między routerem a adresem docelowym
 
 ### `B` - bandwidth [ s ]
 
-> liczba sekund potrzebna na przesłanie 10^10 bitów (~10 Gb)
+> liczba sekund potrzebna na przesłanie 10^10 **bitów** (~10 Gb)
 
 > def: 10^10 [b] / przepustowość [bps]
 
-dla kbps: 10^7 [b] / przepustowość [kbps]
+dla kbps: `10^7 [b] / przepustowość [kbps]`
 
-brana pod uwage najmniejsza z przepustowości między routerem a adresem docelowym, bo zaniża wartość metryki
+brana pod uwage **`najmniejsza`** z przepustowości między routerem a adresem docelowym, bo zaniża wartość metryki
 
-### `R` - reliability [ % ]
+### `R` - reliability [ % ] , [0-255]
 
 > stopień pewności, że pakiet dotrze do celu
 
 > % pakietów NIE odrzuconych przez router przez przepełnienie bufora
 
-- jednostka: procent zapisany na 8 bitach (1 - 0%, 255 - 100%)
+- procent zapisany na 8 bitach (1 - 0%, 255 - 100%)
 - mierzy się przez 5 minut
 
-### `L` - load [ % ]
+### `L` - load [ % ], [0-255]
 
 > stopień największego obciążenia łącza na ścieżce
 
 > % zapełnienia bufora routera
 
-- jednostka: procent zapisany na 8 bitach (1 - 0%, 255 - 100%)
+- procent zapisany na 8 bitach (1 - 0%, 255 - 100%)
 - mierzy się przez 5 minut
 
 ### `MTU` - Maximum Transmission Unit [ B ]

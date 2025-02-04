@@ -11,8 +11,26 @@ import { Details } from '../../components/details'
 
 </Callout>
 
+Przykład dla routera na środku (router 2):
+
 ![Tablica routingu](/lab6/img/img1.webp)
 ![Tablica routingu](/lab6/img/img2.webp)
+
+<Details summary='dla sprzętu cisko nawias [x,y] oznacza...'>
+
+[więcej o tym tutaj](/lab9/#dystans-administracyjny)
+
+x - dystans administracyjny (0-255) (jaki protokół routingu jest używany), im mniejsza liczba tym 'pewniejszy' wpis,
+
+- 0 - directly connected
+- 1 - wpis statyczny
+- 90 - (internal) EIGRP
+- 110 - OSPF
+- 120 - RIP
+
+y - metryka która policzył sobie dany protokół routingu dynamicznego
+
+</Details>
 
 - sieci bezposrednie - podlaczone do interfejsu routera
 - sieci odległe - niepodlaczone bezposrednio, ale znane routerowi

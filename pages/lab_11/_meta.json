@@ -2,5 +2,6 @@
   "index": "Warstwa Transportowa IV , Porty",
   "socket": "Sockety - gniazda",
   "udp": "UDP",
+  "pseudonaglowek": "Pseudonagłówek",
   "tcp": "TCP"
 }

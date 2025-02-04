@@ -4,5 +4,6 @@
   "lab9_igrp": "IGRP",
   "lab9_dual": "dual",
   "lab9_eigrp": "EIGRP",
-  "ospf": "OSPF"
+  "ospf": "OSPF",
+  "lab9_bgp": "BGP"
 }
