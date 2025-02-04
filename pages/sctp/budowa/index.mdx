@@ -1,0 +1,38 @@
+import { Callout } from 'nextra/components'
+import { Details } from '../../../components/details'
+
+# Budowa pakietu SCTP
+
+![Budowa pakietu SCTP](/sctp/img/img1.jpg)
+
+Pakiet składa się z:
+
+- `wspólny nagłówek` - jeden, reprezentuje dane wspólne dla całych danych
+- `nagłówki części` są enkapsulowane wewnątrz pakietu SCTP - każda ma swój nagłówek
+
+## Nagłówek wspólny [12 byte]
+
+![Nagłówek wspólny](/sctp/img/img2.jpg)
+
+> - porty źródłowy i docelowy - po 2 B każdy, standardowo
+> - znacznik weryfikacyjny - pozwala odróżnić pakiety z różnych połączeń, musi być != 0
+> - suma kontrola - solidne CRC
+
+<Callout>
+
+flagi, obcje są przerzucane do nagłówków części - podział na części ułatwa rozszerzanie protokołu
+
+</Callout>
+
+## Nagłówek części [4 byte]
+
+![Nagłówek części](/sctp/img/img3.jpg)
+
+- **typ** [1B]: (jest wiele tylko kilka wymienione)
+  - DATA [0x00] - dane = zwykle dane, zawsze na końcu pakietu
+  - INIT - inicjalizacja połączenia, pierwszy pakiecik, dane = parametry połączenia
+  - INIT ACK - odpowiedź na INIT, drugi pakiecik, dane = parametry połączenia
+  - SACK - selective acknowledgement - potwierdzenie danych, dane = numery sekwencyjne
+  - SHUTDOWN , SHUTDOWN ACK , SHUTDOWN-COMPLETE - zamykanie połączenia
+- **flagi** [1B] - różne dla różnych typów
+- **długość [2B]** - długość całego nagłówka części (całego pakieciku)

@@ -1,0 +1,54 @@
+import { Callout } from 'nextra/components'
+
+# SCTP - Stream Control Transmission Protocol
+
+> modyfikacja (udoskonalenie) TCP, RFC 2960, połączenie pozytywów TCP z UDP
+
+- używamy w sieciach nowoczesnych GB/s
+- używany w do komunikacji wewnętrznej między składowymi komponentami w 5G
+
+## Multihoming - wieloadresowość
+
+> posiadanie przez jednego hosta wielu interfejsów sieciowych (podłączenie
+> do wielu sieci naraz).
+
+> np. smartfon korzystający **jednocześnie** z wifi i 3G
+
+- zwiększa niezawodność - jeśli jeden interfejs pada, to drugi działa (sieci zapasowe)
+- wydajność - równoległe przesyłanie danych, load balancing
+
+## "wady" TCP:
+
+> temu powstał SCTP
+
+- **kolejność nie istotna** ale niech się **nie gubią**
+- nie ma **komunikatów**
+- nie wspiera **multihomingu** - każde połączenie point-to-point jest osobne
+- podatny na DoS (Denial of Service) - można zasypać serwer przez UDP
+- tylko 1 strumień na połączenie - asocjacja (piątka) ma pojedynczą parę źródłową i pojedynczą parę docelową
+- dane są traktowane stricte jako strumień bajtów - brak podziału na wiadomości, konieczność rozróżniania przez aplikację
+
+## Cechy SCTP:
+
+- Protokół **połączeniowy** warstwy IV transportowej.
+- Transport danych jest niezawodny i z **`selektywnymi potwierdzeniami`**.
+- Przesyłanie komunikatów (możliwe bez kontroli kolejności odbioru).
+- Kontrola przepływu i zapobieganie przeciążeniom. - identyczne jak w TCP
+- Wykrywanie MTU ścieżki i fragmentacja - usprawnone w stosunku do TCP
+- Multihoming.
+- Wiele strumieni w ramach jednego połączeniu (asocjacja ma grupy adresów).
+- full-duplex - jednoczesne przesyłanie i odbieranie danych jak w TCP w ramach jednego połączenia
+
+<Callout>
+
+strumień - w SCTP sekwencja krótkich/ długich wiadomosci ( w TCP strumień to tylko strumień bajtów)
+
+</Callout>
+
+## Rozszerzona asocjacja
+
+> adresy IP to lista, realizuje wiele równoległych strumieni w jednym połączeniu między 2 portami.
+
+**asocjacja** - piątka (protokół, **adresy** lokalne, port lokalny, **adresy** zdalne, port zdalny)
+
+**Socket SCTP** - trójka (protokół, adresy lokalne, port lokalny)

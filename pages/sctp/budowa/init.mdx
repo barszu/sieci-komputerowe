@@ -1,0 +1,35 @@
+import { Callout } from 'nextra/components'
+import { Details } from '../../../components/details'
+
+# Nagłówek części typu INIT
+
+> Używane do nawiązania połączenia, zawiera parametry połączenia.
+
+![Nagłówek części INIT](/sctp/img/img5.jpg)
+
+- **Długość:** minimalnie 20 B
+- **Początkowy znacznik weryfikacyjny** (`initiate tag`):
+  > - Odbiorca INITa zapisuje ten numer.
+  > - W późniejszych wiadomościach znacznik weryfikacyjny we wspólnym nagłówku musi mieć tę wartość.
+- **Okno odbiorcy:**
+  > - Wielkość bufora w bajtach, który nadawca wiadomości przeznaczył na tę asocjację.
+  > - Nie wolno go zmniejszać.
+- **Liczba strumieni:**
+  - **Wyjściowych:** Liczba strumieni, których zamierza używać nadawca (offered).
+  - **Maksymalna wejściowych:** Liczba strumieni, których maksymalnie życzy sobie nadawca (requested).
+  - **Uwaga:** Nie ma negocjacji liczby strumieni w żadną stronę! W praktyce używa się min(requested, offered) strumieni (to, czego żądała druga strona i to, co samemu zaoferowaliśmy).
+- **Początkowy TSN:** - Transmission Sequence NUmber
+  > Pierwszy TSN, który będzie użyty przez nadawcę (pierwszy numer sekwencyjny danych, patrz nagłówek DATA). - podobnie jak w TCP
+- **Adresy IP asocjacji:** Opcjonalna lista adresów IP nadawcy w ramach tego strumienia.
+
+### Rozszerzenia protokołu - pierwsze 2 bity typu
+
+- Ze względu na modułową budowę nagłówków łatwo dodawać kolejne nagłówki.
+- Problem: jedna strona może obsługiwać nowe nagłówki, a druga nie.
+
+jak obsługiwać nieznane nagłówki (nie dotyczy znanych nagłówków):
+
+- `00` - Cicho porzuć wiadomość, przerwij analizę całej wiadomości.
+- `01` - Porzuć wiadomość zgłaszając to nadawcy, przerwij analizę całej wiadomości.
+- `10` - Cicho porzuć nagłówek, analizuj kolejne nagłówki.
+- `11` - Porzuć nagłówek zgłaszając to nadawcy, analizuj kolejne nagłówki.

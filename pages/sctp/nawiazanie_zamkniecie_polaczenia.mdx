@@ -1,0 +1,41 @@
+import { Callout, Steps } from 'nextra/components'
+import { Details } from '../../components/details'
+
+## Nawiązywanie połączenia w SCTP
+
+![Nagłówek części](/sctp/img/img6.jpg)
+
+<Steps>
+
+### INIT
+
+Host B poznaje:
+
+- Początkowy znacznik weryfikacyjny hosta A
+- Liczbę strumieni wyjściowych, których chce używać A
+- Maksymalną liczbę strumieni wejściowych, których życzy sobie A
+
+### INIT-ACK
+
+- Host A poznaje to samo, co wcześniej host B
+- Znacznik weryfikacyjny tej wiadomości to poznany wcześniej init tag hosta A
+- Zawiera pole state cookie, czyli trochę danych o urządzeniu, np. adres MAC czy dane z TCB
+
+### COOKIE-ECHO
+
+- Znacznik weryfikacyjny ma ten poznany od B
+- Musi być przed jakimikolwiek danymi (części DATA muszą być po części COOKIE-ECHO)
+- Zawiera dokładną kopię state cookie, którą otrzymano w INIT-ACK, żeby sprawdzić, czy na pewno wszystko dotarło ok
+
+### COOKIE-ACK
+
+- Potwierdza otrzymanie przez drugą stronę state cookie
+- Musi być przed danymi i SACK
+
+</Steps>
+
+## Zamknięcie połączenia
+
+> należy zamykać jak w TCP A -> B, B -> A
+
+![zp](/sctp/img/img9.jpg)

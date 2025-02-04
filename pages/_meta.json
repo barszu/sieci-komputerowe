@@ -70,6 +70,11 @@
     "type": "page",
     "display": "hidden"
   },
+  "sctp": {
+    "title": "SCTP",
+    "type": "page",
+    "display": "hidden"
+  },
 
   "menu": {
     "title": "Rozdziały",
@@ -126,6 +131,10 @@
       "IPv6": {
         "title": "IPv6",
         "href": "/ipv6"
+      },
+      "sctp": {
+        "title": "SCTP",
+        "href": "/sctp"
       }
     }
   }

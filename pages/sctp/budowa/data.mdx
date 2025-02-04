@@ -1,0 +1,37 @@
+import { Callout } from 'nextra/components'
+import { Details } from '../../../components/details'
+
+# Nagłówek części typu DATA
+
+![Nagłówek części DATA](/sctp/img/img4.jpg)
+
+- **typ** [1B]: DATA
+- **flagi** [1B]:
+
+  - B (Begin) - Początek pofragmentowanej wiadomości.
+  - E (End) - Koniec pofragmentowanej wiadomości.
+  - U (Unordered) == BE = 11 - nie ma kolejności bo nie ma fragmentacji
+
+<Details summary="dla opornych o BE...">
+
+| Wartość | Znaczenie                            |
+| ------- | ------------------------------------ |
+| 00      | Początek pofragmentowanej wiadomości |
+| 01      | Środek pofragmentowanej wiadomości   |
+| 10      | Końcówka pofragmentowanej wiadomości |
+| U = 11  | Cała wiadomość (bez fragmentacji)    |
+
+</Details>
+
+- **Długość** wyr. w bajtach
+  > 17B < value < 65kB = część + nagłówek, minimalnie 17 bajtów,<br/>
+  > ponieważ zawsze trzeba przesyłać co najmniej 1 bajt danych (inaczej po co wysyłać część DATA?).
+- **TSN** - Transmission Stream Number - numer sekwencyjny całego DATA,
+  > używany przy składaniu pofragmentowanych wiadomości - (dzięki temu wiadomo, gdzie dokładnie ma trafić fragment).
+- **Identyfikator strumienia**
+  > dzięki temu wiadomo, do którego strumienia (są równoległe!) należą dane.
+- **SSN** - Stream Sequence Number - numer sekwencyjny enkapsulowanych danych
+  > (dzięki temu wiadomo, które dokładnie dane ze strumienia wysłano).
+- **Identyfikator danych** - “payload data identifier”, rodzaj protokołu warstw wyższych, do którego należą dane
+  > SCTP to pole nie obchodzi, ale może być przydatne dla warstw wyższych.
+- **Dane** - właściwe dane

@@ -1,0 +1,105 @@
+import { Callout } from 'nextra/components'
+import { Details } from '../../../components/details'
+
+# Nagłówek części typu SACK
+
+> Selective Acknowledgement - selektywne potwierdzenie
+
+informuje nadawcę o:
+
+### Kumulacyjnym TSN ACK
+
+– czyli największym numerze TSN, który został odebrany w sposób ciągły (bez przerw).
+
+- Wszystkie numery TSN mniejsze lub równe temu numerowi zostały poprawnie odebrane i potwierdzone.
+
+### Opuszczonych blokach
+
+– czyli fragmentach danych, które zostały odebrane poza kolejnością, ale są prawidłowe (potwierdzone).
+
+<Callout type="warning" emoji="i">
+
+Opuszczone bloki to **odebrane dane**, które `znajdują się poza ciągłą sekwencją TSN`. Nie są to brakujące dane, tylko takie, które `dotarły wcześniej niż inne`
+
+</Callout>
+
+![Nagłówek części SACK](/sctp/img/img7.jpg)
+
+- **Flagi**: brak
+- **Długość**: w bajtach, minimalnie 16
+- **Kumulacyjne TSN ACK**: największy numer pozytywnie odebranego bloku danych
+  > Potwierdza otrzymanie spójnego ciągu bajtów aż do numeru sekwencyjnego, który jest tu wpisany (dalsze też mogą być otrzymane, ale są nieciągłe, patrz niżej)
+- **Okno odbiorcy**: wielkość bufora odbiorcy
+  > Wraz z potwierdzeniem często przesuwamy okno
+- **`Liczba` opuszczonych bloków**:
+  > liczba wpisów "początek i koniec opuszczonego bloku", które można się spodziewać dalej
+- **`Liczba` zdublowanych bloków**:
+
+  > liczba zdublowanych TSNów, które otrzymano, a więc liczba nadmiarowych nagłówków DATA
+
+- **lista początków i końców opuszczonych bloków**
+  > każdy blok to para liczb, które wskazują na początek i koniec bloku danych, które zostały odebrane poza kolejnością
+- **lista zdublowanych TSNów**
+  > lista numerów TSN, które zostały otrzymane więcej niż raz
+
+## jak działa SACK?
+
+`Początek opuszczonego bloku`: Offset (względem kumulacyjnego TSN ACK), który wskazuje pierwszy TSN z bloku danych odebranego poza kolejnością.
+
+`Koniec opuszczonego bloku`: Offset (względem kumulacyjnego TSN ACK), który wskazuje ostatni TSN z tego samego bloku.
+
+Te wartości pozwalają nadawcy zrozumieć, które dane zostały odebrane poza kolejnością.
+
+Wszystkie wiadomości DATA z numerami TSN:
+
+`(kumulacyjne TSN ACK + początek opuszczonego bloku) < TSN < (kumulacyjne TSN ACK +koniec opuszczonego bloku)`
+
+są uznawane za prawidłowo otrzymane
+
+<Details summary='Przykład..'>
+
+Załóżmy:
+
+1. Kumulacyjne TSN ACK = 100
+2. Odbiorca zgłasza opuszczony blok od 105 do 110.
+
+Interpretacja:
+
+1. Wszystkie numery TSN od 101 do 104 są brakującymi danymi – nie zostały jeszcze odebrane.
+2. Numery TSN od 105 do 110 zostały odebrane poza kolejnością i są prawidłowe, ale nie można ich jeszcze uznać za część ciągłego strumienia.
+3. Nadawca musi retransmitować brakujące dane (101–104), aby odbiorca mógł potwierdzić większy kumulacyjny TSN ACK.
+
+```
+TSN:  100   101   102   103   104   105   106   107   108   109   110
+      [ACK] [--- brakujące ---] [--- opuszczony blok ---]
+
+```
+
+- 100: Ostatni ciągły TSN (kumulacyjne TSN ACK).
+- 101–104: Brakujące dane.
+- 105–110: Odebrane poza kolejnością (opuszczony blok).
+
+</Details>
+
+### Przykład zadania z SACK
+
+![Przykład SACK](/sctp/img/img8.jpg)
+
+w zwykłym TCP musielibyśmy nie akceptować (wyrzucić chwilowo) 14 15 i 17 część i zarządać 13 a poznej 17, nie można dosłać selektywnie przekłamanych części - podstawowa wada potwierdzenia w TCP
+
+<Callout>
+
+Są to bloki odebrane! Ale przed nimi jest dziura i określamy się co otrzymalismy => z tego wynika czego nie ma i co należy dosłać
+
+</Callout>
+
+- kumulatywny TSN ACK: 12 (bo dotąd wszystko jest ok)
+- blok #1 - zguba blok 13-13
+
+  - offset startu = 14 (numer startu nastepnego bloku po zgubie - ten odebrany) - 12 (kumulatywny TSN ACK) = 2
+  - offset końca = 15 (gdzie ten blok po zgubie się kończy ) - 12 (kumulatywny TSN ACK) = 3
+
+- blok #2 - zguba blok 16-16
+
+  - offset startu = 17 - 12 = 5
+  - offset końca = 17 - 12 = 5
