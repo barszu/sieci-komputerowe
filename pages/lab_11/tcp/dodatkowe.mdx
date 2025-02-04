@@ -4,7 +4,26 @@
 
 > ilość danych, które mogą być przesłane w jednym czasie (nadawca dostosowuje prędkość przesyłu dla sieci)
 
-- **slow start** - zaczyna od małej ilości danych, aż do osiągnięcia maksymalnej prędkości
+- **slow start** - zaczyna od małej ilości danych, aż do osiągnięcia maksymalnej prędkości.
+
+  - Początkowo `cwnd = 1`, co realnie odpowiada jednemu MSS (Maximum Segment Size).
+  - Za każde odebrane potwierdzenie (**ACK**) zwiększamy `cwnd` o 1 MSS.
+  - Powoduje to **wykładniczy wzrost** przepustowości:
+
+  1. Wysyłamy 1 segment → Otrzymujemy 1 ACK → `cwnd = 2`
+  2. Wysyłamy 2 segmenty → Otrzymujemy 2 ACK → `cwnd = 4`
+  3. Wysyłamy 4 segmenty → Otrzymujemy 4 ACK → `cwnd = 8`
+  4. Itd.
+
+  Gdy `cwnd >= ssthresh` (slow start threshold), TCP przechodzi do **unikania przeciążeń (Congestion Avoidance)**, w którym wzrost `cwnd` staje się **liniowy**.
+
+  Jeśli nastąpi utrata pakietów, TCP może:
+
+  - **Zresetować `cwnd` do 1 MSS**.
+  - **Zmniejszyć `cwnd` o połowę**
+
+  Wtedy ponownie mamy wykładniczy wzrost do momentu przekroczenia połowy wartości, przy której nastąpił timeout, a następnie przejść do liniowego wzrostu.
+
 - **congestion avoidance** - po osiągnięciu maksymalnej prędkości, zaczyna zwiększać ilość danych wolniej
 - **fast retransmit** - jeśli nie dostanie potwierdzenia, to od razu retransmituje dane - timeout (chodź może wystąpić z innego powodu np. niezgodności sumy kontrolnej)
 - **fast recovery** - po retransmisji, zaczyna od połowy ilości danych, a nie od zera
