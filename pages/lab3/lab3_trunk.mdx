@@ -1,9 +1,18 @@
+import { Details } from '../../components/details'
+import { Callout } from 'nextra/components'
+
 # Trunk - rzeka VLAN'ów
 
 - Pojedyncze łącze, którego jednocześnie używa wiele VLANów (**multipleksuje łącze**).
-- Zwykle łącza `punkt-punkt` o dużej przepustowości (bo muszą obsłużyć wiele VLANów naraz) i dostępności (np. zwielokrotnienie, żeby zagwarantować brak awarii).
+- Zwykle łącza **`punkt-punkt`** o **dużej przepustowości** (bo muszą obsłużyć wiele VLANów naraz) i dostępności (np. zwielokrotnienie, żeby zagwarantować brak awarii).
 - Z takich łączy buduje się okablowanie szkieletowe (**backbone**), czyli kable z serwerowni do punktów dystrybucyjnych (IDF), gdzie są switche obsługujące podłączone do nich VLANy.
 - Trunkowanie - przesyłanie danych VLANu przez trunk.
+
+<Callout type="error" emoji="❗">
+
+Trunkować można wszystkie VLANy lub wybrane, trunki które należą do danego VLANu należy uwzględnić przy rozrysowywaniu topologi logicznej
+
+</Callout>
 
 ## VLAN a wiele switchy:
 
@@ -44,4 +53,10 @@ Skoro nie da się zrobić `"1 kabel - 1 VLAN"`, to można zrobić `"1 kabel - wi
 
 > Na czas transportu przez trunk **ramki dostają ID VLANu (tag)**, do którego należą, na koniec trunka switch odczytuje ID, usuwa je i przesyła już normalną ramkę Ethernet do komputera z właściwego VLANu. - Nowoczesna technika: **802.1Q, standard IEEE.**
 
-- Stara technika: Inter-Switch Link (external tagging, tagowanie dwupoziomowe), rozwiązanie Cisco, opakowanie ramki Ethernet w dodatkową ramkę ISL: ISL header (26 B) + ramka Ethernet + CRC ramki ISL (4 B).
+<Details summary='Stara technika: Inter-Switch Link'>
+
+> external tagging, tagowanie dwupoziomowe
+
+rozwiązanie Cisco, opakowanie ramki Ethernet w dodatkową ramkę ISL: ISL header (26 B) + ramka Ethernet + CRC ramki ISL (4 B).
+
+</Details>

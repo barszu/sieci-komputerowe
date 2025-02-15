@@ -1,3 +1,7 @@
+import { Steps } from 'nextra/components'
+import { Details } from '../../components/details'
+import { Callout } from 'nextra/components'
+
 # STP - Spanning Tree Protocol
 
 - protokoł **warstwy drugiej** (łącza danych) modelu OSI/ISO, który zapewnia, że **nie ma pętli** (cyklu) w sieci
@@ -7,7 +11,12 @@
 - **dziala na poziomie logicznym** wlaczajac/wylaczajac porty (kierujac ruchem)
 - można mieć dodatkowe 'zapasowe' połączenia
 - **przeźroczyste** dla innych urządzeń, (nie widzą)
-- każdy VLAN ma osobne drzewo (PVST+) - ulepszenie STP
+
+<Callout type="error" emoji="🚨">
+
+W nowoczesnych implementacjach STP, tworzy się **rożne STP dla różnych VLANów**
+
+</Callout>
 
 ## Wady
 
@@ -25,62 +34,6 @@
 - używa specjalnego adresu multicastowego **01:80:C2:00:00:00**
 - na szczycie grafu jest główny switch (`root`) zarządzający siecia
 - zostaje nim na podstawie indetyfikatora (z mniejsza wartościa wygrywa)
-
-## Czynniki wpływające na kształt MST
-
-import { Details } from '../../components/details'
-import { Callout } from 'nextra/components'
-
-> (hierarchia porównywania od najważniejszego)
-
-1. **`Połączenia w sieci i ich przepustowości:`** Drzewo tworzy się na podstawie już istniejących połączeń. STP nie tworzy nowych połączeń, a przepustowość determinuje koszt ścieżki.
-
-- `koszt portu` - wartość zależna od przepustowości połączenia, _mozna zmienić ręcznie w swithach cisko_
-
-<Details summary='o zmianie kosztu portu w switchu cisko (komenda)...'>
-
-```bash
-switch(config)# interface gigabitethernet 0/1 ----> np. port 1 z interfejsu 0 typu gigabit
-switch(config-if)# spanning-tree cost 2
-```
-
-</Details>
-
-- w zwykłym STP : **(10Mbps (Eth) = `100`, 100Mbps (FEth) = `19`, 1Gbps (GEth) = `4`, 10Gbps = `2`)**
-- koszt krawędzi = max(koszt portu nadawcy, koszt portu odbiorcy) - najgorsze
-- **koszt ścieżki** - suma kosztów portów na ścieżce - im mniejsza wartość, tym lepsze połączenie
-
-<Callout type='warning'>
-
-- protokół dla połączenia (np. FEth) jest ustalany w procesie autonegocjacji,
-- w ten sposób dostajemy koszt dla portu (połączenia)
-- wybierany jest najgorszy pośród tych 2 portów: np. **jesli jest Feth i Eth to dla połączenia wybrany zostanie Eth**
-
-</Callout>
-
-<Details>
-
-- mozna ręcznie pogorszyć dogadane protokoły
-- dogadywanie się działa na zasadzie odpytywania się portów po protokołach od najgorszego do najlepszego (np. od Eth do GEth) czy je obsłuża
-
-zależy to oczywiście od medium, i portu - jeżeli mam port A FEth, port B GEth a kabel 1Gb (obsługujący GEth) to ustalony zostanie FEth
-
-</Details>
-
-2. **`BID`** - **priorytet urządzenia + adres MAC urządzenia**
-
-- Priorytety urządzeń są domyślnie ustawione, cisko na **32768 + numer VLAN'u**, można je modyfikować w obrębie VLANU, albo globalnie.
-- jeśli są takie same, to wygrywa urządzenie z mniejszym MAC
-
-![img9](/lab4/img/img9.webp)
-
-3. **`PID nadawcy:`** - **priorytet portu + numer portu**
-
-- Używane, gdy ID urządzeń są identyczne.
-- Priorytety portów są domyślnie takie same, ale można je modyfikować. _domyślny 128?_
-- kiedy takie same są priorytety, **niższy numer portu** wygrywa.
-
-4. **`PID odbiorcy:`** -- || --
 
 ## Zasady konfiguracji STP:
 

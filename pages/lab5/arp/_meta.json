@@ -1,0 +1,5 @@
+{
+  "index": "ARP",
+  "garp_probe_arp": "GARP, Probe ARP",
+  "proxy_arp": "Proxy ARP"
+}

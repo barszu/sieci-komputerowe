@@ -49,15 +49,3 @@ Jest to sieć która posiada tylko jedno wyjście na "świat" (ścieżka domyśl
 
 - większość to sieci końcowe, np. domowe
 - wystarcza w nich jeden wpis, domyślny 0.0.0.0/0.0.0.0 (tylko 1 adres do nielokalnych hostów)
-
-## Pole TTL w nagłówku IP
-
-> Time To Live - czas życia pakietu - ile maksymalnie skoków może wykonać pakiet
-
-- TTL += -1 po przejściu przez router
-- TTL = 0 - pakiet umarł i jest odrzucany (nie wysyłamy z TTL = 0)
-
-router który go zabił wysyła informację zwrotną do nadawcy (ICMP Time Exceeded) że pakiet nie dotarł do celu i umarł
-
-- TTL zapobiega zapętlaniu pakietów
-- wyznacza maksymalną liczbę routerów na ścieżce - `255`

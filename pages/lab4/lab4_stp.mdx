@@ -4,7 +4,9 @@
 
 każdy na początku twierdzi, że jest rootem i wysyła ramki BPDU do sąsiada twierdząc że jest rootem
 
-> BID - Bridge Root ID - most do roota = Bridge ID + Root_MAC, BridgeID = priority + VLAN
+> BID - Bridge Root ID - most do roota = Bridge ID + Root_MAC,
+>
+> BridgeID = priority + VLAN
 
 ![img5](/lab4/img/img5.webp)
 
@@ -12,20 +14,20 @@ switch B, C stwierdzaja ze switch A ma lepszy BID, i zmieniają `root BID` na sw
 
 ![img6](/lab4/img/img6.webp)
 
-kazdy z portów **root bridge** staje sie FWD (Forwarding State - normalna praca portu), ROOT PORT
+kazdy z portów **root bridge** staje sie `DP` - Designated Port, w stanie FWD (Forwarding State - normalna praca portu)
 
-> Designated Port - Port, który odbiera i przekazuje ramki, część drzewa rozpinającego; typowy port dla korzenia drzewa.
+kazdy nie **root bridge** ma znalezc najlepsza droge do root bridge -> wpisać sobie `RP` - root port
 
-kazdy nie **root bridge** ma znalezc najlepsza droge do root bridge -> wpisać sobie route port
-
-- opiera sie to na koszcie dla portu (szybkosc kabla itd) wdl sciezki
+> opiera sie to na koszcie dla portu (szybkosc kabla itd) wdl sciezki
 
 od roota było 0, każdy kabel ma tutaj koszt 4
 
 ![img7](/lab4/img/img7.webp)
 
-root port wybrany z wartoscia 4 i tak oznaczamy jako `Route Porty`
+root port wybrany z wartoscia 4 i tak oznaczamy jako `Route Porty` (w kierunku ROOT BRIDGE)
 
 Szukamy dalej Designated Port... analogicznie
 
 ![img8](/lab4/img/img8.webp)
+
+BP - blocked port został prawy bo miał gorszy PID

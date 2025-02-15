@@ -1,0 +1,23 @@
+# Role routerów w OSPF
+
+## DR (Designated Router)
+
+> Router wyznaczony do zarządzania wymianą informacji w sieciach wielodostępowych. Odpowiada za generowanie Network LSA.
+
+- max 1 na obszar
+
+## BDR (Backup Designated Router)
+
+> Router zapasowy dla DR. Przejmuje rolę DR w przypadku jego awarii.
+
+## ABR (Area Border Router)
+
+> Router łączący dwa lub więcej obszarów OSPF. Odpowiada za wymianę informacji między obszarami i generowanie Summary LSA.
+
+- max 1 na obszar
+
+## ASBR (Autonomous System Boundary Router)
+
+> Router łączący OSPF z innymi systemami autonomicznymi. Odpowiada za importowanie i eksportowanie tras zewnętrznych oraz generowanie External LSA.
+
+- może być wiele ASBR w obszarze

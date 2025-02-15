@@ -1,11 +1,12 @@
 import { Callout } from "nextra/components";
-import {Details} from "../../components/details";
+import {Details} from "../../../components/details";
 
 # Protokół ARP - Adress Resolution Protocol
 
 <Callout type="info">
 
-Dynamiczne mapuje adresy logiczne IP (warstwy 3) na adresy fizyczne MAC (warstwy 2) <br/>
+Dynamiczne mapuje adresy logiczne IP (warstwy 3) na adresy fizyczne MAC (warstwy 2) - `ARP jest protokołem warstwy 3, ale działa na warstwie 2`
+
 Potrzebne jeśli nie znamy adresu MAC, ale znamy IP w sieci lokalnej
 
 </Callout>
@@ -17,6 +18,7 @@ Potrzebne jeśli nie znamy adresu MAC, ale znamy IP w sieci lokalnej
 Informacja o adresie MAC jest zapisywana w tablicy ARP.
 
 </Callout>
+
 <Details summary="pakiet czy ramka ARP ?">
 
 `Ramka ARP` odnosi się do jednostki danych, która jest przesyłana przez sieć i zawiera nagłówek Ethernet oraz ładunek ARP. W przypadku Ethernetu, ramka ARP ma typ EtherType ustawiony na 0x0806, co identyfikuje ją jako ramkę ARP.
@@ -35,21 +37,17 @@ ARP służy tylko do odpytania o `MAC` (znając IP) hostów z `sieci lokalej` (n
 
 Adres IP służy do odnalezienia (przynależność) hosta w sieci, MAC indentyfikuje samo urządzenie
 
-O ARP ...
+### O ARP ...
 
 - jest protokołem warstwy 3 (sieciowej), ale działa na warstwie 2 (łącza danych) bo używamy MAC z warstwy 2 do wysyłania ramek z **pakietami ARP** wewnątrz. <br />
 - działa dla IPv4 i jest dodatkowym protokołem, a w IPv6 jest wbudowany NDP (Neighbor Discovery Protocol)
 - generuje dodatkowy ruch w sieci, ale jest niezbędny do poprawnego działania sieci przy dynamicznych wpisach w tablicy ARP
 
-## Działanie komunikacji z ARP
-
-![img24](/lab5/img/img24.webp)
-
 ## Tablica ARP, IP : MAC
 
 - działa jak tablica forwardingu w switchach, czyli m.in dane są chwilowe (dynamiczne)
 - znajduje się bezpośrednio u hostów
-- **adresy są odczytywane z zapytań oraz z odpowiedzi ARP**
+- **adresy MAC są odczytywane tylko z ARP RESPONSE** - wtedy pojawia się wpis
 - wpisy mają **czas życia**, są dynamicznie tworzone i kasowane
 - można stworzyć **wpisy statyczne**, np. dla większego bezpieczeństwa
 - na win trzyma sie 10s, można sprawdzić komendą:
@@ -69,7 +67,19 @@ O ARP ...
 
 **adres odbiorcy, nadawcy** x2 - adresy MAC dla Ethernet
 
-## Działanie w jednej sieci
+## Działanie komunikacji z ARP
+
+![img24](/lab5/img/img24.webp)
+
+<Callout type="warning">
+
+Kiedy host widzi że destination IP jest nie z tej samej sieci (używa swojej maski) zagląda do swojej tablicy routingu, aby poszukać wpisu zazwyczaj go nie ma więc, korzysta z bramy domyślnej (0.0.0.0 (anything) via brama_domyslna)
+
+> host moze znajdowac sie w innej sieci, a w naszej sieci jest drugi router ktora ma lepsze polaczenie niz przez brame domyslna
+
+</Callout>
+
+### destination IP w LAN
 
 1. Komputer A szukający komputera B zna jego adres IP. Tworzy ramkę Ethernet z zapytaniem ARP (o MAC) (o ile nie ma go w tablicy ARP):
 
@@ -107,17 +117,19 @@ Różnice względem poprzedniej ramki:
 
 4. Komputer A odbiera ramkę ARP i zapisuje adres MAC komputera B w swojej tablicy ARP
 
-## Komunikacja hostów w różnych sieciach
+### destination IP w innej sieci
 
 <Callout type='warning'>
 
-**Wykorzystujemy tu routing!** To jest tylko symulacja komunikacji `nie ARP` !
+**Wykorzystujemy tu routing!** To jest tylko symulacja komunikacji `nie stricte ARP` !
 
 </Callout>
 
 1. Komputer A porównuje sieci swoją i docelową.
 
 > Są różne - tworzy więc zapytanie ARP do bramą domyślnej A. - jeśli nie zna jej MAC
+
+> może być coś innego niż brama domyślna o ile ma wpis w tablicy routingu !
 
 2. Komputer A będzie komunikował się ze swoją **bramą domyślną** - interfejs routera A
 
@@ -138,68 +150,3 @@ Różnice względem poprzedniej ramki:
 8. Router A dostaje MAC_B. Tworzy ramkę Ethernet z tym adresem oraz oryginalnym pakietem IP od A i wysyła go do komputera B.
 
 [wiecej o tym z rysunkiem... (jak działa internet - przesyłanie ramek?)](../lab2/lab2_przesylanie_ramek)
-
-## GRRP - Gratuitoous ARP - ARP bez pytania
-
-Każdy ją otrzymuje, nikt nie odpowiada
-
-> IP źródłowe = IP hosta <br/>
-> IP docelowe = IP hosta
-
-> MAC źródłowy = MAC hosta <br/>
-> MAC docelowy = broadcastowy
-
-### Zastosowania
-
-- **aktualizacja tablic ARP** u innych hostów
-
-<Details>
-  przydatne np. przy backupowych serwerach, bo gdy główny padnie, to zapasowy
-  (ten sam adres IP, co główny) wyśle wszystkim ramkę GARP ze swoim MACiem, żeby
-  wszyscy dowiedzieli się o zmianie
-</Details>
-
-- **powiadomienie** innych hostów o **pojawieniu się nowego**
-
-<Details>
-  zawczasu wypełnia tablice ARP innych hostów IP i MACiem nowego hosta, co
-  potencjalnie zmniejsza późniejszą liczbę wysyłanych pakietów ARP
-</Details>
-
-- **powiadomienie wcześniej switcha** o porcie danego hosta lub o zmianie jego adresu MAC
-
-- wykrywanie błędów w konfiguracji - bardzo częste ramki GARP od danego hosta
-
-<Details>
-  np. jeżeli host ma problem z kablem i co chwilę odłącza się i podłącza z
-  powrotem
-</Details>
-
-### Wady
-
-dodatkowe pakiety wysyłane przy podłączeniu urządzenia powodują dużo ruchu w sieci, a mogą być niepotrzebne (np. nowy host komunikuje się tylko z 1 innym hostem),
-
-## ARP Cache Poisoning | ARP Spoofing
-
-- atak polegający na podmianie adresów MAC w tablicy ARP
-- atakujący wysyła fałszywe odpowiedzi ARP, aby zmusić hosty do przekierowania ruchu do niego
-- atakujący może podszyć się pod inny host, podsłuchiwać ruch, modyfikować go, a nawet przekierowywać go dalej
-
-## ARP probe
-
-<Callout type="info">
-  Służy do sprawdzenia czy ma się unikatowy adres IP. (np. sprzawdzenie czy DHCP
-  nie przydzieliło tego samego adresu 2 hostom)
-</Callout>
-
-Działa jak GARP, ale:
-
-- MAC odbiorcy ustawiamy na 00:00:00:00:00:00
-- IP nadawcy na 0.0.0.0
-
-powyższe gwarantuje, że nic nie wykorzysta tego pakietu do update'owania tablic ARP
-(bo jeżeli jest konflikt adresów, to zdecydowanie nie chcemy, żeby odbiorcy się
-“uczyli” na tych danych), w przeciwieństwie do GARP, gdzie tego właśnie chcemy
-
-- jak nikt nie odpowie, to jest ok
-- jeżeli ktoś odpowie, to jest konflikt adresów IP i nie można z niego korzystać

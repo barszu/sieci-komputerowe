@@ -17,6 +17,10 @@ import Carousel from '../../../components/carousel'
 
 > gdy zostanie wykryta zmiana w topologii sieci, to wszystkie routery są powiadamiane i oczekuje się na potwierdzenie otrzymania tego powiadomienia.
 
+1. odebranie nowego pakietu (stare odrzucane)
+2. router zapamiętuje jego informacje (aktualizuje swój LSD)
+3. rozsyła pakiet na wszystkie interfejsy poza tym, z którego przyszedł (zalewanie sieci)
+
 ## Założenia protokołu
 
 <Steps>

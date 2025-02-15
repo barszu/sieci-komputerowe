@@ -1,4 +1,5 @@
 import { Details } from '../../../components/details'
+import { Steps, Callout } from 'nextra/components'
 
 # LSA - Link State Advertisement
 
@@ -8,8 +9,10 @@ import { Details } from '../../../components/details'
 (ID sąsiada (destination), sieć, metryka), wiek
 ```
 
+![lsa](/lab9/img/img13.jpg)
+
 - router wysyła LSA do sąsiadów (lub DR)
-- są to tablice topologii każdego routera, wysyłane do sąsiadów, a potem z ich pomocą do reszty routerów w systemie autonomicznym
+- są to tablice topologii każdego routera, wysyłane do sąsiadów, a potem z ich pomocą do reszty routerów
 - pozwalają routerom zbudować LSDB (Link State Database), bo informują o stanie sieci (w tym możliwe, że odległych jej fragmentów względem danego routera)
 
 <Details summary='LSDB (Link State Database)'>
@@ -24,8 +27,46 @@ import { Details } from '../../../components/details'
 
 </Details>
 
-## Zalewanie sieci
+## Typy LSA
 
-1. odebranie nowego pakietu (stare odrzucane)
-2. router zapamiętuje jego informacje (aktualizuje swój LSD)
-3. rozsyła pakiet na wszystkie interfejsy poza tym, z którego przyszedł (zalewanie sieci)
+![lsa](/lab9/img/img11.jpg)
+
+<Steps>
+
+#### LSA 1: Router LSA
+
+> Informacje o routerze i jego łączach, wykorzystywane do budowy mapy obszaru OSPF
+
+- zawiera informacje o sieciach ich maskach i kosztach dla kazdego połączenia
+
+#### LSA 2: Network LSA
+
+> Informacje o sieciach wysyłane przez DR (Designated Router). Tworzone przez DR w sieciach wielodostępowych.
+
+#### LSA 3: Summary LSA
+
+> Informacje o sieciach z poza lokalnego obszaru. Wysyłane przez ABR (Area Border Router) w 2 strony.
+
+> Zawierają informacje z LSA typu 1 i 2.
+
+#### LSA 4: ASBR Summary LSA
+
+> jak dostać się do ASBR (Autonomous System Boundary Router).
+
+> Wysyłąne przez ABR jeśli ASBR jest w innym obszarze.
+
+#### LSA 5: External LSA
+
+> Informacje o trasach do sieci zewnętrznych (spoza OSPF) (które są udostępnione z innego AS). Tworzone przez ASBR.
+
+> Przekazywane niezmienione głębiej w sieć OSPF.
+
+#### LSA 6: NSSA LSA
+
+> Informacje o trasach do sieci zewnętrznych w NSSA (Not-So-Stubby Area). Tworzone przez ASBR w NSSA.
+
+#### LSA 7: Opaque LSA
+
+> Dodatkowe informacje, które mogą być używane do różnych celów, takich jak QoS, MPLS itp. Mogą być tworzone przez dowolny router.
+
+</Steps>

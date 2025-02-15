@@ -1,0 +1,71 @@
+import { Callout } from "nextra/components";
+import {Details} from "../../../components/details";
+
+## GARP - Gratuitoous ARP
+
+> **ARP RESPONSE broadcastowo (nie normalanie unicastowo) gdzie nie było wcześniej pytania (ARP REQ) **
+
+> IP źródłowe = IP hosta <br/>
+> IP docelowe = IP hosta
+
+> MAC źródłowy = MAC hosta <br/>
+> MAC docelowy = broadcastowy
+
+### Zastosowania
+
+- **aktualizacja tablic ARP** u innych hostów
+
+<Details>
+  przydatne np. przy backupowych serwerach, bo gdy główny padnie, to zapasowy
+  (ten sam adres IP, co główny) wyśle wszystkim ramkę GARP ze swoim MACiem, żeby
+  wszyscy dowiedzieli się o zmianie
+</Details>
+
+- **powiadomienie** innych hostów o **pojawieniu się nowego**
+
+<Details>
+  zawczasu wypełnia tablice ARP innych hostów IP i MACiem nowego hosta, co
+  potencjalnie zmniejsza późniejszą liczbę wysyłanych pakietów ARP
+</Details>
+
+- **powiadomienie wcześniej switcha** o porcie danego hosta lub o zmianie jego adresu MAC
+
+- wykrywanie błędów w konfiguracji - bardzo częste ramki GARP od danego hosta
+
+<Details>
+  np. jeżeli host ma problem z kablem i co chwilę odłącza się i podłącza z
+  powrotem
+</Details>
+
+### Wady
+
+dodatkowe pakiety wysyłane przy podłączeniu urządzenia powodują dużo ruchu w sieci, a mogą być niepotrzebne (np. nowy host komunikuje się tylko z 1 innym hostem),
+
+## ARP probe
+
+<Callout type="info">
+  Służy do sprawdzenia czy ma się unikatowy adres IP. (np. sprzawdzenie czy DHCP
+  nie przydzieliło tego samego adresu 2 hostom)
+</Callout>
+
+GARP, ale:
+
+- destination MAC = 00:00:00:00:00:00
+- source IP = 0.0.0.0
+
+<Details summary="dlaczego tak?">
+
+powyższe gwarantuje, że nic nie wykorzysta tego pakietu do update'owania tablic ARP
+(bo jeżeli jest konflikt adresów, to zdecydowanie nie chcemy, żeby odbiorcy się
+“uczyli” na tych danych), w przeciwieństwie do GARP, gdzie tego właśnie chcemy
+
+</Details>
+
+- jak nikt nie odpowie, to jest ok
+- jeżeli ktoś odpowie, to jest konflikt adresów IP i nie można z niego korzystać
+
+## ARP Cache Poisoning | ARP Spoofing
+
+- atak polegający na podmianie adresów MAC w tablicy ARP
+- atakujący wysyła fałszywe odpowiedzi ARP, aby zmusić hosty do przekierowania ruchu do niego
+- atakujący może podszyć się pod inny host, podsłuchiwać ruch, modyfikować go, a nawet przekierowywać go dalej

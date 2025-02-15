@@ -1,0 +1,49 @@
+import { Details } from '../../../components/details'
+import { Steps, Callout } from 'nextra/components'
+
+# Obszary OSPF
+
+OSPF nie nadaje się do całego internetu naraz:
+
+- każdy router wymieniałby informacje z każdym
+- obciążenie sieci
+- olbrzymie tablice LSD
+- długie obliczanie algorytmu Dijkstry
+
+<Callout type="info" emoji="📝">
+
+W OSPF mamy obszary, są to zgrupowane routery, nie są to AS (Autonomous System) ale mogą nimi być.
+
+Obszary gdzie nie występuje OSPF a inny protokół routingu dynamicznego nazywać bedziemy AS.
+
+</Callout>
+
+![lsa](/lab9/img/img12.jpg)
+
+## Normal Area
+
+> wszystkie typy LSA są wymieniane w obrębie obszaru, czyli 1, 2, 3, 4, 5
+
+- np. backbone area (obszar 0)
+
+## SA - Stub Area
+
+> wymieniają się tylko LSA typu 1, 2, 3
+
+### T-SA - Totally Stub Area
+
+> bez typu 3
+
+> default route 0.0.0.0 poprzez typ 3
+
+## NSSA - Not So Stubby Area
+
+> wymieniaja się tylko LSA typu 1, 2, 3, 7
+
+> redystrybuowane z użyciem typu 7
+
+### T-NSSA - Totally NSSA
+
+> bez typu 3
+
+> default route 0.0.0.0 poprzez typ 3
