@@ -2,11 +2,11 @@
 
 ![img2](/lab4/img/img2.webp)
 
-> `RP` - **Root Port**: Prowadzi do korzenia; ramki BPDU nie są na niego wysyłane.
+> `DP` - **Designated Port** - odbiera i przekazuje ramki, część drzewa rozpinającego; typowy port dla korzenia drzewa.
 
-> `DP` - **Designated Port**: Port, który odbiera i przekazuje ramki, część drzewa rozpinającego; typowy port dla korzenia drzewa.
+> `RP` - **Root Port**: Prowadzi do korzenia (od dołu); ramki BPDU nie są na niego wysyłane.
 
-> `BP` - **Blocked Port**: Port, który odbiera tylko ramki BPDU i służy tylko do STP. Jest granicą drzewa rozpinającego.
+> `BP` - **Blocked Port**: Port, który odbiera tylko ramki BPDU i służy tylko do STP. Jest granicą drzewa rozpinającego.; kandydat na `RP` ale ścieżka przez niego była gorsza i został zablokowany
 
 ## Stany portów
 

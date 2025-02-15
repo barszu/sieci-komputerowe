@@ -1,3 +1,5 @@
+import { Callout } from 'nextra/components'
+
 # VLAN - Virtual Local Area Network - Wirtualna sieć lokalna
 
 > `logiczne` grupowanie urządzen w warstwie 2 (na poziomie switchy) - nie zmieniamy fizycznie sieci
@@ -25,6 +27,16 @@
 > kolizyjna : nie ma żadnego wpływu kolizje w obrebie tej sieci (no bo medium to samo)
 
 > rozgłoszeniowa - każdy VLAN to osobna domena rozgłoszeniowa
+
+<Callout type="error" emoji="❗">
+
+VLANy pozwalają na stworzenie logicznej topologi sieci na podstawie fizycznej więc na zadaniach warto `rozrysować logiczną strukturę sieci`
+
+`Granicą VLANu jest router`, który pozwala na komunikację między VLANami poprzez użycie routingu
+
+Każdy VLAN powinien otrzymać `rózne adresy sieci IP`, (można a nawet wskazane jest użycie VLSM)
+
+</Callout>
 
 ## Sposoby definiowania przynależności do VLAN:
 

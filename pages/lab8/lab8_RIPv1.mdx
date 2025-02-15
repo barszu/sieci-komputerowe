@@ -13,9 +13,9 @@ import { Details } from "../../components/details";
 
 - pakiety są po 24 B, ale mają dużą część pustą (marnują to miejsce)
 - wolna zbieżność - `30 sekund` na zmianę topologii sieci
-- `zliczanie do nieskończoności` - jeśli router nie zna drogi do jakiejś sieci, to ustawia metrykę na `16` (maksymalna wartość | infinity) i przesyła ją dalej
-- protokół klasowy, `nie obsługuje VLSM`
-- **generuje dużo ruchu**
+- `zliczanie do nieskończoności`
+- protokół klasowy, `nie obsługuje VLSM`, ale FLSM (Fixed Length Subnet Masking) już tak
+- **generuje dużo ruchu** - co 30s broadcastuje całą swoją tablicę routingu
 - `nie ma autoryzacji i zabezpieczeń `
 - limit maksymalnej rozległości sieci - `max 15 skoków`
 - nie bierze pod uwagę obciążenia, przepustowości sieci
@@ -29,7 +29,6 @@ import { Details } from "../../components/details";
 </Details>
 
 - co 30s spada wydajność sieci przez wymianę informacji przez routery
-- broadcast nie jest dobry np. dla dużych sieci
 - w sieciach niejednorodnych przez prostą metrykę działa bardzo słabo
 
 ## Zliczanie do nieskończoności

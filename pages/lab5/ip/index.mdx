@@ -1,0 +1,51 @@
+# Właściwości protokołu IP
+
+- dodaje **niewielką ilość danych sterujących** - podstawowe funkcje do przeslaniania danych ze źródła do celu
+- **bezpołączeniowy** nie zestawia połączenia przed rozpoczęciem przesyłania pakietów, przesyła każdy pakiet oddzielnie
+- niezależny od medium
+- **nie gwarantuje dostarczenia** - pakiety mogą się zgubić
+- **nie gwarantuje kolejności** - pakiety mogą przyjść w innej kolejności niż były wysłane
+- **brak timeout'u, retransmisji**
+- **brak kontroli przepływu** - nie ma mechanizmu zapobiegającego przeciążeniu sieci
+- **ograniczenie długości wiadomości** - maksymalna długość pakietu to `64kB` z ewentualnym podziałem na mniejsze (`fragmentacja`)
+  - `MTU` - Maximum Transmission Unit - maksymalna wielkość pakietu, którą może przesłać dane medium
+- **nie gwarantuje braku powtórzeń** - te same pakiety mogą przyjść wielokrotnie
+- **nie gwarantuje kolejności** - pakiety mogą przyjść w dowolnej kolejności
+- **nie potwierdza odbioru**
+
+_(nie ma sesji, nie ma potwierdzeń, nie ma gwarancji dostarczenia, jak listy w XIX wieku ale mogą sie zduplikować)_
+
+### Użyteczność protokołu IP mimo powyższych wad:
+
+- braki rozwiązują warstwy wyższe, w szczególności TCP/UDP
+- prostota i elastyczność
+- minimalny narzut
+- zapewnia organizację trasy do przesyłania pakietów
+- w praktyce powyższe braki nie są tak odczuwalne, jak by się mogło wydawać
+
+## Fragmentacja pakietów
+
+> podział pakietu na mniejsze części, które mogą być przesłane przez medium o mniejszej wielkości
+
+- występuje na komputerach, routerach
+- **składanie następuje tylko u odbiorcy**
+- w nagłówku IP znajduje się pole:
+  - `Fragment Offset` - przesunięcie fragmentu względem oryginalnego pakietu
+  - `More Fragments` - czy to ostatni fragment
+  - `Don't Fragment` - czy można fragmentować pakiet
+  - `Identification` - identyfikator pakietu, który jest fragmentowany (kazdy fragment ma ten sam)
+
+## Składanie pakietów
+
+- każdy niezłożony jeszcze **PAKIET IP** u hosta ma bufor, tablicę znaczników i zegar
+- fragmenty posiadają pole `Identification` - wiadomo do którego pakietu należą
+
+Wypełnianie bufora:
+
+- na podstawie `Fragment Offset` wiadomo, jak daleko od początku wstawić dany fragment do bufora
+- po odebraniu fragmentu uruchamia się zegar na czas _max(init_value, TTL)_
+  > (TTL - Time To Live, czas życia zegara)
+- jeżeli następny fragment nie dojdzie w tym czasie, to odrzuca się cały pakiet (czyści bufor)
+- ostatni fragment posiada 0 na bicie MF (More Fragments)
+
+  więc wiadomo, że to koniec pakietu (przy czym nie musi przyjść ostatni - po prostu jest ostatni w sensie ułożenia fragmentów w pamięci)

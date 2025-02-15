@@ -1,14 +1,17 @@
+import { Details } from "../../../components/details"
+import { Callout} from "nextra/components"
+
 # Cele tworzenia podsieci:
 
-- podział dużych sieci klasy A i B na mniejsze
+- podział dużych sieci na mniejsze - więcej sieci => mniejszy maxymalny cap na hosty
 - podział domen rozgłoszeniowych na mniejsze (**każda podsieć to osobna domena rozgłoszeniowa**)
-- ukrycie szczegółów budowy sieci przed routerami zewnętrznymi
+- ukrycie szczegółów budowy sieci przed routerami zewnętrznymi (trzeba znać maskę która nie jest przekazywana ot tak)
 - możliwość połączenia różnych rodzajów sieci lokalnych
-- lepsze od wielu sieci klasy wyższej, bo **zmniejsza to rozmiar tablic routowania**
+- lepsze od wielu sieci klasy wyższej, bo **zmniejsza to rozmiar tablic routowania** - można je agregować
 
 ![img2](/lab5/img/img2.webp)
 
-# Tworzenie podsieci:
+## Tworzenie podsieci:
 
 - tylko **logiczny**
 - **rozróżnia się je dzięki masce podsieci**
@@ -16,7 +19,13 @@
   **adres sieci + adres podsieci + adres hosta**
 - adres podsieci “zużywa” bity na adres hosta, więc **więcej podsieci = mniej hostów w każdej podsieci**
 
-# Maska sieci (podsieci):
+## Maska sieci (podsieci):
+
+<Callout>
+
+Większośc problemów z adresami IP wynika z używania innej maski, gdzie maski nie są od tak przekazywane w nagłówku IP
+
+</Callout>
 
 - **długość adresów sieci i hosta wyznacza klasa**, a **maska granicę między adresem podsieci i adresem hosta**
 - **4 bajty** (32 bity) np. 255.255.255.0
@@ -25,17 +34,9 @@
   - `0` - bit jest częścią **adresu hosta** (spójny ciag '0' jest na końcu)
   - występuje zapis skrócony np. **/24** (24 bity na adres sieci, 8 na adres hosta)
 
-### Maski w klasach
-
-- **klasa A** (ip od 0.0.0.0) - **255**.XXX.XXX.XXX - **/8**
-- **klasa B** (ip od 128.0.0.0)- **255.255**.XXX.XXX - **/16**
-- **klasa C** (ip od 192.0.0.0)- **255.255.255**.XXX - **/24**
-
 Przykładowe maski:
 
 ![img4](/lab5/img/img4.webp)
-
-import { Details } from "../../components/details"
 
 <Details summary="wszystkie maski dla IPv4:">
 
@@ -77,6 +78,12 @@ import { Details } from "../../components/details"
 
 </Details>
 
+### Maski w klasach
+
+- **klasa A** (ip od 0.0.0.0) - **255**.XXX.XXX.XXX - **/8**
+- **klasa B** (ip od 128.0.0.0)- **255.255**.XXX.XXX - **/16**
+- **klasa C** (ip od 192.0.0.0)- **255.255.255**.XXX - **/24**
+
 > Przykład analizy adresu IP:
 >
 > Obliczenie adresu sieci:
@@ -105,32 +112,3 @@ _liczba bitów adresu IP - skrocony zapis maski = ilość 0 w masce_
 
 ![img12](/lab5/img/img12.webp)
 ![img13](/lab5/img/img13.webp)
-
-## Podsieci niezalecane:
-
-ze względu na poniższe problemy używanie tych podsieci jest niezalecane (kiedyś te adresy były nawet domyślnie wyłączone)
-
-Załóżmy, że mamy adres sieci 192.168.1.0/24 i chcemy podzielić go na 8 podsieci. Potrzebujemy 3 bitów na adres podsieci (2^3 = 8).
-
-Adres sieci: 192.168.1.0/24
-Maska podsieci: 255.255.255.224 (/27)
-
-### Podsieć zero:
-
-- same zera na bitach adresu podsieci
-- **ma taki sam adres sieci i podsieci**, co jest mylące
-
-Adres sieci: 192.168.1.0
-Adres podsieci: 192.168.1.0
-Zakres adresów hostów: 192.168.1.1 - 192.168.1.30
-Adres broadcast: 192.168.1.31
-
-### Podsieć samych jedynek:
-
-- same jedynki na bitach adresu podsieci
-- **adres broadcast sieci i podsieci są takie same**, co może w skrajnych przypadkach powodować cykle routowania
-
-Adres sieci: 192.168.1.224
-Adres podsieci: 192.168.1.224
-Zakres adresów hostów: 192.168.1.225 - 192.168.1.254
-Adres broadcast: 192.168.1.255

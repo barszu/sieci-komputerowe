@@ -3,13 +3,9 @@ import { Details } from '../../components/details'
 
 # Tablica routingu
 
-<Callout>
-
-- `IP sieci docelowej` -> `IP następnego skoku` lub “`sieć bezpośrednia`”
-- adresy IP = IP + maska
-- IP następnego skoku = brama (next hop IP)
-
-</Callout>
+```
+`IP sieci docelowej + maska` via `IP następnego skoku` || `sieć bezpośrednia wpięta`
+```
 
 Przykład dla routera na środku (router 2):
 
@@ -52,15 +48,14 @@ Trasa domyślna musi być ręcznie dodana (przypisana) do tablicy routingu.
 
 - tablica, dzięki której router wie, gdzie kierować pakiety zaadresowane do danej sieci
 - pamięta tylko informację o następnym routerze na trasie do sieci (next hop IP) lub informację o tym, że sieć jest już przyległa do danego routera (nie zna całej ścieżki)
-- jeżeli wpis nie zostanie znaleziony w tablicy, to realizuje się najdłuższe dopasowanie, czyli “wygrywa” ten adres docelowy w tablicy, który ma najdłuższą zgodną maskę podsieci
+- wygrywa wpis który ma najdłuższą maske, i adres docelowy pakietu z tą maską = adres wpisany w tablice routingu z tą maską
 
-  - maska 255.255.255.255 to “najlepsza” maska
-  - maska 0.0.0.0 (brama domyślna) to “najgorsza” maska - zostanie użyta, jeżeli nie znajdzie się żadne lepsze dopasowanie i jest w tablicy
+  > maska 0.0.0.0 (brama domyślna) to “najgorsza” maska - zostanie użyta, jeżeli nie znajdzie się żadne lepsze dopasowanie i jest w tablicy
 
-- wpisy można agregować, łącząc wiele podobnych w jeden (np. jeśli wiele wpisów ma ten sam adres następnego skoku) i zaoszczędzić miejsce w tablicy routingu
+- wpisy można agregować, łącząc wiele podobnych w jeden (np. jeśli wiele wpisów ma ten sam adres następnego skoku) i zaoszczędzić miejsce w tablicy routingu - poprzez zmniejszanie maski
 
 - wpisy w tablicy są tam:
-  routing statyczny - ustawiane ręcznie przez administratora
+  routing statyczny - ustawiane ręcznie przez administratora - najbardziej zaufane
   routing dynamiczny -tworzone i zarządzane automatycznie przez protokół -
 
 ## Routing statyczny

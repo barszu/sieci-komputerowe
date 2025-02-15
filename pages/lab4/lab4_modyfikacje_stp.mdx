@@ -1,3 +1,7 @@
+import { Steps } from 'nextra/components'
+import { Details } from '../../components/details'
+import { Callout } from 'nextra/components'
+
 # Pochodne po STP 802.1D (modyfikacje)
 
 ## **PVST/PVST+** - Per VLAN Spanning Tree +
@@ -20,18 +24,27 @@
 
 2. Połączenie stanu portów -> `Blocking + Listening => Discarding`:
 
-3. **Wszystkie** switche wysyłają BPDU co `Hello Time`, nie tylko korzeń, co zwiększa niezawodność.
+3. **Wszystkie** switche wysyłają BPDU co `Hello Time`, **nie tylko ROOT** co zwiększa niezawodność.
 
 4. Informacja uznawana jest za przestarzałą po braku 3 kolejnych BPDU od poprzedniego switcha w ścieżce do korzenia.
 
 5. Dwukierunkowa informacja między switchami:
 
    - W STP - tylko przetwarzanie informacji od sąsiadów
-   - W RSTP switche komunikują się między sobą, aby szybciej reagować na zdarzenia.
+   - W RSTP switche komunikują się między sobą, aby szybciej reagować na zdarzenia - burza w topologi jest raczej globalna
 
-6. Nowe koszta dla połączeń:
+<Details summary='6. Nowe koszty połączeń w RSTP'>
 
-![img3](/lab4/img/img3.webp)
+| Typ połączenia | Koszt RSTP |
+| -------------- | ---------- |
+| 10 Mbps        | 2,000,000  |
+| 100 Mbps       | 200,000    |
+| 1 Gbps         | 20,000     |
+| 10 Gbps        | 2,000      |
+| 100 Gbps       | 200        |
+| 1 Tbps         | 20         |
+
+</Details>
 
 7. **Edge Ports** - (wyjścia dla komputerów) mają stan `forwarding`
 

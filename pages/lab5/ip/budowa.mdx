@@ -1,0 +1,143 @@
+import { Steps, Callout } from 'nextra/components'
+import { Details } from '../../../components/details'
+
+# Budowa nagłówka IPv4
+
+![img15](/lab5/img/img15.webp)
+
+<Steps>
+
+### wersja protokołu IP [4b]
+
+> dla IPv4 to 4 (0100)
+
+### długość nagłówka [16b] ; \{4B}
+
+> ile bajtów zajmuje sam nagłówek IP, dzięki temu odbiorca wie, gdzie kończy się nagłówek, a zaczynają się dane (payload) pakietu IP.
+
+- zawiera liczbę “słów” 4-bajtowych - dlugość nagłówka IP to x \* 4 B
+
+<Callout type="info">
+
+**min** długość nagłówka = **`20 B`** - bez obcji <br/>
+**max** długość nagłówka = **`60 B`** - z obcjami
+
+</Callout>
+
+### `ToS` - Type of Service [8b]
+
+> informuje o jakości obsługi pakietu.
+
+<Details>
+
+- priorytet [3b]
+  - im wyższa wartość liczbowa, tym ważniejszy pakiet;
+  - jeżeli router jest zapełniony i musi odrzucić jakieś pakiety, to odrzuci najpierw te o niższym priorytecie
+- opóźnienie [1b]
+  - jeżeli ustawiony na 1, to opóźnienie ma być jak najmniejsze;
+  - wykorzystywane np. w pakietach telnet (protokół zdalnego terminala)
+- niezawodność [1b]
+  - 1 => niezawodność ma być jak największa,
+  - np. protokół SNMP do zarządzania i monitorowania sieci
+- przepustowość [1b]
+  - 1 => przepustowość ma być jak największa,
+  - np. protokół FTP do wymiany plików
+- ECN [1b] (Explicit Congestion Notification) - powiadamia o przeciążeniu łącza
+
+</Details>
+
+### długość całkowita [16b]
+
+> ile **bajtów zajmuje cały pakiet IP** (nagłówek + dane)
+
+<Callout type="info">
+
+**min** = **`20 B`** - sam nagłówek bez obcji <br/>
+**max** = **`64 kB`**
+
+</Callout>
+
+### Pola do fragmentacji [32b]
+
+- `Identification` [16b] - identyfikator pakietu, który jest fragmentowany (kazdy fragment ma ten sam)
+- `bit 0` - padding (wypełnienie) - nic nie robi
+- `DF` [1b] - Don't Fragment - czy można fragmentować pakiet
+- `MF` [1b] - More Fragments - czy jeszcze jakiś fragment przyjdzie => 0 na ostatnim fragmencie
+- `Fragment Offset` [13b] ; `{8B}` - przesunięcie fragmentu względem oryginalnego pakietu
+  > liczone w jednostkach po 8 bajtów (w związku z tym przy podziale wielkości fragmentów **poza ostatnim** muszą być podzielne przez 8!)
+
+### TTL [8b]
+
+> Time To Live - czas życia pakietu - ile maksymalnie skoków może wykonać pakiet
+
+- TTL += `-1` po przejściu przez router
+- TTL = 0 - pakiet umarł i jest odrzucany
+
+> nie wysyłamy dalej go jeśli po zmniejszeniu przez nas TTL = 0 (bo nie ma już skoków)
+
+router który go zabił wysyła informację zwrotną do nadawcy (ICMP Time Exceeded) że pakiet nie dotarł do celu i umarł
+
+- TTL zapobiega zapętlaniu pakietów
+- wyznacza maksymalną liczbę routerów na ścieżce - `255`
+
+### Protokół warstwy wyższej [8b]
+
+> informacja jaki protokół warstwy wyższej jest użyty w pakiecie IP (TCP/UDP)
+
+### Suma kontrolna **dla nagłówka** [16b]
+
+> sprawdzenie poprawności tylko **nagłówka**
+
+- sprawdzana przy przetwarzaniu pakietu, więc np. w routerach po drodze
+- o poprawność danych dbają wyższe warstwy
+
+### Adres źródłowy [32b] `[4B]`
+
+> adres IP nadawcy (unicast)
+
+### Adres docelowy [32b] `[4B]`
+
+> adres IP odbiorcy (unicast, multicast, broadcast)
+
+### Opcje [x * 32b]
+
+> np. zapis trasy lub definiowanie ścieżki po której pakiet ma przejść
+
+- zmienna długość, wielokrotność 32 bitów, mogą być nie muszą
+- jeśli opcja nie jest wielokrotnością 32 bitów, jest wypełniana zerami (padding)
+- Przykłady opcji:
+  - `Record Route` - Zapis trasy : zapisanie adresów IP routerów, przez które przechodzi pakiet.
+  - `Source Routing` - Definiowanie ścieżki : pozwala nadawcy określić ścieżkę, którą pakiet ma przejść przez sieć. Może to być używane do omijania przeciążonych lub uszkodzonych części sieci.
+
+<Details summary='Kliknij, aby zobaczyć więcej o budowie obcji'>
+
+![img16](/lab5/img/img16.webp)
+**Option Type** [7b] - typ opcji:
+
+- flag [1b] - czy opcja jest kopiowana do każdego fragmentu pakietu
+- class [2b] - klasa opcji
+  - 0 - kontrola
+  - 2 - informacja debugująca, do pomiarów
+  - 1, 3 - zarezerwowane
+
+**Option Length** [8b] - długość opcji w bajtach (od flag do końca Option Data)
+**Option Data** [x * 8b] - dane opcji
+
+</Details>
+
+<Details summary='Kliknij, aby zobaczyć więcej o możliwych obcjach'>
+
+- **0 - koniec listy opcji** - oznaczenie końca listy opcji, całe pole opcji to tylko 1 bajt, brak pól Option Length i Option Data
+- **1 - brak operacji** - podobnie do powyższego, bez szczególnego znaczenia
+- **2 - security** - różne dane związane z bezpieczeństwem, np. szyfrowaniem pakietu
+- **3 - Loose Source Routing** - ciąg adresów IP routerów, pakiet ma przejść po kolei przez te routery, ale z dowolną trasą pomiędzy danymi routerami
+- **4 - Internet Timestamp** - zwykły znacznik czasowy
+- **7 - Record Route** - lista adresów IP, przez które przeszedł pakiet (jego trasa)
+- **8 - Stream ID** - zwykle ignorowany
+- **9 - Strict Source Routing** - ciąg adresów IP routerów, pakiet ma przejść po kolei przez te routery i tylko i wyłącznie przez te routery, w danej kolejności
+
+**Routing źródłowy** - określanie przez nadawcę pakietu (źródło) trasy pakietu, czyli hostów, którzy mają po kolei przekazywać pakiet. Realizowany poprzez opcję Loose Source Routing lub Strict Source Routing.
+
+</Details>
+
+</Steps>

@@ -2,7 +2,8 @@
   "link_state": "o protokołach stanu łącza",
   "ospf": "OSPF",
   "lsa": "'pakiety' LSA",
+  "routery": "role routerów w OSPF",
+  "obszary": "Obszary OSPF",
   "dzialanie": "Działanie OSPF",
-  "dr": "Designated Router",
-  "hierarchiczny_ospf": "Hierarchiczny OSPF"
+  "dr": "Designated Router"
 }

@@ -1,4 +1,4 @@
-import {Details} from '../../components/details'
+import {Details} from '../../../components/details'
 
 # Proxy ARP
 
@@ -12,13 +12,13 @@ umieszczając informacje o hoście pracującym w drugiej sieci.
 - przydatne jeżeli chcemy np. tunelować się do naszej sieci i stwierdzać że w niej jesteśmy
 - proxy arp może być ustawione na routerze (bramie domyślnej), lub może to być osobne urządzenie (ale raczej to jest router)
 
-## Różnica z normalnym ARP
+## Różnica przy komunikacja z normalnym ARP
 
 W normalnym ARP, kiedy hosty wiedzą, że są w innej sieci i zaczynają korzystać z routingu i komunikują sie (przez) z bramą domyślna.
 
 Kiedy wiedzą że są w innej sieci? => 'kompletnie' różne adresy IP
 
-Ale nie zawsze tak jest sieci **mogą się różnić jedynie maską, **a komputer zna tylko maske swojej sieci
+Ale nie zawsze tak jest sieci **mogą się różnić jedynie maską** a komputer zna tylko maske swojej sieci
 
 ![img25](/lab5/img/img25.webp)
 
@@ -34,14 +34,17 @@ Pakiet IP zostanie wysłany do routera (rzekomego hosta B) a router przekieruje 
 
 1. Komputer A wysyła zapytanie ARP do komputera B (wierzy błędnie, że są w tej samej sieci)
 2. Router z włączonym proxy ARP odpowiada na zapytanie ARP, udając że jest komputerem B
-3. Router znajduje u siebie w tablicy ARP adres docelowy (zaużmy) i zwraca swój MAC jako odpowiedź (że niby komp B ma ten MAC)
+
+> wtedy kiedy stwierdzi że ten host nie może istnieć w tej sieci - więc nie odpowie za hosta poprawnie skonfigurowanego ktory nie działa
+
+3. Router zwraca swój MAC jako odpowiedź (że niby komp B ma ten MAC)
 4. A teraz myśli że komunikuje się bezpośrednio z B ale tak na prawdę rozmawia z routerem
 
 ## Zalety
 
 - ukrywa istnienie wielu sieci (oba hosty mogą korzystać z tego samego adresu sieci)
 
-<Details summary="debil:">
+<Details>
   pozwala hostom w różnych sieciach komunikować się tak, jakby były w tej samej
   sieci. Router odpowiada na zapytania ARP, udając, że jest docelowym hostem, co
   ukrywa złożoność sieci przed hostami.

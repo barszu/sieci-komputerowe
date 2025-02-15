@@ -10,8 +10,10 @@ kiedy switch otrzyma gorsze to ignoruje i korzysta z wcześniej zapisanych.
 
 ## Lepsza BPDU ?
 
-- Przenosi **lepsze informacje o ścieżce do roota** niż te aktualnie przechowuje switch.
+> **`ROOT BID > łączny koszt > Sender PID > Receiver PID`**
+
 - Ma **niższy identyfikator roota** (root bridge) . wpp...
   - Jeśli identyfikatory root są równe, ma niższy koszt ścieżki do mostu głównego.
   - Jeśli zarówno identyfikator root, jak i koszt ścieżki są równe, ma niższy identyfikator switcha.
+- Przenosi **lepsze informacje o ścieżce do roota** niż te aktualnie przechowuje switch.
 - Kiedy switch otrzymuje takie BPDU, aktualizuje swoje własne informacje.
